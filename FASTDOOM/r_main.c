@@ -1926,11 +1926,8 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_II:
                 colfunc = R_DrawColumnBackbufferMMX;
                 break;
-            /* The CPUs which have no column renderer of their own are drawn
-               with the four columns renderer of r_col4.c, which writes a row
-               of four columns with one 32 bit store; the mode is left to the
-               renderer of the byte stores when its view is scaled, which
-               R_SetupColumn4() tells. */
+            /* the CPUs of no renderer of their own are drawn four columns of
+               a row at a time, a scaled view left to the byte stores */
             default:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
                 break;
@@ -2559,11 +2556,8 @@ static void R_SetupVBE2Funcs(void)
             case AMD_K6:
                 colfunc = R_DrawColumnVBE2FastLEA;
                 break;
-            /* One 32 bit store of a row of four columns instead of four
-               byte stores of the linear framebuffer, for the CPUs which have
-               no column renderer of their own; a scaled view is left to the
-               renderers of the mode, which write two and four bytes at a
-               time, which R_SetupColumn4() tells. */
+            /* one 32 bit store of a row of the framebuffer instead of four
+               byte stores, a scaled view left to the renderers of the mode */
             default:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
                 break;
@@ -3570,8 +3564,6 @@ void R_SetupFrame(void)
     destview = destscreen + MulScreenWidthQuarter(viewwindowy) + (viewwindowx >> 2);
 #endif
 
-    // The four columns renderer keeps the alignment of its groups from the
-    // origin of the view, and drops the columns kept of the frame before.
 }
 
 //
@@ -3601,8 +3593,7 @@ void R_RenderPlayerView(void)
     // The head node is the last node output.
     R_RenderBSPNode(firstnode);
 
-    // The walls are all drawn, so the columns kept have to reach the view
-    // before the flats of the planes overwrite them.
+    // the flats of the planes draw over the columns kept
     R_FLUSH_COLUMNS4();
 
     // Check for new console commands.
@@ -3615,8 +3606,7 @@ void R_RenderPlayerView(void)
 
     R_DrawMasked();
 
-    // The sprites do not use the four columns renderer, but the columns kept
-    // by the masked walls have to reach the view with the frame.
+    // the masked walls keep columns for the view of the frame
     R_FLUSH_COLUMNS4();
 
     // Check for new console commands.

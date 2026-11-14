@@ -13,64 +13,24 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Wall renderer that maps four adjacent columns at a time, so the
-//	view is written with aligned 32 bit stores instead of one store
-//	per pixel.
+//	Wall renderer which maps four adjacent columns at a time, so a row
+//	of them goes to the view with one aligned 32 bit store instead of
+//	four byte stores: the idea of Ken Silverman from issue #143, "you
+//	render 4 vertical wall lines simultaneously".
 //
-//	The idea is Ken Silverman's from issue #143: "Do aligned 32-bit
-//	writes to video memory.  Easy for ceilings.  Yes it's possible for
-//	walls (which are rendered in the vertical direction) too!  The
-//	trick is: you render 4 vertical wall lines simultaneously."
+//	The renderer takes the place of the column function of the seg
+//	loops.  A column asked for is kept in a slot, and the four slots
+//	are drawn together when they hold four consecutive columns of a 32
+//	bit aligned address: the rows of the group in which the four
+//	columns are visible are one 32 bit store each, the rows of the top
+//	and the bottom edge are byte stores, for a row of them costs fewer
+//	stores so, and the columns which join no group are drawn one at a
+//	time.  The renderer is used only where four columns of the view are
+//	the four bytes of a row, which is what R_SetupColumn4() tells.
 //
-//	The four lines of a group are texture mapped side by side: for
-//	every row of the group one texel is taken from each of the four
-//	columns, the four palette indices are joined in one register and
-//	the whole row of the group goes to the backbuffer (the buffered
-//	modes) or to video memory (the VBE2 direct modes) with a single
-//	32 bit store.  Four bytes are written with one store, which is
-//	what the 386 and the 486 pay for with four stores, and in video
-//	memory four writes are saved for one.
-//
-//	The renderer replaces the column function called by the seg loops.
-//	Every wall column asked for is dropped into a slot and the four
-//	slots are drawn together when they hold four consecutive columns
-//	whose first one starts at a 32 bit aligned address.  The rows of
-//	the group in which all four columns are visible are written with
-//	one store per row; the rows of the top and the bottom edge, in
-//	which the columns are of different height, are drawn column by
-//	column with byte stores, as they leave the bytes of the columns
-//	which are not visible there alone and a row of them costs fewer
-//	stores that way than with a read of the word, a mask and a write.
-//	The columns which can not join a group (the columns in front of
-//	and behind an aligned group, the columns after a gap left by an
-//	opening which is too high to draw, the columns of a seg which is
-//	not drawn to its end, ...) are drawn one at a time, which costs
-//	the same as the column renderers used before.
-//
-//	The segs of Doom are of a few columns and the wall of a seg changes
-//	its height from column to column, so the work of a group which is
-//	not of one height is kept as small as it can be: the columns are
-//	kept in the slots with as few stores as there are, the groups of
-//	one height do not touch the edges at all, and the loop of the rows
-//	which are drawn with 32 bit stores keeps the least values it can:
-//	a seg maps its columns with one texture, one light level and one
-//	step, so the loop of a seg has three pointers, four texture
-//	positions, one colormap and one step to keep.
-//
-//	The renderer is drawn with only where four columns of the view are
-//	the four bytes of a row, which is what R_SetupColumn4() tells: the
-//	modes which keep the view one byte per pixel and which call the
-//	column function for every column of the view, with the view of the
-//	1:1 detail level.  A view of the DETAIL_LOW and the DETAIL_POTATO
-//	level is scaled, its renderers write two and four bytes of a pixel
-//	and they skip the rows of the view which the pixel of their size
-//	does not reach, so those levels keep the renderers of r_draw.c.
-//
-//	The columns kept point into the WAD cache: the seg loops take the
-//	column of a texture into the cache for every column of a texture
-//	whose patches are in more than one lump, and taking a lump into
-//	the cache purges other lumps.  Every loop which does that hands
-//	the columns kept to the view first, with R_FLUSH_COLUMNS4().
+//	The columns kept point into the WAD cache, which the seg loops
+//	purge when they take a lump, so every such loop hands the columns
+//	kept to the view first, with R_FLUSH_COLUMNS4().
 */
 
 #include <limits.h>
@@ -86,9 +46,7 @@
 #if (defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)) \
     && !defined(MODE_CGA16) && !defined(MODE_CVB) && !defined(MODE_CGA512)
 
-/* The buffered modes draw into a backbuffer of one byte per pixel and the
-   direct modes draw into linear video memory, both SCREENWIDTH bytes of a
-   row, and the column of a row of the 1:1 view is at its byte. */
+/* the row of a y and the column of an x of the view, one byte per pixel */
 #if defined(MODE_VBE2_DIRECT)
 #define COL4_ROW(y) (destview + MulScreenWidth(y))
 #define COL4_COL(x) (x)
@@ -97,53 +55,29 @@
 #define COL4_COL(x) (columnofs[(x)])
 #endif
 
-/* A row of the view is four bytes of a 32 bit store only of its rows are
-   words, which is what the mode of the frame is checked for. */
+/* the rows of the view must be words for a group to be one 32 bit store */
 typedef char col4screenwidthaligned[(SCREENWIDTH % 4 == 0) ? 1 : -1];
 
 /*
  * The format of the texture position of a row.
  *
- * The column renderers of the modes drawn with the renderer are assembly,
- * R_DrawColumnBackbuffer of linearh.asm and R_DrawColumnVBE2 of vbe2dh.asm,
- * and they do not shift the position of a row by FRACBITS as the C renderers
- * of r_draw.c do.  They keep the position of the first row of a column and
- * the step of a row as one 32 bit value of 25 fraction bits and of seven
- * significant bits, "7 significant bits, 25 frac" of their comments:
+ * The column renderers of the modes drawn here are assembly, of linearh.asm
+ * and of vbe2dh.asm, and they keep the position and the step of a row in
+ * seven significant bits and 25 fraction bits, not in the FRACBITS of the C
+ * renderers of r_draw.c:
  *
- *     eax = (dc_yl - centery) * dc_iscale
- *     ecx = dc_iscale << 9            ; the step of a row
- *     edx = (dc_texturemid + eax) << 9 ; the position of the first row
- *     ebx = edx >> 25                 ; the texel of the row, with a shift
- *                                     ; which is not signed
+ *     ecx = dc_iscale << 9                        ; the step of a row
+ *     edx = (dc_texturemid + (dc_yl - centery) * dc_iscale) << 9
+ *     ebx = edx >> 25                             ; the texel, "shr"
  *
- * The texel of a column is therefore named by the seven bits which are left
- * above the 25 fraction bits, and the bits above them fall away.  The name
- * is taken out of the position with a shift to the right which is not
- * signed, "shr ebx,25" of the source, and so the texel of a row is one of
- * 0 to 127, of the 128 rows of a column of a texture: "The graphics wrap
- * vertically at 128 pixels" of the comment of the assembly file.  The
- * position of a wall below the middle of the view and of a wall of a tall
- * texture goes under the numbers which the seven bits name, and the byte
- * renderers of the mode draw such a wall from the texel which the seven
- * bits name, which is the position of the row modulo the rows of a column;
- * the four columns renderer has to take the texel the same way, for the
- * texels of a signed shift of the position are the bytes before the column
- * of a texture, and the wall of a column is drawn from the wrong texels.
- *
- * The step of a wall is the reciprocal 0xffffffff / rw_scale of the scale of
- * the seg,
- * a large number, and the position of a wall which is close to the view and
- * of a wall of a tall texture goes over the seven significant bits, so the
- * bits which fall away are not seldom: the byte renderers draw such a wall
- * from the texel which the shifted value names and they walk it with the
- * step of the shifted value, and the four columns renderer has to name the
- * same texels, for the wall of a column has to be drawn as it is drawn
- * without the renderer.
- *
- * The position of a row below the first row of a column is reached the way
- * the byte renderers reach it, with the step added once per row, which is
- * the step multiplied by the number of the rows and wrapped at 32 bits.
+ * The texel of a row is of 0 to 127 and a texture wraps vertically at 128
+ * texels, "The graphics wrap vertically at 128 pixels" of the assembly
+ * source, and the bits above the seven of the position fall away, which the
+ * walls close to the view and the tall walls and the masked walls reach.
+ * The texel is taken out of the position with a shift which is not signed,
+ * for a signed shift names the bytes before the column of the texture, and
+ * the position of a row is walked with the step added once per row, wrapped
+ * at 32 bits, as the assembly renderers walk it.
  */
 #define COL4_FRACSH 25
 
@@ -177,28 +111,19 @@ typedef struct
 /* the four columns of the group, slots[0] is the leftmost one */
 static col4slot_t slots[4];
 
-/* dc_x of slots[0] and the number of columns kept in the slots.  The number
-   is published in r_col4.h, so the seg loops of the renderers of the modes
-   test it of their own and pay no call when no column is kept. */
+/* dc_x of slots[0] and the number of columns kept, the number published in
+   r_col4.h, so the seg loops test it of their own */
 static int slotx;
 int col4pending;
 
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */
 static int alignx;
 
-/*
- * The address of a pixel of a light table.
- *
- * The byte renderers of the modes of the renderer reach a pixel of a light
- * table by overwriting the low byte of the address of the table with the
- * byte of the source, "mov al,[eax]" of the assembly source with eax of the
- * address of the table of dc_colormap; the address names the pixel of the
- * table only when the table begins at a address of 256 bytes, which the
- * tables of the game do, and the low byte of the address of the table falls
- * away from the name of the pixel.  The renderer names the pixel of a table
- * the same way with the mask of the low byte, so that a table which is not
- * of 256 bytes is used as the byte renderers of the mode use it.
- */
+/* The byte renderers of the modes name a pixel of a light table by writing
+   the byte of the source over the low byte of the address of the table,
+   "mov al,[eax]", which names a pixel only of a table beginning at an
+   address of 256 bytes, as the tables of the game do.  The mask names the
+   pixel of a table which is not of 256 bytes as the mode names it. */
 #define COL4_MAP(map) ((lighttable_t *)((unsigned long)(map) & ~0xffUL))
 
 /* the column asked for, kept to be drawn together with its three neighbours */
@@ -221,20 +146,9 @@ static int alignx;
         slotx++;                                 \
     }
 
-/*
- * One column, drawn with byte stores, the rows from 'from' to 'to' only:
- * used for the columns which are not a complete, aligned group and for the
- * rows of the top and the bottom edge of a group, where the four columns
- * are not of the same height.  The rows of the group which are drawn with
- * 32 bit stores are left to them.
- *
- * The texture position of a row is taken the way the assembly renderers of
- * the modes take it, from the center of the view and in the format of
- * COL4_FRACSH, for the position of a column of a masked wall, of a wall of a
- * sky and of a wall which is close to the view goes below zero and the
- * renderers index the source below it, and the same bytes have to be read
- * there.
- */
+/* One column drawn with byte stores, of the rows from 'from' to 'to' only:
+   the columns which join no group and the rows of the edges of a group, of
+   the texture position of COL4_FRACSH, read as the mode reads it. */
 #define COL4_DEFONE(name, row)                                               \
 static void name(col4slot_t *col, int x, int from, int to)                   \
 {                                                                            \
@@ -269,15 +183,9 @@ static void name(col4slot_t *col, int x, int from, int to)                   \
 
 COL4_DEFONE(R_DrawColumn4One, COL4_ROW(top))
 
-/*
- * The rows of the top and the bottom edge of a group, where the columns are
- * not of the same height: the rows [top, ylo) of the column and the rows
- * (yhi, bottom] of it, drawn with byte stores, for a row of them costs one
- * store and a row of the group is written with one store only when the four
- * columns are in it.  The texture position of a row is walked to from the
- * first row of the column, as the byte renderers walk it, so the slots are
- * read once for the two ranges.
- */
+/* The rows [top, ylo) and (yhi, bottom] of a column of a group which is not
+   of one height, drawn with byte stores, one setup of the slot for both of
+   the ranges, the position walked to from the first row of the column. */
 #define COL4_EDGES(col, x, ylo, yhi)                                         \
     {                                                                        \
         const byte *source = (col)->source;                                  \
@@ -318,13 +226,8 @@ COL4_DEFONE(R_DrawColumn4One, COL4_ROW(top))
         }                                                                    \
     }
 
-/*
- * The rows of the group in which the four columns are visible: one texel
- * of every column is taken, the four are joined and the row is written
- * with one 32 bit store.
- */
-
-/* one row of the group: 4 texels -> 1 aligned 32 bit store */
+/* one row of the group, of the four columns visible: the four texels joined
+   into one 32 bit store */
 #define COL4_ROW4()                                                          \
     {                                                                        \
         unsigned int pixel;                                                  \
@@ -343,11 +246,8 @@ COL4_DEFONE(R_DrawColumn4One, COL4_ROW(top))
         dest += SCREENWIDTH;                                                 \
     }
 
-/*
- * The rows of a seg: the four columns of a seg are mapped by one texture,
- * one light level and one step, so only the three pointers and the four
- * texture positions are of their own, which is what the loop has to keep.
- */
+/* The rows of the group of one light level and one step, which is what a seg
+   of one texture gives: the loop keeps three pointers and four positions. */
 static void R_DrawColumns4Mid(byte *dest, int y, int rows)
 {
     const byte *source0 = slots[0].source;
@@ -357,7 +257,6 @@ static void R_DrawColumns4Mid(byte *dest, int y, int rows)
 
     const lighttable_t *map = slots[0].colormap;
 
-    /* the four columns are of one step, so one step is kept */
     fixed_t fracstep = COL4_STEP(slots[0].step);
 
     fixed_t frac0 = COL4_SEED(&slots[0], y);
@@ -419,23 +318,16 @@ static void R_DrawColumns4MidAll(byte *dest, int y, int rows)
     }
 }
 
-/*
- * The four columns kept, drawn one at a time, for there is no row of the
- * group in which the four of them are visible.
- */
+/* the four columns kept drawn one at a time, of no row showing all of them */
 static void R_DrawColumns4Alone(int x)
 {
     int i;
 
     for (i = 0; i < 4; i++)
         R_DrawColumn4One(&slots[i], x + i, INT_MIN, INT_MAX);
-
 }
 
-/*
- * The four columns of a group, drawn with 32 bit stores where the four of
- * them are visible.
- */
+/* the group of four columns, with 32 bit stores where the four are visible */
 static void R_DrawColumns4(int x)
 {
     int ylo, yhi;
@@ -453,11 +345,9 @@ static void R_DrawColumns4(int x)
     yhi = slots[0].bottom;
     equal = 1;
 
-    /* the rows in which the four of them are visible: they are the rows
-       from the highest of the tops of the columns to the lowest of their
-       bottoms, for a column is not drawn above its top nor below its
-       bottom.  'equal' is kept on the way, for a group of columns of one
-       height has no rows of the edges at all. */
+    /* the rows of the four columns, from the highest of the tops of them to
+       the lowest of their bottoms; 'equal' tells the group of one height,
+       which has no rows of the edges at all */
     for (i = 1; i < 4; i++)
     {
         if (slots[i].top > slots[i].bottom)
@@ -489,15 +379,11 @@ static void R_DrawColumns4(int x)
         return;
     }
 
-    /* The group of one height, the wall between two floors: the four
-       columns are visible in every row of the group, so the edges of the
-       group are its own rows and there is nothing to draw beside the rows
-       of 32 bit stores. */
+    /* the group of one height, a wall between two floors: every one of its
+       rows shows the four columns, so there is no edge to draw */
     if (equal)
     {
-        /* the columns of a seg are mapped by one texture, one light level
-           and one step: the loop of their rows keeps three pointers, four
-           texture positions, one colormap and one step */
+        /* the columns of a seg are of one light level and one step */
         if (slots[0].colormap == slots[1].colormap &&
             slots[0].colormap == slots[2].colormap &&
             slots[0].colormap == slots[3].colormap &&
@@ -534,13 +420,9 @@ static void R_DrawColumns4(int x)
     {
         R_DrawColumns4MidAll(COL4_ROW(ylo) + COL4_COL(x), ylo, yhi - ylo + 1);
     }
-
 }
 
-/*
- * The columns kept in the slots which are not a complete group are drawn
- * one at a time.
- */
+/* the columns kept which are not a complete group, drawn one at a time */
 void R_FlushColumn4(void)
 {
     while (col4pending)
@@ -552,13 +434,8 @@ void R_FlushColumn4(void)
     }
 }
 
-/*
- * R_DrawColumn4
- *
- * The column function of the seg loops.  The column asked for joins the
- * group when it is the next one of the group, else the group kept is drawn
- * and a new group is started with it.
- */
+/* the column function of the seg loops: the column asked for joins the group
+   kept when it is the next one of it, else the group is drawn first */
 void R_DrawColumn4(void)
 {
     int x = dc_x;
@@ -576,9 +453,9 @@ void R_DrawColumn4(void)
             }
             else
             {
-                /* a group has to start at a 32 bit aligned column, so the
-                   leftmost column is drawn on its own and the three which
-                   are left are kept for the group of the next column */
+                /* the group has to start at an aligned column, so the
+                   leftmost column goes on its own and the three of its right
+                   are kept for the group of the next column */
                 R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
                 COL4_SHIFT();
                 col4pending = 3;
@@ -589,8 +466,7 @@ void R_DrawColumn4(void)
     {
         if (col4pending == 1)
         {
-            /* the end of a seg of a few columns: the column kept goes to
-               the view without the loop of the flush */
+            /* the end of a short seg, the one column kept without the loop */
             R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
             col4pending = 0;
         }
@@ -603,22 +479,13 @@ void R_DrawColumn4(void)
     }
 }
 
-/*
- * R_SetupColumn4
- *
- * Called when the renderers of the frame are set up: the columns kept of
- * the frame before are dropped and the alignment of the groups, which
- * depends on the origin of the view, is calculated.
- *
- * The function returns the column function of the frame: the renderer, and
- * the function asked for when four columns of the view are not the four
- * bytes of a row of the buffer of the mode, which is the case of a view of
- * the DETAIL_LOW and the DETAIL_POTATO level, whose renderers write a pixel
- * of two and of four bytes and skip the rows of the view a pixel of their
- * size does not reach.  A view which does not start at a word is drawn with
- * too, for the columns in front of the first group of its rows are drawn one
- * at a time.
- */
+/* Called when the renderers of the frame are set up: the columns kept of the
+   frame before are dropped and the alignment of the groups of the view is
+   taken.  The renderer is returned, and the function asked for of a scaled
+   view, whose renderers write a pixel of two and of four bytes and skip the
+   rows a pixel of their size does not reach.  A view which does not start at
+   a word is drawn with the renderer too, for the columns in front of the
+   first group of its rows are drawn one at a time. */
 void (*R_SetupColumn4(void (*fallback)(void)))(void)
 {
     col4pending = 0;
@@ -626,9 +493,7 @@ void (*R_SetupColumn4(void (*fallback)(void)))(void)
     if (detailshift != DETAIL_HIGH)
         return fallback;
 
-    /* a group starts at a 32 bit aligned column of the view; the columns in
-       front of the first group of a row of the view are drawn one at a time,
-       so the origin of the view is not a reason to leave the renderer out */
+    /* the alignment of a group of the columns of the rows of the view */
 #if defined(MODE_VBE2_DIRECT)
     alignx = (int)((unsigned long)destview & 3);
 #else
