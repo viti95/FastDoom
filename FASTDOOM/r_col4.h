@@ -46,6 +46,15 @@
  * The texture position of a row is kept in the format of the assembly column
  * renderers of the modes, and the renderer is compared with them byte for
  * byte over the shapes of the columns of the seg loops.
+ *
+ * The middle rows of a group of one light table and of one step, which is
+ * what a seg of one texture gives, go to the loop of col4.asm, of the four
+ * bytes of a row: of the positions of the four columns of the registers of
+ * the machine, and of the registers of MMX for the CPUs of MMX.  R_Setup-
+ * Column4() chooses between the two of them with the CPU of the machine and
+ * keeps the choice in col4midfunc, as r_main.c keeps colfunc and spanfunc;
+ * the groups of columns of more than one light table, or of more than one
+ * step, are drawn of the C.
  */
 
 /* The modes of the renderer, of the reason of the paragraph above. */
@@ -54,6 +63,15 @@
 
 void R_DrawColumn4(void);
 void R_FlushColumn4(void);
+
+/* The middle rows of a group of four columns of one light table and of one
+   step: the group of the columns kept in col4slots, of the x of them in
+   col4x, of the first of their rows in col4y and of their number in col4rows,
+   which r_col4.c writes before the call.  R_SetupColumn4() chooses one of the
+   two of them with the CPU of the machine and keeps it in col4midfunc. */
+void R_DrawColumns4Mid(void);
+void R_DrawColumns4MidMMX(void);
+extern void (*col4midfunc)(void);
 
 /* the number of the columns of the seg loops kept of the view */
 extern int col4pending;

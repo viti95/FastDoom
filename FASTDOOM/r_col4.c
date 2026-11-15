@@ -31,6 +31,11 @@
 //	The columns kept point into the WAD cache, which the seg loops
 //	purge when they take a lump, so every such loop hands the columns
 //	kept to the view first, with R_FLUSH_COLUMNS4().
+//
+//	The rows of a group in which the four columns are visible are of the
+//	assembly of col4.asm, which draws a group of one light table and of
+//	one step: R_SetupColumn4() chooses between its two renderers with the
+//	CPU of the machine, as r_main.c chooses the renderers of a mode.
 */
 
 #include <limits.h>
@@ -90,7 +95,7 @@ typedef char col4screenwidthaligned[(SCREENWIDTH % 4 == 0) ? 1 : -1];
     (fixed_t)((step) << 9)
 
 /* the position of the row (y) of a column kept, walked to from its top */
-#define COL4_SEED(col, y) \
+#define COL4_SEED(col, y)                                                     \
     (fixed_t)(COL4_SEEDAT((col)->mid, (col)->top, (col)->step)                \
               + ((y) - (col)->top) * COL4_STEP((col)->step))
 
@@ -108,13 +113,24 @@ typedef struct
     int bottom;
 } col4slot_t;
 
-/* the four columns of the group, slots[0] is the leftmost one */
-static col4slot_t slots[4];
+/* The four columns of the group, col4slots[0] the leftmost one, with the x,
+   the first row and the number of the rows of them: the renderer of col4.asm
+   reads them, so they are not of this file only. */
+col4slot_t col4slots[4];
+int col4x;
+int col4y;
+int col4rows;
 
-/* dc_x of slots[0] and the number of columns kept, the number published in
+/* dc_x of col4slots[0] and the number of columns kept, the number published in
    r_col4.h, so the seg loops test it of their own */
 static int slotx;
 int col4pending;
+
+/* The renderer of the middle rows of a group of four columns, chosen by
+   R_SetupColumn4() with the CPU of the machine as the renderers of r_main.c
+   are: of the assembly of col4.asm, and of the CPUs of MMX the one of the
+   positions of the four columns in the registers of MMX. */
+void (*col4midfunc)(void) = R_DrawColumns4Mid;
 
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */
 static int alignx;
@@ -140,9 +156,9 @@ static int alignx;
 /* the group is drawn from left to right, so the columns move up */
 #define COL4_SHIFT()                             \
     {                                            \
-        slots[0] = slots[1];                     \
-        slots[1] = slots[2];                     \
-        slots[2] = slots[3];                     \
+        col4slots[0] = col4slots[1];             \
+        col4slots[1] = col4slots[2];             \
+        col4slots[2] = col4slots[3];             \
         slotx++;                                 \
     }
 
@@ -226,78 +242,30 @@ COL4_DEFONE(R_DrawColumn4One, COL4_ROW(top))
         }                                                                    \
     }
 
-/* one row of the group, of the four columns visible: the four texels joined
-   into one 32 bit store */
-#define COL4_ROW4()                                                          \
-    {                                                                        \
-        unsigned int pixel;                                                  \
-                                                                             \
-        pixel = (unsigned int)map[source0[COL4_TEXEL(frac0)]];               \
-        pixel |= (unsigned int)map[source1[COL4_TEXEL(frac1)]] << 8;         \
-        pixel |= (unsigned int)map[source2[COL4_TEXEL(frac2)]] << 16;        \
-        pixel |= (unsigned int)map[source3[COL4_TEXEL(frac3)]] << 24;        \
-                                                                             \
-        *(unsigned int *)(void *)dest = pixel;                               \
-                                                                             \
-        frac0 += fracstep;                                                   \
-        frac1 += fracstep;                                                   \
-        frac2 += fracstep;                                                   \
-        frac3 += fracstep;                                                   \
-        dest += SCREENWIDTH;                                                 \
-    }
-
-/* The rows of the group of one light level and one step, which is what a seg
-   of one texture gives: the loop keeps three pointers and four positions. */
-static void R_DrawColumns4Mid(byte *dest, int y, int rows)
-{
-    const byte *source0 = slots[0].source;
-    const byte *source1 = slots[1].source;
-    const byte *source2 = slots[2].source;
-    const byte *source3 = slots[3].source;
-
-    const lighttable_t *map = slots[0].colormap;
-
-    fixed_t fracstep = COL4_STEP(slots[0].step);
-
-    fixed_t frac0 = COL4_SEED(&slots[0], y);
-    fixed_t frac1 = COL4_SEED(&slots[1], y);
-    fixed_t frac2 = COL4_SEED(&slots[2], y);
-    fixed_t frac3 = COL4_SEED(&slots[3], y);
-
-    /* two rows per pass, they do not depend on each other */
-    while (rows > 1)
-    {
-        COL4_ROW4();
-        COL4_ROW4();
-        rows -= 2;
-    }
-
-    if (rows)
-        COL4_ROW4();
-}
-
-/* the rows of a group whose columns are not of one light level and one step */
+/* The rows of a group which is not of the shape the renderers of col4.asm
+   take: of more than one light table, of more than one step, or of sources of
+   more than one stride, so every one of its columns is walked on its own. */
 static void R_DrawColumns4MidAll(byte *dest, int y, int rows)
 {
-    const byte *source0 = slots[0].source;
-    const byte *source1 = slots[1].source;
-    const byte *source2 = slots[2].source;
-    const byte *source3 = slots[3].source;
+    const byte *source0 = col4slots[0].source;
+    const byte *source1 = col4slots[1].source;
+    const byte *source2 = col4slots[2].source;
+    const byte *source3 = col4slots[3].source;
 
-    const lighttable_t *map0 = slots[0].colormap;
-    const lighttable_t *map1 = slots[1].colormap;
-    const lighttable_t *map2 = slots[2].colormap;
-    const lighttable_t *map3 = slots[3].colormap;
+    const lighttable_t *map0 = col4slots[0].colormap;
+    const lighttable_t *map1 = col4slots[1].colormap;
+    const lighttable_t *map2 = col4slots[2].colormap;
+    const lighttable_t *map3 = col4slots[3].colormap;
 
-    fixed_t step0 = COL4_STEP(slots[0].step);
-    fixed_t step1 = COL4_STEP(slots[1].step);
-    fixed_t step2 = COL4_STEP(slots[2].step);
-    fixed_t step3 = COL4_STEP(slots[3].step);
+    fixed_t step0 = COL4_STEP(col4slots[0].step);
+    fixed_t step1 = COL4_STEP(col4slots[1].step);
+    fixed_t step2 = COL4_STEP(col4slots[2].step);
+    fixed_t step3 = COL4_STEP(col4slots[3].step);
 
-    fixed_t frac0 = COL4_SEED(&slots[0], y);
-    fixed_t frac1 = COL4_SEED(&slots[1], y);
-    fixed_t frac2 = COL4_SEED(&slots[2], y);
-    fixed_t frac3 = COL4_SEED(&slots[3], y);
+    fixed_t frac0 = COL4_SEED(&col4slots[0], y);
+    fixed_t frac1 = COL4_SEED(&col4slots[1], y);
+    fixed_t frac2 = COL4_SEED(&col4slots[2], y);
+    fixed_t frac3 = COL4_SEED(&col4slots[3], y);
 
     while (rows-- > 0)
     {
@@ -324,8 +292,37 @@ static void R_DrawColumns4Alone(int x)
     int i;
 
     for (i = 0; i < 4; i++)
-        R_DrawColumn4One(&slots[i], x + i, INT_MIN, INT_MAX);
+        R_DrawColumn4One(&col4slots[i], x + i, INT_MIN, INT_MAX);
 }
+
+/* The group of one light table, of one step, and of sources of one stride,
+   which is what a seg of one texture gives: the four columns of one light
+   level, of one step, of texture positions which differ by a constant of the
+   texture (so a wall not parallel to the view, of positions that move from
+   column to column, is of the assembly too), and of the columns of the texture
+   of one distance in the lump, which the renderers of col4.asm walk by the
+   stride of the first two columns. */
+#define COL4_MID()                                              \
+    (col4slots[0].colormap == col4slots[1].colormap             \
+     && col4slots[0].colormap == col4slots[2].colormap          \
+     && col4slots[0].colormap == col4slots[3].colormap          \
+     && col4slots[0].step == col4slots[1].step                  \
+     && col4slots[0].step == col4slots[2].step                  \
+     && col4slots[0].step == col4slots[3].step                  \
+     && (int)(col4slots[1].source - col4slots[0].source)        \
+            == (int)(col4slots[2].source - col4slots[1].source) \
+     && (int)(col4slots[2].source - col4slots[1].source)        \
+            == (int)(col4slots[3].source - col4slots[2].source))
+
+/* the middle rows of the four columns of the view of x, of the rows of ylo to
+   yhi, handed over to the renderer of the columns kept of col4.asm */
+#define COL4_MID_DRAW(x, ylo, yhi)    \
+    do {                              \
+        col4x = (x);                  \
+        col4y = (ylo);                \
+        col4rows = (yhi) - (ylo) + 1; \
+        col4midfunc();                \
+    } while (0)
 
 /* the group of four columns, with 32 bit stores where the four are visible */
 static void R_DrawColumns4(int x)
@@ -334,15 +331,15 @@ static void R_DrawColumns4(int x)
     int equal;
     int i;
 
-    if (slots[0].top > slots[0].bottom)
+    if (col4slots[0].top > col4slots[0].bottom)
     {
         /* an empty column, so there is no row with the four of them */
         R_DrawColumns4Alone(x);
         return;
     }
 
-    ylo = slots[0].top;
-    yhi = slots[0].bottom;
+    ylo = col4slots[0].top;
+    yhi = col4slots[0].bottom;
     equal = 1;
 
     /* the rows of the four columns, from the highest of the tops of them to
@@ -350,24 +347,24 @@ static void R_DrawColumns4(int x)
        which has no rows of the edges at all */
     for (i = 1; i < 4; i++)
     {
-        if (slots[i].top > slots[i].bottom)
+        if (col4slots[i].top > col4slots[i].bottom)
         {
             /* an empty column, so there is no row with the four of them */
             R_DrawColumns4Alone(x);
             return;
         }
 
-        if (slots[i].top != ylo)
+        if (col4slots[i].top != ylo)
         {
             equal = 0;
-            if (slots[i].top > ylo)
-                ylo = slots[i].top;
+            if (col4slots[i].top > ylo)
+                ylo = col4slots[i].top;
         }
-        if (slots[i].bottom != yhi)
+        if (col4slots[i].bottom != yhi)
         {
             equal = 0;
-            if (slots[i].bottom < yhi)
-                yhi = slots[i].bottom;
+            if (col4slots[i].bottom < yhi)
+                yhi = col4slots[i].bottom;
         }
     }
 
@@ -383,43 +380,24 @@ static void R_DrawColumns4(int x)
        shows the four columns, so there is no edge to draw */
     if (equal)
     {
-        /* the columns of a seg are of one light level and one step */
-        if (slots[0].colormap == slots[1].colormap &&
-            slots[0].colormap == slots[2].colormap &&
-            slots[0].colormap == slots[3].colormap &&
-            slots[0].step == slots[1].step &&
-            slots[0].step == slots[2].step &&
-            slots[0].step == slots[3].step)
-        {
-            R_DrawColumns4Mid(COL4_ROW(ylo) + COL4_COL(x), ylo,
-                              yhi - ylo + 1);
-        }
+        /* the columns of a seg are of one light table and one step */
+        if (COL4_MID())
+            COL4_MID_DRAW(x, ylo, yhi);
         else
-        {
             R_DrawColumns4MidAll(COL4_ROW(ylo) + COL4_COL(x), ylo,
                                  yhi - ylo + 1);
-        }
         return;
     }
 
     /* the rows of the two edges, one setup for the column of both of them */
     for (i = 0; i < 4; i++)
-        COL4_EDGES(&slots[i], x + i, ylo, yhi);
+        COL4_EDGES(&col4slots[i], x + i, ylo, yhi);
 
     /* the rows with the four columns, one 32 bit store per row */
-    if (slots[0].colormap == slots[1].colormap &&
-        slots[0].colormap == slots[2].colormap &&
-        slots[0].colormap == slots[3].colormap &&
-        slots[0].step == slots[1].step &&
-        slots[0].step == slots[2].step &&
-        slots[0].step == slots[3].step)
-    {
-        R_DrawColumns4Mid(COL4_ROW(ylo) + COL4_COL(x), ylo, yhi - ylo + 1);
-    }
+    if (COL4_MID())
+        COL4_MID_DRAW(x, ylo, yhi);
     else
-    {
         R_DrawColumns4MidAll(COL4_ROW(ylo) + COL4_COL(x), ylo, yhi - ylo + 1);
-    }
 }
 
 /* the columns kept which are not a complete group, drawn one at a time */
@@ -428,7 +406,7 @@ void R_FlushColumn4(void)
     while (col4pending)
     {
         /* COL4_SHIFT() moves the columns to the left and their x with them */
-        R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
+        R_DrawColumn4One(&col4slots[0], slotx, INT_MIN, INT_MAX);
         COL4_SHIFT();
         col4pending--;
     }
@@ -442,7 +420,7 @@ void R_DrawColumn4(void)
 
     if (col4pending && x == slotx + col4pending)
     {
-        COL4_STORE(slots[col4pending]);
+        COL4_STORE(col4slots[col4pending]);
 
         if (++col4pending == 4)
         {
@@ -456,7 +434,7 @@ void R_DrawColumn4(void)
                 /* the group has to start at an aligned column, so the
                    leftmost column goes on its own and the three of its right
                    are kept for the group of the next column */
-                R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
+                R_DrawColumn4One(&col4slots[0], slotx, INT_MIN, INT_MAX);
                 COL4_SHIFT();
                 col4pending = 3;
             }
@@ -467,13 +445,13 @@ void R_DrawColumn4(void)
         if (col4pending == 1)
         {
             /* the end of a short seg, the one column kept without the loop */
-            R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
+            R_DrawColumn4One(&col4slots[0], slotx, INT_MIN, INT_MAX);
             col4pending = 0;
         }
         else
             R_FlushColumn4();
 
-        COL4_STORE(slots[0]);
+        COL4_STORE(col4slots[0]);
         slotx = x;
         col4pending = 1;
     }
@@ -492,6 +470,13 @@ void (*R_SetupColumn4(void (*fallback)(void)))(void)
 
     if (detailshift != DETAIL_HIGH)
         return fallback;
+
+    /* the middle rows of a group, of the CPU of the machine, the renderer of
+       MMX for the CPUs of MMX of r_main.c */
+    col4midfunc = R_DrawColumns4Mid;
+    if (selectedCPU == RISE_MP6 || selectedCPU == INTEL_PENTIUM_MMX
+        || selectedCPU == INTEL_PENTIUM_II)
+        col4midfunc = R_DrawColumns4MidMMX;
 
     /* the alignment of a group of the columns of the rows of the view */
 #if defined(MODE_VBE2_DIRECT)
