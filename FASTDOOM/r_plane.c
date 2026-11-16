@@ -1285,8 +1285,12 @@ void R_DrawSky(visplane_t *pl)
         ofs = texofs[col];
 
         /* the columns of the four columns kept point into the WAD cache, which
-           the lump taken below can purge */
-        R_FLUSH_COLUMNS4();
+           the lump taken below can purge, and only when it is not in the cache
+           already, as the segs of r_segs.c check: of the sky the columns of a
+           patch are all of one lump, so the four columns are kept whole over
+           the width of a patch, and are of the boundary of it flushed */
+        if (texbase != lumpcache[lump])
+            R_FLUSH_COLUMNS4();
 
         dc_source = W_CachedLumpBase(texbase, lump, ofs);
 
