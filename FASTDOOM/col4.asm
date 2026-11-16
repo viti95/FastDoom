@@ -209,131 +209,166 @@ done4mid:
 ; "paddd", and of no position of a column in the registers of the machine,
 ; which the sources of the four columns and the table fill.
 ;
-; eax   light table pointer, its byte written over by the source
-; ebx   light table pointer, 0 lowbyte
-; ecx   the texel of a column, the pixel of a column
-; edx   the source of a column, the columns of the memory taking it
-; ebp   the source of the second column
+; The four texels of a row are out of the positions with two "psrld" and one
+; "packssdw", which puts the four of them, of seven bits, in the four halves
+; of one register, two texels of a "movd" to the registers of the machine.
+; The second texel of a "movd" is out of it with one "shr", so that the four
+; texels of a row take no move of one register of MMX to the other and one
+; "psrlq" only.
+;
+; Of the CPUs of MMX the two first are of the Pentium, where the byte of the
+; renderers of the mode, written over the low byte of an address, is of no
+; cost, and of the Pentium II the same byte is of the merging of a register,
+; which costs.  The table is of 256 bytes, so a byte of the source added to
+; the address of the table, its low byte zero, is the byte of the table which
+; the renderers of the mode name with their low byte written over, and this
+; renderer adds it, of the registers of the machine staying whole.
+;
+; eax   the source of a column
+; ebx   light table, its address of the low byte zero
+; ecx   the texels of the two first columns, the pixel of a column
+; edx   the texels of the two last columns
+; ebp   the rows of the group left, the loop of a register
 ; esi   the pixels of the row, the leftmost column to the low byte
 ; edi   the four bytes of the row of the view
 ;
 ; mm0   the positions of the first and of the second column
 ; mm1   the step of a row, of both the halves of a register
 ; mm2   the positions of the third and of the fourth column
-; mm4   the texels of the first and of the second column
+; mm4   the texels of the four columns, of the packing of the two of mm5 in
 ; mm5   the texels of the third and of the fourth column
 ;
 ; "emms" is not of the renderers of the project, which are of no x87 code of
 ; their own, and this renderer is of the same kind.
 ;============================================================================
 CODE_SYM_DEF R_DrawColumns4MidMMX
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		edi
-	push		ebp
+  push    ebx
+  push    ecx
+  push    edx
+  push    esi
+  push    edi
+  push    ebp
 
-  call near SetupColumns4Mid
-  js   near done4midmmx ; a group without a row is not to be drawn
+  call    near SetupColumns4Mid
+  js      near done4midmmx
 
-  ; the four bytes of the first row of the view
-  mov  eax,[_col4y]
+  ; Dirección inicial de destino en pantalla
+  mov     eax, [_col4y]
 %ifdef MODE_VBE2_DIRECT
-  MulScreenWidthStart edi,eax
-  MulScreenWidthEnd edi
-  add  edi,[_destview]
-  add  edi,[_col4x]
+  MulScreenWidthStart edi, eax
+  MulScreenWidthEnd   edi
+  add     edi, [_destview]
+  add     edi, [_col4x]
 %else
-  mov  edi,[_ylookup+eax*4]
-  mov  eax,[_col4x]
-  add  edi,[_columnofs+eax*4]
+  mov     edi, [_ylookup + eax*4]
+  mov     eax, [_col4x]
+  add     edi, [_columnofs + eax*4]
 %endif
 
-  mov  ebx,[_col4slots+SLOT_COLORMAP]
-  and  ebx,-256
+  ; Colormap alineado a 256 bytes
+  mov     ebx, [_col4slots + SLOT_COLORMAP]
+  and     ebx, -256
 
-  ; the positions of the four columns, two of a register
-  mov  ebp,[c4pos]
-  mov  eax,ebp
-  add  eax,[c4d1]
-  movd mm0,ebp
-  movd mm1,eax
-  psllq mm1,32
-  por  mm0,mm1
-  mov  eax,ebp
-  add  eax,[c4d2]
-  mov  ecx,ebp
-  add  ecx,[c4d3]
-  movd mm2,eax
-  movd mm3,ecx
-  psllq mm3,32
-  por  mm2,mm3
+  ; Inicializar posiciones de las 4 columnas en mm0 y mm2
+  mov     ebp, [c4pos]
+  mov     eax, ebp
+  mov     ecx, ebp
+  mov     edx, ebp
+  add     eax, [c4d1]
+  add     ecx, [c4d2]
+  add     edx, [c4d3]
 
-  ; the step of a row, of both the halves of a register
-  mov  ecx,[c4step]
-  movd mm1,ecx
-  punpckldq mm1,mm1
+  movd    mm0, ebp
+  movd    mm1, eax
+  punpckldq mm0, mm1              ; mm0 = [pos1 | pos0]
 
-  mov  ebp,[_col4slots+SLOT_SIZE+SLOT_SOURCE] ; the source of the second column
+  movd    mm2, ecx
+  movd    mm3, edx
+  punpckldq mm2, mm3              ; mm2 = [pos3 | pos2]
+
+  ; Paso vertical (step) duplicado en mm1
+  movd    mm1, [c4step]
+  punpckldq mm1, mm1              ; mm1 = [step | step]
+
+  ; Guardar los 4 punteros de textura en registros MMX (mm6 y mm3)
+  movd    mm6, [_col4slots + SLOT_SOURCE]
+  movd    mm4, [_col4slots + SLOT_SIZE + SLOT_SOURCE]
+  punpckldq mm6, mm4              ; mm6 = [src1 | src0]
+
+  movd    mm3, [_col4slots + 2*SLOT_SIZE + SLOT_SOURCE]
+  movd    mm4, [_col4slots + 3*SLOT_SIZE + SLOT_SOURCE]
+  punpckldq mm3, mm4              ; mm3 = [src3 | src2]
+
+  ; Contador de filas en ebp (libre durante todo el bucle)
+  mov     ebp, [c4left]
 
 align 16
 LoopColumns4MidMMX:
-  movq mm4,mm0
-  psrld mm4,25 ; the texels of the first two columns
-  movq mm5,mm2
-  psrld mm5,25 ; the texels of the last two columns
-  paddd mm0,mm1 ; the positions of the row to come
-  paddd mm2,mm1
+  ; 1. Calcular los 4 índices de texel (7 bits) y avanzar posiciones
+  movq    mm4, mm0
+  psrld   mm4, 25                 ; mm4 = [0 | tex1 | 0 | tex0]
+  paddd   mm0, mm1                ; pos0 += step, pos1 += step
 
-  mov  eax,ebx ; the table, its low byte to be written over every column
-  movd ecx,mm4
-  mov  edx,[_col4slots+SLOT_SOURCE]
-  mov  al,[edx+ecx] ; the byte of the source, over the low byte of the table
-  mov  al,[eax] ; the pixel of the light table
-  movzx ecx,al
-  mov  esi,ecx ; the pixel of the leftmost column to the low byte
+  movq    mm5, mm2
+  psrld   mm5, 25                 ; mm5 = [0 | tex3 | 0 | tex2]
+  paddd   mm2, mm1                ; pos2 += step, pos3 += step
 
-  psrlq mm4,32
-  movd ecx,mm4
-  mov  al,[ebp+ecx]
-  mov  al,[eax]
-  movzx ecx,al
-  shl  ecx,8
-  or   esi,ecx
+  packssdw mm4, mm5               ; empaquetar 4 dwords -> 4 words
+  pxor    mm5, mm5                ; mm5 = 0
+  packuswb mm4, mm5               ; empaquetar 4 words -> 4 bytes bajos en mm4
 
-  movd ecx,mm5
-  mov  edx,[_col4slots+2*SLOT_SIZE+SLOT_SOURCE]
-  mov  al,[edx+ecx]
-  mov  al,[eax]
-  movzx ecx,al
-  shl  ecx,16
-  or   esi,ecx
+  ; 2. Extraer los 4 índices a ecx y preparar punteros [src1|src0] en mm4
+  movd    ecx, mm4                ; cl=tex0, ch=tex1, bits 16..23=tex2, bits 24..31=tex3
+  movq    mm4, mm6                ; mm4 = [src1 | src0]
+  movq    mm5, mm3                ; mm5 = [src3 | src2]
 
-  psrlq mm5,32
-  movd ecx,mm5
-  mov  edx,[_col4slots+3*SLOT_SIZE+SLOT_SOURCE]
-  mov  al,[edx+ecx]
-  mov  al,[eax]
-  movzx ecx,al
-  shl  ecx,24
-  or   esi,ecx ; the four pixels of the row, of the leftmost to the low byte
+  ; --- Columna 0 y Columna 1 ---
+  movd    eax, mm4                ; eax = src0
+  psrlq   mm4, 32                 ; mm4 baja = src1
+  movzx   esi, cl                 ; esi = tex0
+  movzx   edx, ch                 ; edx = tex1
+  shr     ecx, 16                 ; cl = tex2, ch = tex3
 
-  mov  [edi],esi ; the four bytes of the row at once
-  add  edi,SCREENWIDTH
+  movzx   esi, byte [eax + esi]   ; texel 0
+  movd    eax, mm4                ; eax = src1
+  movzx   esi, byte [ebx + esi]   ; pixel 0 (bits 0..7)
+  movzx   edx, byte [eax + edx]   ; texel 1
+  movzx   edx, byte [ebx + edx]   ; pixel 1
+  shl     edx, 8                  ; pixel 1 (bits 8..15)
+  or      esi, edx                ; esi = [0 | 0 | pix1 | pix0]
 
-  dec  dword [c4left]
-  jns  near LoopColumns4MidMMX
+  ; --- Columna 2 y Columna 3 ---
+  movd    eax, mm5                ; eax = src2
+  psrlq   mm5, 32                 ; mm5 baja = src3
+  movzx   edx, cl                 ; edx = tex2
+  shr     ecx, 8                  ; ecx = tex3
+
+  movzx   edx, byte [eax + edx]   ; texel 2
+  movd    eax, mm5                ; eax = src3
+  movzx   edx, byte [ebx + edx]   ; pixel 2
+  shl     edx, 16                 ; pixel 2 (bits 16..23)
+  or      esi, edx                ; esi = [0 | pix2 | pix1 | pix0]
+
+  movzx   ecx, byte [eax + ecx]   ; texel 3
+  movzx   ecx, byte [ebx + ecx]   ; pixel 3
+  shl     ecx, 24                 ; pixel 3 (bits 24..31)
+  or      esi, ecx                ; esi = [pix3 | pix2 | pix1 | pix0]
+
+  ; Escribir los 4 píxeles y avanzar fila
+  mov     [edi], esi
+  add     edi, SCREENWIDTH
+
+  dec     ebp
+  jns     near LoopColumns4MidMMX
 
 done4midmmx:
-  pop  ebp
-  pop  edi
-  pop  esi
-  pop  edx
-  pop  ecx
-  pop  ebx
+  pop     ebp
+  pop     edi
+  pop     esi
+  pop     edx
+  pop     ecx
+  pop     ebx
   ret
-; R_DrawColumns4MidMMX ends
 
 ; the position of the first row, the step of a row, the position of every
 ; column over that of the leftmost one and the rows left of the group, out of
