@@ -1921,14 +1921,20 @@ static void R_SetupBackbufferFuncs(void)
             case AMD_K6:
                 colfunc = R_DrawColumnBackbufferFastLEA;
                 break;
+            /* four columns of a row at a time, of the rows of the four of
+               them one 32 bit store, and of the CPUs of MMX the loop of the
+               registers of MMX: the renderer of the mode is of the scaled
+               views, which are of a pixel of two and of four bytes */
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
-                colfunc = R_DrawColumnBackbufferMMX;
+                R_SET_COLUMNS4_MID(R_DrawColumns4MidMMX);
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
                 break;
-            /* the CPUs of no renderer of their own are drawn four columns of
-               a row at a time, a scaled view left to the byte stores */
+            /* the CPUs of no renderer of their own, of the loop of the
+               registers of the machine */
             default:
+                R_SET_COLUMNS4_MID(R_DrawColumns4Mid);
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
                 break;
             }
@@ -2546,19 +2552,22 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86MX:
                 colfunc = R_DrawColumnVBE2Roll;
                 break;
-            case RISE_MP6:
-            case INTEL_PENTIUM_MMX:
-            case INTEL_PENTIUM_II:
-                colfunc = R_DrawColumnVBE2MMX;
-                break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K6:
                 colfunc = R_DrawColumnVBE2FastLEA;
                 break;
             /* one 32 bit store of a row of the framebuffer instead of four
-               byte stores, a scaled view left to the renderers of the mode */
+               byte stores, and of the CPUs of MMX the loop of the registers
+               of MMX: the renderer of the mode is of the scaled views */
+            case RISE_MP6:
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+                R_SET_COLUMNS4_MID(R_DrawColumns4MidMMX);
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
+                break;
             default:
+                R_SET_COLUMNS4_MID(R_DrawColumns4Mid);
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
                 break;
             }

@@ -34,8 +34,9 @@
 //
 //	The rows of a group in which the four columns are visible are of the
 //	assembly of col4.asm, which draws a group of one light table and of
-//	one step: R_SetupColumn4() chooses between its two renderers with the
-//	CPU of the machine, as r_main.c chooses the renderers of a mode.
+//	one step, of the registers of the machine and of the registers of MMX:
+//	r_main.c chooses between the two of them, as it chooses the other
+//	renderers of a mode.
 */
 
 #include <limits.h>
@@ -126,10 +127,9 @@ int col4rows;
 static int slotx;
 int col4pending;
 
-/* The renderer of the middle rows of a group of four columns, chosen by
-   R_SetupColumn4() with the CPU of the machine as the renderers of r_main.c
-   are: of the assembly of col4.asm, and of the CPUs of MMX the one of the
-   positions of the four columns in the registers of MMX. */
+/* The renderer of the middle rows of a group of four columns, of the assembly
+   of col4.asm: of the registers of the machine here, and of the registers of
+   MMX for the CPUs of MMX, which r_main.c chooses with R_SET_COLUMNS4_MID(). */
 void (*col4midfunc)(void) = R_DrawColumns4Mid;
 
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */
@@ -470,13 +470,6 @@ void (*R_SetupColumn4(void (*fallback)(void)))(void)
 
     if (detailshift != DETAIL_HIGH)
         return fallback;
-
-    /* the middle rows of a group, of the CPU of the machine, the renderer of
-       MMX for the CPUs of MMX of r_main.c */
-    col4midfunc = R_DrawColumns4Mid;
-    if (selectedCPU == RISE_MP6 || selectedCPU == INTEL_PENTIUM_MMX
-        || selectedCPU == INTEL_PENTIUM_II)
-        col4midfunc = R_DrawColumns4MidMMX;
 
     /* the alignment of a group of the columns of the rows of the view */
 #if defined(MODE_VBE2_DIRECT)
