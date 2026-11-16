@@ -129,7 +129,8 @@ int col4pending;
 
 /* The renderer of the middle rows of a group of four columns, of the assembly
    of col4.asm: of the registers of the machine here, and of the registers of
-   MMX for the CPUs of MMX, which r_main.c chooses with R_SET_COLUMNS4_MID(). */
+   MMX for the CPUs of MMX, which r_main.c chooses of its own switch of the
+   CPU, as it chooses the renderers of the mode. */
 void (*col4midfunc)(void) = R_DrawColumns4Mid;
 
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */

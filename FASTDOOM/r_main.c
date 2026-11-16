@@ -1905,6 +1905,25 @@ static void R_SetupBackbufferFuncs(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
+#ifdef USE_COLUMNS4
+        /* the loop of the middle rows of the four columns, of the walls and
+           of the sky: of the CPUs of MMX the one of their registers, and the
+           one of the registers of the machine for the CPUs of no loop of their
+           own, as the renderers of the mode are of the CPUs which have a loop
+           tuned for them.  Of the views of the other detail levels the four
+           columns are not taken, so the loop of them is of no use */
+        switch (selectedCPU)
+        {
+        case RISE_MP6:
+        case INTEL_PENTIUM_MMX:
+        case INTEL_PENTIUM_II:
+            col4midfunc = R_DrawColumns4MidMMX;
+            break;
+        default:
+            col4midfunc = R_DrawColumns4Mid;
+            break;
+        }
+#endif
         switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
@@ -1928,13 +1947,11 @@ static void R_SetupBackbufferFuncs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
-                R_SET_COLUMNS4_MID(R_DrawColumns4MidMMX);
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
                 break;
             /* the CPUs of no renderer of their own, of the loop of the
                registers of the machine */
             default:
-                R_SET_COLUMNS4_MID(R_DrawColumns4Mid);
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
                 break;
             }
@@ -2551,6 +2568,21 @@ static void R_SetupVBE2Funcs(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
+#ifdef USE_COLUMNS4
+        /* the loop of the middle rows of the four columns, as of the buffered
+           modes above */
+        switch (selectedCPU)
+        {
+        case RISE_MP6:
+        case INTEL_PENTIUM_MMX:
+        case INTEL_PENTIUM_II:
+            col4midfunc = R_DrawColumns4MidMMX;
+            break;
+        default:
+            col4midfunc = R_DrawColumns4Mid;
+            break;
+        }
+#endif
 
         switch (WALLRENDER_FUNC(wallRender))
         {
@@ -2574,11 +2606,9 @@ static void R_SetupVBE2Funcs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
-                R_SET_COLUMNS4_MID(R_DrawColumns4MidMMX);
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
                 break;
             default:
-                R_SET_COLUMNS4_MID(R_DrawColumns4Mid);
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
                 break;
             }
