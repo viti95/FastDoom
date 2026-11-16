@@ -117,6 +117,7 @@ GLOBOBJS = \
  i_sound.obj \
  i_file.obj \
  i_gamma.obj \
+ col4.obj \
  linearh.obj \
  linearh2.obj \
  linearh3.obj \

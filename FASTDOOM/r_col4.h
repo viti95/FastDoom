@@ -46,6 +46,15 @@
  * The texture position of a row is kept in the format of the assembly column
  * renderers of the modes, and the renderer is compared with them byte for
  * byte over the shapes of the columns of the seg loops.
+ *
+ * The middle rows of a group of one light table and of one step, which is
+ * what a seg of one texture gives, go to the loop of col4.asm, of the four
+ * bytes of a row: of the positions of the four columns of the registers of
+ * the machine, and of the registers of MMX for the CPUs of MMX.  The choice
+ * between the two of them is of R_SET_COLUMNS4_MID(), which r_main.c calls
+ * of its switch of the CPU, as the choice of colfunc and of spanfunc is of
+ * it; the groups of columns of more than one light table, or of more than
+ * one step, are drawn of the C.
  */
 
 /* The modes of the renderer, of the reason of the paragraph above. */
@@ -54,6 +63,19 @@
 
 void R_DrawColumn4(void);
 void R_FlushColumn4(void);
+
+/* The middle rows of a group of four columns of one light table and of one
+   step: the group of the columns kept in col4slots, of the x of them in
+   col4x, of the first of their rows in col4y and of their number in col4rows,
+   which r_col4.c writes before the call.  The renderer of them is kept in
+   col4midfunc, of the scalar loop by default, and r_main.c chooses the loop
+   of the CPUs of MMX with the macro below, as it chooses the other renderers
+   of a mode. */
+void R_DrawColumns4Mid(void);
+void R_DrawColumns4MidMMX(void);
+extern void (*col4midfunc)(void);
+
+#define R_SET_COLUMNS4_MID(fn) (col4midfunc = (fn))
 
 /* the number of the columns of the seg loops kept of the view */
 extern int col4pending;
@@ -68,6 +90,7 @@ void (*R_SetupColumn4(void (*fallback)(void)))(void);
 #else
 
 #define R_CHOOSE_COLUMNS4(fallback) (fallback)
+#define R_SET_COLUMNS4_MID(fn) ((void)0)
 #define R_FLUSH_COLUMNS4() ((void)0)
 
 #endif
