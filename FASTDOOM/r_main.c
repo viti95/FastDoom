@@ -2122,11 +2122,16 @@ static void R_SetupBackbufferFuncs(void)
 #endif
                 break;
             /* the sky of the CPUs of the four columns is drawn as their walls
-               are, the four columns of the full view of the sky.  The sky is
-               of the table of the light one to one, so the four columns, that
-               take their byte of the table, are of the same pixels as the
-               renderer of the mode whole bright, which the screenblocks >= 10
-               of the sky does not need */
+               are: the sky is of one table of the light, of one step and of
+               the full width of the view, so its columns go in groups of four
+               whole over a patch.  The renderer whole bright of the
+               screenblocks >= 10 is left to the CPUs which are of no four
+               columns, for the four of them take the byte of the table, which
+               of the sky is one to one, so their pixels are the same as its;
+               and of the scale of the sky not one to one, of the table of the
+               light fixed of the invulnerability and of the rows over the 128
+               of the texture, the four columns are of the sky of the
+               screenblocks < 10, which is the one to prefer */
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
@@ -2745,6 +2750,8 @@ static void R_SetupVBE2Funcs(void)
                 skyfunc = R_DrawColumnVBE2Roll;
 #endif
                 break;
+            /* the sky of the four columns, of the renderer whole bright of
+               the screenblocks >= 10 not needing it, as above */
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
