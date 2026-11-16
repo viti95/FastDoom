@@ -2121,20 +2121,22 @@ static void R_SetupBackbufferFuncs(void)
                 skyfunc = R_DrawColumnBackbufferFastLEA;
 #endif
                 break;
+            /* the sky of the CPUs of the four columns is drawn as their walls
+               are, of the renderer of the mode the full view of the sky */
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferMMX;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
 #else
-                skyfunc = R_DrawColumnBackbufferMMX;
+                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
 #endif
                 break;
             default:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbuffer;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
 #else
-                skyfunc = R_DrawColumnBackbuffer;
+                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
 #endif
                 break;
             }
@@ -2743,9 +2745,9 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2MMX;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
 #else
-                skyfunc = R_DrawColumnVBE2MMX;
+                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
 #endif
                 break;
             case UMC_GREEN_486:
@@ -2759,9 +2761,9 @@ static void R_SetupVBE2Funcs(void)
                 break;
             default:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
 #else
-                skyfunc = R_DrawColumnVBE2;
+                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
 #endif
                 break;
             }
@@ -3609,6 +3611,10 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
     drawPlanes();
+
+    // the sky of the planes keeps columns, which the masked walls and the
+    // sprites of the view are to draw over
+    R_FLUSH_COLUMNS4();
 
     // Check for new console commands.
     NetUpdate();

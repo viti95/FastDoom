@@ -1284,6 +1284,10 @@ void R_DrawSky(visplane_t *pl)
         lump = texlumps[col];
         ofs = texofs[col];
 
+        /* the columns of the four columns kept point into the WAD cache, which
+           the lump taken below can purge */
+        R_FLUSH_COLUMNS4();
+
         dc_source = W_CachedLumpBase(texbase, lump, ofs);
 
         skyfunc();
