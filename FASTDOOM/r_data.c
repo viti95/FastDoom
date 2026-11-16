@@ -220,6 +220,9 @@ void R_GenerateComposite(int texnum)
     short *collump;
     unsigned short *colofs;
 
+    /* the block takes the place of the lumps of the columns kept */
+    R_FLUSH_COLUMNS4();
+
     texture = textures[texnum];
 
     block = Z_Malloc(texturecompositesize[texnum], PU_STATIC, &texturecomposite[texnum]);

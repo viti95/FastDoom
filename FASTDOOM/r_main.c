@@ -1921,13 +1921,21 @@ static void R_SetupBackbufferFuncs(void)
             case AMD_K6:
                 colfunc = R_DrawColumnBackbufferFastLEA;
                 break;
+            /* four columns of a row at a time, of the rows of the four of
+               them one 32 bit store, and of the CPUs of MMX the loop of the
+               registers of MMX: the renderer of the mode is of the scaled
+               views, which are of a pixel of two and of four bytes */
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
-                colfunc = R_DrawColumnBackbufferMMX;
+                R_SET_COLUMNS4_MID(R_DrawColumns4MidMMX);
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
                 break;
+            /* the CPUs of no renderer of their own, of the loop of the
+               registers of the machine */
             default:
-                colfunc = R_DrawColumnBackbuffer;
+                R_SET_COLUMNS4_MID(R_DrawColumns4Mid);
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
                 break;
             }
             break;
@@ -2544,18 +2552,23 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86MX:
                 colfunc = R_DrawColumnVBE2Roll;
                 break;
-            case RISE_MP6:
-            case INTEL_PENTIUM_MMX:
-            case INTEL_PENTIUM_II:
-                colfunc = R_DrawColumnVBE2MMX;
-                break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K6:
                 colfunc = R_DrawColumnVBE2FastLEA;
                 break;
+            /* one 32 bit store of a row of the framebuffer instead of four
+               byte stores, and of the CPUs of MMX the loop of the registers
+               of MMX: the renderer of the mode is of the scaled views */
+            case RISE_MP6:
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+                R_SET_COLUMNS4_MID(R_DrawColumns4MidMMX);
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
+                break;
             default:
-                colfunc = R_DrawColumnVBE2;
+                R_SET_COLUMNS4_MID(R_DrawColumns4Mid);
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
                 break;
             }
             break;
@@ -3559,6 +3572,7 @@ void R_SetupFrame(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     destview = destscreen + MulScreenWidthQuarter(viewwindowy) + (viewwindowx >> 2);
 #endif
+
 }
 
 //
@@ -3588,6 +3602,9 @@ void R_RenderPlayerView(void)
     // The head node is the last node output.
     R_RenderBSPNode(firstnode);
 
+    // the flats of the planes draw over the columns kept
+    R_FLUSH_COLUMNS4();
+
     // Check for new console commands.
     NetUpdate();
 
@@ -3597,6 +3614,9 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
     R_DrawMasked();
+
+    // the masked walls keep columns for the view of the frame
+    R_FLUSH_COLUMNS4();
 
     // Check for new console commands.
     NetUpdate();
