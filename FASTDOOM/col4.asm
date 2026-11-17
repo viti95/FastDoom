@@ -147,17 +147,14 @@ LoopColumns4Mid:
   shr  ecx,25 ; the texel of the column
   mov  edx,[_col4slots+SLOT_SOURCE]
   mov  bl,[ecx+edx] ; the byte of the source, over the low byte of the table
-  mov  bl,[ebx] ; the pixel of the light table
-  movzx ecx,bl
-  mov  esi,ecx ; the pixel of the leftmost column to the low byte
+  movzx esi,byte [ebx] ; the pixel of the light table, the pixel of the leftmost column to the low byte
 
   mov  ecx,eax
   add  ecx,[c4d1]
   shr  ecx,25
   mov  edx,[_col4slots+SLOT_SIZE+SLOT_SOURCE]
   mov  bl,[ecx+edx]
-  mov  bl,[ebx]
-  movzx ecx,bl
+  movzx ecx,byte [ebx]
   shl  ecx,8
   or   esi,ecx
 
@@ -166,8 +163,7 @@ LoopColumns4Mid:
   shr  ecx,25
   mov  edx,[_col4slots+2*SLOT_SIZE+SLOT_SOURCE]
   mov  bl,[ecx+edx]
-  mov  bl,[ebx]
-  movzx ecx,bl
+  movzx ecx,byte [ebx]
   shl  ecx,16
   or   esi,ecx
 
@@ -176,8 +172,7 @@ LoopColumns4Mid:
   shr  ecx,25
   mov  edx,[_col4slots+3*SLOT_SIZE+SLOT_SOURCE]
   mov  bl,[ecx+edx]
-  mov  bl,[ebx]
-  movzx ecx,bl
+  movzx ecx,byte [ebx]
   shl  ecx,24
   or   esi,ecx ; the four pixels of the row, of the leftmost to the low byte
 
