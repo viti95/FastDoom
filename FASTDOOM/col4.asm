@@ -70,7 +70,7 @@ c4d1:   dd 0
 c4d2:   dd 0
 c4d3:   dd 0
 c4step: dd 0 ; the step of a row
-c4left: dd 0 ; the rows of the group left to draw
+c4left: dd 0 ; the rows of the group left to draw, which the loops count in a register
 
 BEGIN_CODE_SECTION
 
@@ -95,6 +95,7 @@ BEGIN_CODE_SECTION
 ; edx   the source of the column drawn
 ; esi   the pixels of the row, the leftmost column to the low byte
 ; edi   the four bytes of the row of the view
+; ebp   the rows of the group left, the loop of a register
 ;
 ; The texel of a row is out of its position with the "shr ebx,25" of the byte
 ; renderers, the seven bits which wrap a texture vertically at 128 pixels.
@@ -116,6 +117,12 @@ CODE_SYM_DEF R_DrawColumns4Mid
 
   call near SetupColumns4Mid
   js   near done4mid ; a group without a row is not to be drawn
+
+  ; the call gives the rows of the group left in eax, of none a negative
+  ; number: the rows are counted in a register, which the loop of the machine
+  ; keeps whole, of "dec [mem]" being of three uops of the Pentium, of the
+  ; write of the rows left joining the loop of its own
+  mov  ebp,eax ; the rows of the group left, the loop of a register
 
   ; the four bytes of the first row of the view
   mov  eax,[_col4y]
@@ -179,7 +186,7 @@ LoopColumns4Mid:
 
   add  eax,[c4step] ; the position of the row to come
 
-  dec  dword [c4left]
+  dec  ebp ; the rows of the group left
   jns  near LoopColumns4Mid
 
 done4mid:
