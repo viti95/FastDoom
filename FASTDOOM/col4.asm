@@ -72,12 +72,6 @@ c4d3:   dd 0
 c4step: dd 0 ; the step of a row
 c4left: dd 0 ; the rows of the group left to draw
 
-%ifdef COL4_TEST
-global c4pos
-global c4step
-global c4left
-%endif
-
 BEGIN_CODE_SECTION
 
 ;============================================================================
