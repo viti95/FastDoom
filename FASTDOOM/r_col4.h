@@ -53,8 +53,10 @@
  * the machine, and of the registers of MMX for the CPUs of MMX.  The choice
  * between the two of them is of r_main.c, which writes col4midfunc of its
  * own switch of the CPU, as the choice of colfunc and of skyfunc is of it;
- * the groups of columns of more than one light table, or of more than one
- * step, are drawn of the C.
+ * the groups of columns of more than one light table, of more than one step
+ * or of sources of more than one stride are of the loop of the registers of
+ * the machine of col4.asm, of the source, of the table and of the step of
+ * every column of its own.
  */
 
 /* The modes of the renderer, of the reason of the paragraph above: of the
@@ -77,6 +79,14 @@ void R_FlushColumn4(void);
 void R_DrawColumns4Mid(void);
 void R_DrawColumns4MidMMX(void);
 extern void (*col4midfunc)(void);
+
+/* The middle rows of the same four columns kept, of a group which is not of
+   one light table, of one step, or of sources of one stride, so of every
+   column of the group the source, the table, the step and the position of a
+   row are walked on their own: of the loop of the registers of the machine of
+   col4.asm, of the same x, of the same first row and of the same number of
+   rows of the data of the file. */
+void R_DrawColumns4MidAll(void);
 
 /* the number of the columns of the seg loops kept of the view */
 extern int col4pending;

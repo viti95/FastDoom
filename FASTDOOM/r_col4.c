@@ -33,10 +33,11 @@
 //	kept to the view first, with R_FLUSH_COLUMNS4().
 //
 //	The rows of a group in which the four columns are visible are of the
-//	assembly of col4.asm, which draws a group of one light table and of
-//	one step, of the registers of the machine and of the registers of MMX:
-//	r_main.c chooses between the two of them, as it chooses the other
-//	renderers of a mode.
+//	assembly of col4.asm, which draws a group of one light table and of one
+//	step of the registers of the machine and of the registers of MMX, r_main.c
+//	choosing between the two of them as it chooses the other renderers of a
+//	mode, and of the loop of the registers of the machine the groups of light
+//	tables, of steps and of sources of their own.
 */
 
 #include <limits.h>
@@ -127,10 +128,11 @@ int col4rows;
 static int slotx;
 int col4pending;
 
-/* The renderer of the middle rows of a group of four columns, of the assembly
-   of col4.asm: of the registers of the machine here, and of the registers of
-   MMX for the CPUs of MMX, which r_main.c chooses of its own switch of the
-   CPU, as it chooses the renderers of the mode. */
+/* The renderer of the middle rows of a group of four columns of one light
+   table and of one step, of the assembly of col4.asm: of the registers of the
+   machine here, and of the registers of MMX for the CPUs of MMX, which
+   r_main.c chooses of its own switch of the CPU, as it chooses the renderers
+   of the mode. */
 void (*col4midfunc)(void) = R_DrawColumns4Mid;
 
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */
@@ -243,50 +245,6 @@ COL4_DEFONE(R_DrawColumn4One, COL4_ROW(top))
         }                                                                    \
     }
 
-/* The rows of a group which is not of the shape the renderers of col4.asm
-   take: of more than one light table, of more than one step, or of sources of
-   more than one stride, so every one of its columns is walked on its own. */
-static void R_DrawColumns4MidAll(byte *dest, int y, int rows)
-{
-    const byte *source0 = col4slots[0].source;
-    const byte *source1 = col4slots[1].source;
-    const byte *source2 = col4slots[2].source;
-    const byte *source3 = col4slots[3].source;
-
-    const lighttable_t *map0 = col4slots[0].colormap;
-    const lighttable_t *map1 = col4slots[1].colormap;
-    const lighttable_t *map2 = col4slots[2].colormap;
-    const lighttable_t *map3 = col4slots[3].colormap;
-
-    fixed_t step0 = COL4_STEP(col4slots[0].step);
-    fixed_t step1 = COL4_STEP(col4slots[1].step);
-    fixed_t step2 = COL4_STEP(col4slots[2].step);
-    fixed_t step3 = COL4_STEP(col4slots[3].step);
-
-    fixed_t frac0 = COL4_SEED(&col4slots[0], y);
-    fixed_t frac1 = COL4_SEED(&col4slots[1], y);
-    fixed_t frac2 = COL4_SEED(&col4slots[2], y);
-    fixed_t frac3 = COL4_SEED(&col4slots[3], y);
-
-    while (rows-- > 0)
-    {
-        unsigned int pixel;
-
-        pixel = (unsigned int)map0[source0[COL4_TEXEL(frac0)]];
-        pixel |= (unsigned int)map1[source1[COL4_TEXEL(frac1)]] << 8;
-        pixel |= (unsigned int)map2[source2[COL4_TEXEL(frac2)]] << 16;
-        pixel |= (unsigned int)map3[source3[COL4_TEXEL(frac3)]] << 24;
-
-        *(unsigned int *)(void *)dest = pixel;
-
-        frac0 += step0;
-        frac1 += step1;
-        frac2 += step2;
-        frac3 += step3;
-        dest += SCREENWIDTH;
-    }
-}
-
 /* the four columns kept drawn one at a time, of no row showing all of them */
 static void R_DrawColumns4Alone(int x)
 {
@@ -323,6 +281,18 @@ static void R_DrawColumns4Alone(int x)
         col4y = (ylo);                \
         col4rows = (yhi) - (ylo) + 1; \
         col4midfunc();                \
+    } while (0)
+
+/* the middle rows of the four columns of the view of x, of the rows of ylo to
+   yhi, of a group which is not of the shape of the loop above: of more than
+   one light table, of more than one step, or of sources of more than one
+   stride, so every one of its columns is walked on its own */
+#define COL4_ALL_DRAW(x, ylo, yhi)    \
+    do {                              \
+        col4x = (x);                  \
+        col4y = (ylo);                \
+        col4rows = (yhi) - (ylo) + 1; \
+        R_DrawColumns4MidAll();       \
     } while (0)
 
 /* the group of four columns, with 32 bit stores where the four are visible */
@@ -385,8 +355,7 @@ static void R_DrawColumns4(int x)
         if (COL4_MID())
             COL4_MID_DRAW(x, ylo, yhi);
         else
-            R_DrawColumns4MidAll(COL4_ROW(ylo) + COL4_COL(x), ylo,
-                                 yhi - ylo + 1);
+            COL4_ALL_DRAW(x, ylo, yhi);
         return;
     }
 
@@ -398,7 +367,7 @@ static void R_DrawColumns4(int x)
     if (COL4_MID())
         COL4_MID_DRAW(x, ylo, yhi);
     else
-        R_DrawColumns4MidAll(COL4_ROW(ylo) + COL4_COL(x), ylo, yhi - ylo + 1);
+        COL4_ALL_DRAW(x, ylo, yhi);
 }
 
 /* the columns kept which are not a complete group, drawn one at a time */
