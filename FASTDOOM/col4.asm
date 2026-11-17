@@ -66,7 +66,6 @@ BEGIN_DATA_SECTION
 
 align 4
 c4pos:  dd 0 ; the position of the row of the leftmost column
-c4d0:   dd 0 ; the position of a column over that of the leftmost one
 c4d1:   dd 0
 c4d2:   dd 0
 c4d3:   dd 0
@@ -144,7 +143,6 @@ CODE_SYM_DEF R_DrawColumns4Mid
 align 16
 LoopColumns4Mid:
   mov  ecx,eax
-  add  ecx,[c4d0]
   shr  ecx,25 ; the texel of the column
   mov  edx,[_col4slots+SLOT_SOURCE]
   mov  bl,[ecx+edx] ; the byte of the source, over the low byte of the table
@@ -404,7 +402,6 @@ SetupColumns4Mid:
   sub  eax,ecx
   shl  eax,9
   mov  [c4d3],eax
-  mov  dword [c4d0],0
 
 SetupColumns4MidDone:
   mov  eax,[c4left] ; the rows left, of none a negative number for the call
