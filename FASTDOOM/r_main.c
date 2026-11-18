@@ -3398,6 +3398,16 @@ void R_ExecuteSetViewSize(void)
         if (spanfunc == R_DrawSpanVBE2MMX)
             spanfunc = R_DrawSpanVBE2;
 #endif
+
+#if defined(USE_COLUMNS4)
+        // Four columns of a row at a time, of the walls and of the sky: the
+        // loop of the middle rows of the four of them of the registers of MMX
+        // is of the CPUs which have MMX, the selectedCPU of the menu being of
+        // the model of the CPU named by the user, which is not the set of the
+        // instructions of the CPU of the machine
+        if (col4midfunc == R_DrawColumns4MidMMX)
+            col4midfunc = R_DrawColumns4Mid;
+#endif
     }
 
     R_InitBuffer(scaledviewwidth, viewheight);
