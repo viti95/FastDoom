@@ -40,8 +40,6 @@
 //	tables, of steps and of sources of their own.
 */
 
-#include <limits.h>
-
 #include "doomdef.h"
 #include "options.h"
 #include "i_system.h"
@@ -95,11 +93,6 @@ typedef char col4screenwidthaligned[(SCREENWIDTH % 4 == 0) ? 1 : -1];
 /* the step of a row */
 #define COL4_STEP(step) \
     (fixed_t)((step) << 9)
-
-/* the position of the row (y) of a column kept, walked to from its top */
-#define COL4_SEED(col, y)                                                     \
-    (fixed_t)(COL4_SEEDAT((col)->mid, (col)->top, (col)->step)                \
-              + ((y) - (col)->top) * COL4_STEP((col)->step))
 
 /* the texel of a row, of seven bits which are not signed */
 #define COL4_TEXEL(frac) \
@@ -165,42 +158,34 @@ static int alignx;
         slotx++;                                 \
     }
 
-/* One column drawn with byte stores, of the rows from 'from' to 'to' only:
-   the columns which join no group and the rows of the edges of a group, of
-   the texture position of COL4_FRACSH, read as the mode reads it. */
-#define COL4_DEFONE(name, row)                                               \
-static void name(col4slot_t *col, int x, int from, int to)                   \
-{                                                                            \
-    const byte *source = col->source;                                        \
-    const lighttable_t *map = col->colormap;                                 \
-    fixed_t fracstep = COL4_STEP(col->step);                                 \
-    fixed_t frac;                                                            \
-    byte *dest;                                                              \
-    int count;                                                               \
-    int top = col->top;                                                      \
-    int bottom = col->bottom;                                                \
-                                                                             \
-    if (top < from)                                                          \
-        top = from;                                                          \
-    if (bottom > to)                                                         \
-        bottom = to;                                                         \
-                                                                             \
-    if (top <= bottom)                                                       \
-    {                                                                        \
-        frac = COL4_SEED(col, top);                                          \
-        dest = (row) + COL4_COL(x);                                          \
-        count = bottom - top + 1;                                            \
-                                                                             \
-        do                                                                   \
-        {                                                                    \
-            *dest = map[source[COL4_TEXEL(frac)]];                           \
-            frac += fracstep;                                                \
-            dest += SCREENWIDTH;                                             \
-        } while (--count);                                                   \
-    }                                                                        \
-}
+/* One column drawn with byte stores, of all of its rows: the columns which
+   join no group, the rows of the edges of a group being of COL4_EDGES; of the
+   texture position of COL4_FRACSH, read as the mode reads it. */
+static void R_DrawColumn4All(col4slot_t *col, int x)
+{
+    const byte *source = col->source;
+    const lighttable_t *map = col->colormap;
+    fixed_t fracstep = COL4_STEP(col->step);
+    int top = col->top;
+    int bottom = col->bottom;
+    fixed_t frac;
+    byte *dest;
+    int count;
 
-COL4_DEFONE(R_DrawColumn4One, COL4_ROW(top))
+    if (top <= bottom)
+    {
+        frac = COL4_SEEDAT(col->mid, top, col->step);
+        dest = COL4_ROW(top) + COL4_COL(x);
+        count = bottom - top + 1;
+
+        do
+        {
+            *dest = map[source[COL4_TEXEL(frac)]];
+            frac += fracstep;
+            dest += SCREENWIDTH;
+        } while (--count);
+    }
+}
 
 /* The rows [top, ylo) and (yhi, bottom] of a column of a group which is not
    of one height, drawn with byte stores, one setup of the slot for both of
@@ -251,7 +236,8 @@ static void R_DrawColumns4Alone(int x)
     int i;
 
     for (i = 0; i < 4; i++)
-        R_DrawColumn4One(&col4slots[i], x + i, INT_MIN, INT_MAX);
+        if (col4slots[i].top <= col4slots[i].bottom)
+            R_DrawColumn4All(&col4slots[i], x + i);
 }
 
 /* The group of one light table, of one step, and of sources of one stride,
@@ -260,7 +246,11 @@ static void R_DrawColumns4Alone(int x)
    texture (so a wall not parallel to the view, of positions that move from
    column to column, is of the assembly too), and of the columns of the texture
    of one distance in the lump, which the renderers of col4.asm walk by the
-   stride of the first two columns. */
+   stride of the first two columns.
+
+   Told of the four columns of the group, every one of them compared with the
+   leftmost of the group, the comparisons of the light table and of the step
+   being transitive. */
 #define COL4_MID()                                              \
     (col4slots[0].colormap == col4slots[1].colormap             \
      && col4slots[0].colormap == col4slots[2].colormap          \
@@ -302,40 +292,43 @@ static void R_DrawColumns4(int x)
     int equal;
     int i;
 
-    if (col4slots[0].top > col4slots[0].bottom)
+    ylo = col4slots[0].top;
+    yhi = col4slots[0].bottom;
+    equal = 1;
+
+    if (ylo > yhi)
     {
         /* an empty column, so there is no row with the four of them */
         R_DrawColumns4Alone(x);
         return;
     }
 
-    ylo = col4slots[0].top;
-    yhi = col4slots[0].bottom;
-    equal = 1;
-
     /* the rows of the four columns, from the highest of the tops of them to
        the lowest of their bottoms; 'equal' tells the group of one height,
        which has no rows of the edges at all */
     for (i = 1; i < 4; i++)
     {
-        if (col4slots[i].top > col4slots[i].bottom)
+        int top = col4slots[i].top;
+        int bottom = col4slots[i].bottom;
+
+        if (top > bottom)
         {
             /* an empty column, so there is no row with the four of them */
             R_DrawColumns4Alone(x);
             return;
         }
 
-        if (col4slots[i].top != ylo)
+        if (top != ylo)
         {
             equal = 0;
-            if (col4slots[i].top > ylo)
-                ylo = col4slots[i].top;
+            if (top > ylo)
+                ylo = top;
         }
-        if (col4slots[i].bottom != yhi)
+        if (bottom != yhi)
         {
             equal = 0;
-            if (col4slots[i].bottom < yhi)
-                yhi = col4slots[i].bottom;
+            if (bottom < yhi)
+                yhi = bottom;
         }
     }
 
@@ -370,16 +363,21 @@ static void R_DrawColumns4(int x)
         COL4_ALL_DRAW(x, ylo, yhi);
 }
 
-/* the columns kept which are not a complete group, drawn one at a time */
+/* The columns kept which are not a complete group, drawn one at a time: the
+   columns of the group kept are of the columns of the view from slotx to the
+   right, so every one of them is drawn of its slot without the columns of the
+   group being moved. */
 void R_FlushColumn4(void)
 {
-    while (col4pending)
-    {
-        /* COL4_SHIFT() moves the columns to the left and their x with them */
-        R_DrawColumn4One(&col4slots[0], slotx, INT_MIN, INT_MAX);
-        COL4_SHIFT();
-        col4pending--;
-    }
+    int x = slotx;
+    int n = col4pending;
+    int i;
+
+    for (i = 0; i < n; i++, x++)
+        if (col4slots[i].top <= col4slots[i].bottom)
+            R_DrawColumn4All(&col4slots[i], x);
+
+    col4pending = 0;
 }
 
 /* the column function of the seg loops: the column asked for joins the group
@@ -387,36 +385,38 @@ void R_FlushColumn4(void)
 void R_DrawColumn4(void)
 {
     int x = dc_x;
+    int pending = col4pending;
 
-    if (col4pending && x == slotx + col4pending)
+    if (pending && x == slotx + pending)
     {
-        COL4_STORE(col4slots[col4pending]);
+        COL4_STORE(col4slots[pending]);
 
-        if (++col4pending == 4)
+        if (++pending == 4)
         {
             if (((slotx + alignx) & 3) == 0)
             {
                 R_DrawColumns4(slotx);
-                col4pending = 0;
+                pending = 0;
             }
             else
             {
                 /* the group has to start at an aligned column, so the
                    leftmost column goes on its own and the three of its right
                    are kept for the group of the next column */
-                R_DrawColumn4One(&col4slots[0], slotx, INT_MIN, INT_MAX);
+                R_DrawColumn4All(&col4slots[0], slotx);
                 COL4_SHIFT();
-                col4pending = 3;
+                pending = 3;
             }
         }
+
+        col4pending = pending;
     }
     else
     {
-        if (col4pending == 1)
+        if (pending == 1)
         {
             /* the end of a short seg, the one column kept without the loop */
-            R_DrawColumn4One(&col4slots[0], slotx, INT_MIN, INT_MAX);
-            col4pending = 0;
+            R_DrawColumn4All(&col4slots[0], slotx);
         }
         else
             R_FlushColumn4();
