@@ -126,9 +126,12 @@ typedef struct
 /* The four columns of the group drawn, col4slots[0] the leftmost one, with
    the x, the first row and the number of the rows of them: the renderer of
    col4.asm reads them, so they are not of this file only.  The columns kept of
-   the groups of the file are of the slots of every one of them, the slots of
-   the group drawn being copied to these of the renderer, of the renderer
-   reading the slots of the one group only while the two of them are kept. */
+   the groups of the file are of the slots of every one of them, the four of
+   them of the renderer being copied of the group drawn, of the renderer
+   reading the slots of the one group only while the two of them are kept.  Of
+   the slots of the renderer the four of the fields of them are copied, the
+   renderer of col4.asm reading none of the rows of the column of the slot, the
+   rows being of the file of the slots of the group of its own. */
 col4slot_t col4slots[COL4_GSLOT];
 static col4slot_t groupslot[COL4_GROUP][COL4_GSLOT];
 int col4x;
@@ -177,6 +180,13 @@ static int alignx;
    group taking the rows the four of the columns show and the rows of the view
    of the group taking all of the rows of them.  The group of one column of
    view (x) opened, the group of columns kept of the column of its right. */
+/* the column asked for kept of the group (g), the rows of the band of the
+   group being the rows of the view of the four of the columns of it (of the
+   highest of the tops of them to the lowest of their bottoms), and the rows of
+   the view of the group of the test of the clash being the union of the rows
+   of the columns of the group, kept always: the group of none opening with the
+   test of the clash of the group of it being open, of the union of the group
+   of it being of the columns kept then */
 #define COL4_STORE(g, map, x)                                          \
     do {                                                               \
         col4slot_t *col = groupslot[g] + pending[g];                   \
@@ -307,14 +317,15 @@ static void R_DrawColumn4All(col4slot_t *col, int x)
         }                                                                    \
     }
 
-/* the four columns kept drawn one at a time, of no row showing all of them */
-static void R_DrawColumns4Alone(int x)
+/* the four columns of the slots (slot) drawn one at a time, of no row showing
+   all of them */
+static void R_DrawColumns4Alone(int x, col4slot_t *slot)
 {
     int i;
 
     for (i = 0; i < 4; i++)
-        if (col4slots[i].top <= col4slots[i].bottom)
-            R_DrawColumn4All(&col4slots[i], x + i);
+        if (slot[i].top <= slot[i].bottom)
+            R_DrawColumn4All(&slot[i], x + i);
 }
 
 /* The group of one light table and of one step, which is what a seg of one
@@ -349,8 +360,8 @@ static void R_DrawColumns4Alone(int x)
 
 /* the middle rows of the four columns of the view of x, of the rows of ylo to
    yhi, of a group which is not of the shape of the loop above: of more than
-   one light table, of more than one step, or of sources of more than one
-   stride, so every one of its columns is walked on its own */
+   one light table or of more than one step, so every one of its columns is
+   walked on its own */
 #define COL4_ALL_DRAW(x, ylo, yhi)    \
     do {                              \
         col4x = (x);                  \
@@ -359,21 +370,24 @@ static void R_DrawColumns4Alone(int x)
         R_DrawColumns4MidAll();       \
     } while (0)
 
-/* the group of four columns, with 32 bit stores where the four are visible */
-static void R_DrawColumns4(int x)
+/* the group of four columns of the slots (slot) of the view of x, with 32 bit
+   stores where the four are visible, the rows of them of the slots of the
+   group and the four of the fields of the renderer of the slots of the
+   renderer, the renderer of col4.asm of the fields of these reading */
+static void R_DrawColumns4(int x, col4slot_t *slot)
 {
     int ylo, yhi;
     int equal;
     int i;
 
-    ylo = col4slots[0].top;
-    yhi = col4slots[0].bottom;
+    ylo = slot[0].top;
+    yhi = slot[0].bottom;
     equal = 1;
 
     if (ylo > yhi)
     {
         /* an empty column, so there is no row with the four of them */
-        R_DrawColumns4Alone(x);
+        R_DrawColumns4Alone(x, slot);
         return;
     }
 
@@ -382,13 +396,13 @@ static void R_DrawColumns4(int x)
        which has no rows of the edges at all */
     for (i = 1; i < 4; i++)
     {
-        int top = col4slots[i].top;
-        int bottom = col4slots[i].bottom;
+        int top = slot[i].top;
+        int bottom = slot[i].bottom;
 
         if (top > bottom)
         {
             /* an empty column, so there is no row with the four of them */
-            R_DrawColumns4Alone(x);
+            R_DrawColumns4Alone(x, slot);
             return;
         }
 
@@ -410,7 +424,7 @@ static void R_DrawColumns4(int x)
     {
         /* the walls of the group do not overlap, so no row shows the four
            of them and every column is drawn on its own */
-        R_DrawColumns4Alone(x);
+        R_DrawColumns4Alone(x, slot);
         return;
     }
 
@@ -428,7 +442,7 @@ static void R_DrawColumns4(int x)
 
     /* the rows of the two edges, one setup for the column of both of them */
     for (i = 0; i < 4; i++)
-        COL4_EDGES(&col4slots[i], x + i, ylo, yhi);
+        COL4_EDGES(&slot[i], x + i, ylo, yhi);
 
     /* the rows with the four columns, one 32 bit store per row */
     if (COL4_MID())
@@ -459,6 +473,7 @@ static void R_DrawGroup4(int g)
 {
     col4slot_t *slot = groupslot[g];
     int x = slotx[g];
+    int i;
 
     if (((x + alignx) & 3) != 0)
     {
@@ -466,8 +481,6 @@ static void R_DrawGroup4(int g)
            goes on its own and the three of its right are kept for the group of
            the next column, of the band of the group and of the rows of the
            view of it being of the columns kept then */
-        int i;
-
         R_DrawColumn4All(&slot[0], x);
 
         slot[0] = slot[1];
@@ -477,31 +490,45 @@ static void R_DrawGroup4(int g)
         slotx[g] = x + 1;
         pending[g] = 3;
 
-        bandtop[g] = rowtop[g] = slot[0].top;
-        bandbot[g] = rowbot[g] = slot[0].bottom;
-
-        for (i = 1; i < 3; i++)
+        /* the band of the group and the rows of the view of it of the three of
+           the columns kept, of the registers for the comparisons of them and of
+           the writes to the state of the group of the one of them at the end */
         {
-            if (slot[i].top > bandtop[g])
-                bandtop[g] = slot[i].top;
-            if (slot[i].bottom < bandbot[g])
-                bandbot[g] = slot[i].bottom;
-            if (slot[i].top < rowtop[g])
-                rowtop[g] = slot[i].top;
-            if (slot[i].bottom > rowbot[g])
-                rowbot[g] = slot[i].bottom;
+            int bt = slot[0].top, bb = slot[0].bottom;
+            int rt = bt, rb = bb;
+
+            for (i = 1; i < 3; i++)
+            {
+                if (slot[i].top > bt)
+                    bt = slot[i].top;
+                if (slot[i].bottom < bb)
+                    bb = slot[i].bottom;
+                if (slot[i].top < rt)
+                    rt = slot[i].top;
+                if (slot[i].bottom > rb)
+                    rb = slot[i].bottom;
+            }
+
+            bandtop[g] = bt;
+            bandbot[g] = bb;
+            rowtop[g] = rt;
+            rowbot[g] = rb;
         }
 
         return;
     }
 
-    /* the slots of the group to the slots of the renderer of col4.asm */
-    col4slots[0] = slot[0];
-    col4slots[1] = slot[1];
-    col4slots[2] = slot[2];
-    col4slots[3] = slot[3];
+    /* the four of the fields of the slots of the group to the slots of the
+       renderer of col4.asm, the renderer reading none of the rows of them */
+    for (i = 0; i < 4; i++)
+    {
+        col4slots[i].source = slot[i].source;
+        col4slots[i].colormap = slot[i].colormap;
+        col4slots[i].step = slot[i].step;
+        col4slots[i].mid = slot[i].mid;
+    }
 
-    R_DrawColumns4(x);
+    R_DrawColumns4(x, slot);
     pending[g] = 0;
 }
 
@@ -540,13 +567,15 @@ void R_FlushColumn4(void)
    of the columns kept being the farther one of the view */
 void R_DrawColumn4(void)
 {
-    lighttable_t *map = COL4_MAP(dc_colormap);
+    lighttable_t *map;
     int g;
 
     /* the column of no rows is of none to the view, the seg loops asking for
        the columns of the tiers of a seg which are not seen */
     if (dc_yl > dc_yh)
         return;
+
+    map = COL4_MAP(dc_colormap);
 
     if (COL4_MATCH(0))
         g = 0;
@@ -597,7 +626,11 @@ void R_DrawColumn4(void)
     COL4_STORE(g, map, dc_x);
 
     if (pending[g] == COL4_GSLOT)
+    {
+        /* the group of the column asked for full, its four bytes of a row
+           written at once and its columns kept of none left */
         R_DrawGroup4(g);
+    }
 
     col4pending = pending[0] + pending[1];
 }
