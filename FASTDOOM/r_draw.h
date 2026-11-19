@@ -69,6 +69,7 @@ void R_DrawColumnLow(void);
 void R_DrawColumnLowDirect(void);
 
 void R_DrawColumnBackbufferRoll(void);
+void R_DrawColumnBackbufferRollFastNS(void);
 void R_DrawSpanBackbufferRoll(void);
 
 void R_DrawColumnBackbufferMMX(void);
@@ -200,6 +201,7 @@ void R_DrawColumnLowBackbufferDirect(void);
 void R_DrawColumnPotatoBackbufferDirect(void);
 
 void R_DrawColumnVBE2Roll(void);
+void R_DrawColumnVBE2RollFastNS(void);
 void R_DrawColumnVBE2MMX(void);
 void R_DrawColumnVBE2(void);
 void R_DrawColumnVBE2NS(void);

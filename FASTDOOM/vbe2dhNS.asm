@@ -29,6 +29,12 @@
 ; with adc ebx,edx, the carry of the fractional addition being the +1 and
 ; the integer part of the increment riding along in bits 6..0 of edx.
 ;
+; The roll version of the file keeps the same loop, but walking down the
+; screen one row at a time (add edi,SCREENWIDTH) instead of jumping into
+; the unwound loop, as the roll renderer of vbe2dh.asm does.  It is the
+; renderer of the CPUs which take that loop: the AMD K5, the Pentium
+; P54CS, the Cyrix 6x86 and the Cyrix 6x86MX.
+;
 
 BITS 32
 %include "macros.inc"
@@ -62,6 +68,8 @@ CODE_SYM_DEF R_PatchCenteryVBE2HighNS
   push ebx
   mov  ebx,[_centery]
   mov  eax,patchCentery+1
+  mov  [eax],ebx
+  mov  eax,patchCenteryRoll+1
   mov  [eax],ebx
   pop  ebx
   ret
@@ -152,5 +160,78 @@ vscale0:
 	pop		ebx
   pop		edi
   ret
+
+;============================================================================
+; R_DrawColumnVBE2RollFastNS, the roll renderer of the CPUs which take the
+; loop, the AMD K5, the Pentium P54CS, the Cyrix 6x86 and the Cyrix 6x86MX.
+;
+; edi starts at the top pixel of the column and is rolled down of a screen
+; width per row, so the column of the rows above the top of the view is
+; drawn as the plain roll renderer of vbe2dh.asm draws it.  The loop of
+; the rows is the noshift one of the file, add/adc/and, in place of the
+; add/mov/shr one of that file, the texture column being kept wrapped at
+; 128 by the and of the loop.
+;============================================================================
+
+CODE_SYM_DEF R_DrawColumnVBE2RollFastNS
+	push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  MulScreenWidthStart edi, eax
+  sub  ebp,eax         ; ebp = pixel count
+  js   short donehr
+
+  mov  ebx,[_dc_x]
+  MulScreenWidthEnd edi
+  mov  ecx,[_dc_iscale]
+  add  edi,ebx
+  add  edi,[_destview]
+
+patchCenteryRoll:
+  sub   eax,0x12345678
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+
+  ; split the position into fractional/integer parts
+  mov   ebx,edx
+  shr   ebx,25 ; get address of first location
+  shl   edx,7  ; fractional part of the position
+  mov   eax,ecx
+  shr   ecx,25 ; integer part of the increment
+  shl   eax,7  ; fractional part of the increment
+  or    edx,ecx ; integer increment rides along in bits 6..0
+  mov   ecx,eax ; fractional increment
+  mov   eax,[_dc_colormap]
+
+LoopRollNS:
+  add  edx,ecx                        ; fractional part, CF = overflow
+  mov  al,[esi+ebx]                   ; get source pixel
+  adc  ebx,edx                        ; integer part + integer delta + carry
+  mov  al,[eax]                       ; translate the color
+  and  ebx,7Fh                        ; keep the 7 bit texture column
+  mov  [edi],al                       ; draw a pixel to the buffer
+  add  edi,SCREENWIDTH
+  dec  ebp
+  jns  LoopRollNS
+
+donehr:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+; R_DrawColumnVBE2RollFastNS ends
 
 %endif
