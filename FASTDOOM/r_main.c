@@ -1937,22 +1937,20 @@ static void R_SetupBackbufferFuncs(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K6:
                 colfunc = R_DrawColumnBackbufferFastLEA;
                 break;
-            /* four columns of a row at a time, of the rows of the four of
-               them one 32 bit store, and of the CPUs of MMX the loop of the
-               registers of MMX: the renderer of the mode is of the scaled
-               views, which are of a pixel of two and of four bytes */
-            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnBackbufferMMX;
+                break;
+            case RISE_MP6:
             case INTEL_PENTIUM_II:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
                 break;
-            /* the CPUs of no renderer of their own, of the loop of the
-               registers of the machine */
+            case AMD_K6:
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferFastLEA);
+                break;
             default:
-                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
+                colfunc = R_DrawColumnBackbuffer;
                 break;
             }
             break;
@@ -2131,26 +2129,27 @@ static void R_SetupBackbufferFuncs(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnBackbufferFastLEA;
 #endif
                 break;
-            /* the sky of the CPUs of the four columns is drawn as their walls
-               are: the sky is of one table of the light, of one step and of
-               the full width of the view, so its columns go in groups of four
-               whole over a patch.  The renderer whole bright of the
-               screenblocks >= 10 is left to the CPUs which are of no four
-               columns, for the four of them take the byte of the table, which
-               of the sky is one to one, so their pixels are the same as its;
-               and of the scale of the sky not one to one, of the table of the
-               light fixed of the invulnerability and of the rows over the 128
-               of the texture, the four columns are of the sky of the
-               screenblocks < 10, which is the one to prefer */
-            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferMMX;
+#else
+                skyfunc = R_DrawColumnBackbufferMMX;
+#endif
+                break;
+            case AMD_K6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferFastLEA);
+#else
+                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferFastLEA);
+#endif
+                break;
+            case RISE_MP6:
             case INTEL_PENTIUM_II:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferMMX);
@@ -2160,9 +2159,9 @@ static void R_SetupBackbufferFuncs(void)
                 break;
             default:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbuffer);
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbuffer;
 #else
-                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
+                skyfunc = R_DrawColumnBackbuffer;
 #endif
                 break;
             }
@@ -2597,19 +2596,20 @@ static void R_SetupVBE2Funcs(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K6:
                 colfunc = R_DrawColumnVBE2FastLEA;
                 break;
-            /* one 32 bit store of a row of the framebuffer instead of four
-               byte stores, and of the CPUs of MMX the loop of the registers
-               of MMX: the renderer of the mode is of the scaled views */
-            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnVBE2MMX;
+                break;
+            case RISE_MP6:
             case INTEL_PENTIUM_II:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
                 break;
+            case AMD_K6:
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2FastLEA);
+                break;
             default:
-                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
+                colfunc = R_DrawColumnVBE2;
                 break;
             }
             break;
@@ -2780,10 +2780,21 @@ static void R_SetupVBE2Funcs(void)
                 skyfunc = R_DrawColumnVBE2Roll;
 #endif
                 break;
-            /* the sky of the four columns, of the renderer whole bright of
-               the screenblocks >= 10 not needing it, as above */
-            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2MMX;
+#else
+                skyfunc = R_DrawColumnVBE2MMX;
+#endif
+                break;
+            case AMD_K6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2FastLEA);
+#else
+                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2FastLEA);
+#endif
+                break;
+            case RISE_MP6:
             case INTEL_PENTIUM_II:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2MMX);
@@ -2793,7 +2804,6 @@ static void R_SetupVBE2Funcs(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2FastLEA;
 #else
@@ -2802,9 +2812,9 @@ static void R_SetupVBE2Funcs(void)
                 break;
             default:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2);
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2;
 #else
-                skyfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
+                skyfunc = R_DrawColumnVBE2;
 #endif
                 break;
             }
@@ -3397,6 +3407,16 @@ void R_ExecuteSetViewSize(void)
 
         if (spanfunc == R_DrawSpanVBE2MMX)
             spanfunc = R_DrawSpanVBE2;
+#endif
+
+#if defined(USE_COLUMNS4)
+        // Four columns of a row at a time, of the walls and of the sky: the
+        // loop of the middle rows of the four of them of the registers of MMX
+        // is of the CPUs which have MMX, the selectedCPU of the menu being of
+        // the model of the CPU named by the user, which is not the set of the
+        // instructions of the CPU of the machine
+        if (col4midfunc == R_DrawColumns4MidMMX)
+            col4midfunc = R_DrawColumns4Mid;
 #endif
     }
 
