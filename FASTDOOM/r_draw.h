@@ -110,6 +110,9 @@ void R_DrawColumnPotatoFastLEA(void);
 void R_DrawColumnFastNS(void);
 void R_DrawColumnLowFastNS(void);
 void R_DrawColumnPotatoFastNS(void);
+void R_DrawColumnRollFastNS(void);
+void R_DrawColumnLowRollFastNS(void);
+void R_DrawColumnPotatoRollFastNS(void);
 void R_DrawColumnPotato(void);
 void R_DrawColumnPotatoDirect(void);
 
