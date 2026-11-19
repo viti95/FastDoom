@@ -37,6 +37,19 @@ extern _centery
 ; ebx should be set to 0 0 0 dh to feed the pipeline
 ;
 ; The graphics wrap vertically at 128 pixels
+;
+; The roll versions of the file keep the lea/shr flip flop of the file, but
+; walking down the screen one row at a time (add edi,PLANEWIDTH) instead of
+; jumping into the unwound loop, as the roll renderers of linearh.asm and of
+; vbe2dh.asm do.  The unwound loop of the file is of the parity of the pixel
+; count, the phase of the flip flop of the row that runs first being picked
+; by the entry code of its renderer; the roll loops of the file are of two
+; rows per pass, one of them of each one of the two phases of the flip flop,
+; so the phase of them is kept over the passes of the loop and the row of
+; the turn of every one of the two rows of a pass is fed by the row which
+; goes before it, exactly as of the unwound loop.  Of the odd number of the
+; rows of a column the first of them is drawn out of the loop, the loop of
+; them being entered with the phase of the flip flop of the row of the turn.
 ;============================================================================
 
 BEGIN_DATA_SECTION
@@ -64,6 +77,12 @@ CODE_SYM_DEF R_PatchCenteryPlanarKN
   mov   eax,patchCentery2+1
   mov   [eax],ebx
   mov   eax,patchCentery3+1
+  mov   [eax],ebx
+  mov   eax,patchCentery1Roll+1
+  mov   [eax],ebx
+  mov   eax,patchCentery2Roll+1
+  mov   [eax],ebx
+  mov   eax,patchCentery3Roll+1
   mov   [eax],ebx
   pop ebx
   ret
@@ -331,5 +350,334 @@ vscale0:
 	pop	ebx
   pop	edi
   ret
+
+; ========================================
+; R_DrawColumnPotatoRollFastLEA, the roll
+; renderer of the potato detail level
+; ========================================
+CODE_SYM_DEF R_DrawColumnPotatoRollFastLEA
+	push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+eax*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   near  pdoner
+
+  add  edi,[_destview]
+  add  edi,[_dc_x]
+
+  mov   ecx,[_dc_iscale]
+
+patchCentery1Roll:
+  sub   eax,0x12345678
+  imul  ecx
+
+  mov   esi,[_dc_source]
+
+  shl   ecx,9 ; 7 significant bits, 25 frac
+
+  ; EVEN/ODD of the number of rows ?
+  test  ebp,1
+  jne   short .eventwos
+
+  ; odd number of rows: ebx the column of the first one of them, edx the
+  ; position of the row of the turn.  The first row is drawn out of the
+  ; loop, the loop of the pair of the rows of the turn being entered with
+  ; the column of it in edx and the position of the next in ebx.
+  mov   ebx,[_dc_texturemid]
+
+  add   ebx,eax
+  shl   ebx,9 ; 7 significant bits, 25 frac
+
+  mov   eax,[_dc_colormap]
+
+  lea   edx,[ebx+ecx]
+  shr   ebx, 25
+
+  mov   al,[esi+ebx]                    ; get source pixel
+  lea   ebx,[edx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   edx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  dec   ebp
+  js    near  pdoner
+  jmp       .LoopRoll
+
+.eventwos:
+  ; even number of rows: edx the column of the first one of them, ebx the
+  ; position of the row of the turn
+  mov   edx,[_dc_texturemid]
+  add   edx,eax
+  shl   edx,9 ; 7 significant bits, 25 frac
+
+  mov   eax,[_dc_colormap]
+
+  lea   ebx,[edx+ecx]
+  shr   edx,25
+
+  ; the rows are rolled down of the width of a plane per row, the whole
+  ; column being of the four planes of its one byte per pixel store
+.LoopRoll:
+  mov   al,[esi+edx]                    ; get source pixel
+  lea   edx,[ebx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   ebx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  mov   al,[esi+ebx]                    ; get source pixel
+  lea   ebx,[edx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   edx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  sub   ebp,2
+  jns   short .LoopRoll
+
+pdoner:
+	pop	ebp
+	pop	esi
+	pop	edx
+	pop	ecx
+	pop	ebx
+  pop	edi
+  ret
+; R_DrawColumnPotatoRollFastLEA ends
+
+; ===================================
+; R_DrawColumnLowRollFastLEA, the roll
+; renderer of the low detail level
+; ===================================
+CODE_SYM_DEF R_DrawColumnLowRollFastLEA
+	push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebx*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   near  ldoner
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+
+  and  ecx,1
+  shr esi,1
+  lea  eax,[ecx+ecx*8+3]
+  mov  dx,SC_INDEX+1
+  out  dx,al
+
+  mov eax, ebx
+  add edi,esi
+
+  mov   ecx,[_dc_iscale]
+
+patchCentery2Roll:
+  sub   eax,0x12345678
+  imul  ecx
+
+  mov   esi,[_dc_source]
+
+  shl   ecx,9 ; 7 significant bits, 25 frac
+
+  ; EVEN/ODD of the number of rows ?
+  test  ebp,1
+  jne   short .eventwos
+
+  ; odd number of rows: ebx the column of the first one of them, edx the
+  ; position of the row of the turn.  The first row is drawn out of the
+  ; loop, the loop of the pair of the rows of the turn being entered with
+  ; the column of it in edx and the position of the next in ebx.
+  mov   ebx,[_dc_texturemid]
+
+  add   ebx,eax
+  shl   ebx,9 ; 7 significant bits, 25 frac
+
+  mov   eax,[_dc_colormap]
+
+  lea   edx,[ebx+ecx]
+  shr   ebx, 25
+
+  mov   al,[esi+ebx]                    ; get source pixel
+  lea   ebx,[edx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   edx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  dec   ebp
+  js    near  ldoner
+  jmp       .LoopRoll
+
+.eventwos:
+  ; even number of rows: edx the column of the first one of them, ebx the
+  ; position of the row of the turn
+  mov   edx,[_dc_texturemid]
+  add   edx,eax
+  shl   edx,9 ; 7 significant bits, 25 frac
+
+  mov   eax,[_dc_colormap]
+
+  lea   ebx,[edx+ecx]
+  shr   edx,25
+
+  ; the rows are rolled down of the width of a plane per row, the byte of
+  ; each one of them reaching the two planes of the mask set above
+.LoopRoll:
+  mov   al,[esi+edx]                    ; get source pixel
+  lea   edx,[ebx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   ebx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  mov   al,[esi+ebx]                    ; get source pixel
+  lea   ebx,[edx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   edx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  sub   ebp,2
+  jns   short .LoopRoll
+
+ldoner:
+	pop	ebp
+	pop	esi
+	pop	edx
+	pop	ecx
+	pop	ebx
+  pop	edi
+  ret
+; R_DrawColumnLowRollFastLEA ends
+
+; ==================================
+; R_DrawColumnRollFastLEA, the roll
+; renderer of the high detail level
+; ==================================
+CODE_SYM_DEF R_DrawColumnRollFastLEA
+	push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebx*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   near  hdoner
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+
+  and  cl,3
+  mov  dx,SC_INDEX+1
+  mov  al,1
+  shl  al,cl
+  out  dx,al
+
+  shr esi,2
+  mov eax, ebx
+  add edi,esi
+
+  mov   ecx,[_dc_iscale]
+
+patchCentery3Roll:
+  sub   eax,0x12345678
+  imul  ecx
+
+  mov   esi,[_dc_source]
+
+  shl   ecx,9 ; 7 significant bits, 25 frac
+
+  ; EVEN/ODD of the number of rows ?
+  test  ebp,1
+  jne   short .eventwos
+
+  ; odd number of rows: ebx the column of the first one of them, edx the
+  ; position of the row of the turn.  The first row is drawn out of the
+  ; loop, the loop of the pair of the rows of the turn being entered with
+  ; the column of it in edx and the position of the next in ebx.
+  mov   ebx,[_dc_texturemid]
+
+  add   ebx,eax
+  shl   ebx,9 ; 7 significant bits, 25 frac
+
+  mov   eax,[_dc_colormap]
+
+  lea   edx,[ebx+ecx]
+  shr   ebx, 25
+
+  mov   al,[esi+ebx]                    ; get source pixel
+  lea   ebx,[edx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   edx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  dec   ebp
+  js    near  hdoner
+  jmp       .LoopRoll
+
+.eventwos:
+  ; even number of rows: edx the column of the first one of them, ebx the
+  ; position of the row of the turn
+  mov   edx,[_dc_texturemid]
+  add   edx,eax
+  shl   edx,9 ; 7 significant bits, 25 frac
+
+  mov   eax,[_dc_colormap]
+
+  lea   ebx,[edx+ecx]
+  shr   edx,25
+
+  ; the rows are rolled down of the width of a plane per row, the byte of
+  ; each one of them reaching the one plane of the mask set above
+.LoopRoll:
+  mov   al,[esi+edx]                    ; get source pixel
+  lea   edx,[ebx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   ebx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  mov   al,[esi+ebx]                    ; get source pixel
+  lea   ebx,[edx+ecx]                   ; 386:2cc, 486:1cc
+  mov   al,[eax]                        ; translate the color
+  shr   edx, 25                         ; 386:3cc, 486:2cc
+  mov   [edi],al                        ; draw a pixel to the buffer
+  add   edi,PLANEWIDTH
+
+  sub   ebp,2
+  jns   short .LoopRoll
+
+hdoner:
+	pop	ebp
+	pop	esi
+	pop	edx
+	pop	ecx
+	pop	ebx
+  pop	edi
+  ret
+; R_DrawColumnRollFastLEA ends
 
 %endif

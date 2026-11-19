@@ -70,6 +70,7 @@ void R_DrawColumnLowDirect(void);
 
 void R_DrawColumnBackbufferRoll(void);
 void R_DrawColumnBackbufferRollFastNS(void);
+void R_DrawColumnBackbufferRollFastLEA(void);
 void R_DrawSpanBackbufferRoll(void);
 
 void R_DrawColumnBackbufferMMX(void);
@@ -113,6 +114,9 @@ void R_DrawColumnPotatoFastNS(void);
 void R_DrawColumnRollFastNS(void);
 void R_DrawColumnLowRollFastNS(void);
 void R_DrawColumnPotatoRollFastNS(void);
+void R_DrawColumnRollFastLEA(void);
+void R_DrawColumnLowRollFastLEA(void);
+void R_DrawColumnPotatoRollFastLEA(void);
 void R_DrawColumnPotato(void);
 void R_DrawColumnPotatoDirect(void);
 
@@ -205,6 +209,7 @@ void R_DrawColumnPotatoBackbufferDirect(void);
 
 void R_DrawColumnVBE2Roll(void);
 void R_DrawColumnVBE2RollFastNS(void);
+void R_DrawColumnVBE2RollFastLEA(void);
 void R_DrawColumnVBE2MMX(void);
 void R_DrawColumnVBE2(void);
 void R_DrawColumnVBE2NS(void);
