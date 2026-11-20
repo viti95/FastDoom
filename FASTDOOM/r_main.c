@@ -2080,6 +2080,9 @@ static void R_SetupBackbufferFuncs(void)
             case AMD_K6:
                 spanfunc = R_DrawSpanBackbufferMMX;
                 break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanBackbufferSSE2;
+                break;
             default:
                 spanfunc = R_DrawSpanBackbuffer;
                 break;
@@ -2739,6 +2742,9 @@ static void R_SetupVBE2Funcs(void)
             case AMD_K6:
                 spanfunc = R_DrawSpanVBE2MMX;
                 break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanVBE2SSE2;
+                break;
             default:
                 spanfunc = R_DrawSpanVBE2;
                 break;
@@ -3371,6 +3377,21 @@ void R_ExecuteSetViewSize(void)
 #endif
 
     // Avoid crashes due to missing instruction sets
+    if (!hasSSE2) {
+
+#if defined(USE_BACKBUFFER)
+        // Backbuffer
+        if (spanfunc == R_DrawSpanBackbufferSSE2)
+            spanfunc = R_DrawSpanBackbuffer;
+#endif
+
+#if defined(MODE_VBE2_DIRECT)
+        // VBE2
+        if (spanfunc == R_DrawSpanVBE2SSE2)
+            spanfunc = R_DrawSpanVBE2;
+#endif
+    }
+
     if (!hasMMX) {
 
 #if defined(USE_BACKBUFFER)

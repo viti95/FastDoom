@@ -584,4 +584,168 @@ SinglePixelSpan:
 	pop		ebx
   ret
 
+; ======================
+; R_DrawSpanVBE2SSE2
+;
+; Four pixels per iteration of the loop, with the texture offsets of the
+; four of them calculated at once with the SSE2 instructions and with the
+; four colors of them joined and written to the video memory with a 32
+; bit write.
+;
+; The pixels which are not a full group of four of them are rendered one
+; by one with a scalar loop at the end.
+; ======================
+CODE_SYM_DEF R_DrawSpanVBE2SSE2
+  push    ebx
+  push    ecx
+  push    edx
+  push    esi
+  push    edi
+  push    ebp
+
+  mov     ecx,[_ds_frac]        ; build composite position
+  mov     esi,[_ds_source]
+
+  mov     ebp,[_ds_y]
+
+  MulScreenWidthStart edi, ebp
+
+  mov     eax,[_ds_x1]
+  mov     ebp,[_ds_x2]
+  sub     ebp,eax               ; EBP has the number of pixels less one
+
+  mov     edx,ecx
+  MulScreenWidthEnd edi
+  mov     ebx,ecx
+  add     edi,[_destview]
+  shr     edx,4
+  shr     ebx,26
+  and     edx,0xFC0
+  add     edi,eax
+  or      ebx,edx               ; texture offset of the first pixel
+
+  mov     edx,[_ds_step]        ; build composite step
+
+  inc     ebp                   ; EBP has the number of pixels
+  mov     ebx,ebp
+  and     ebx,3                 ; pixels which are not a full group of four
+  push    ebx                   ; them kept in the stack for the scalar loop
+  shr     ebp,2                 ; groups of four pixels
+  dec     ebp                   ; iterations of the loop less one
+
+  ; xmm0 has the four positions of the loop, one in each dword of them,
+  ; and xmm1 has the step of the position multiplied by four in all of
+  ; them, with xmm4 having the mask of the vertical component
+
+  movd    xmm0,ecx              ; position of the first pixel
+  lea     eax,[ecx+edx]         ; position of the second pixel
+  movd    xmm1,eax
+  lea     eax,[eax+edx]         ; position of the third pixel
+  movd    xmm2,eax
+  lea     eax,[eax+edx]         ; position of the fourth pixel
+  movd    xmm3,eax
+  shufps  xmm0,xmm1,0           ; the first two positions of them
+  shufps  xmm2,xmm3,0           ; the last two positions of them
+  shufps  xmm0,xmm2,0x88        ; the four positions of them
+  lea     eax,[edx*4]           ; step of the position multiplied by four
+  movd    xmm1,eax
+  shufps  xmm1,xmm1,0           ; it broadcasted to the four dwords
+  mov     edx,0xFC0
+  movd    xmm4,edx
+  shufps  xmm4,xmm4,0           ; mask of the vertical component
+
+  mov     eax,[_ds_colormap]    ; base of the color table
+  mov     ebx,eax               ; the base of the color table for the pair
+                                ;  of source pixels of each two pixels
+
+  ; the instructions of them above do not modify the flags, so the sign
+  ; of the iterations of the loop less one calculated with them is still
+  ; in them
+
+  js    TailSpanVBE2SSE2        ; there are not groups of four pixels
+
+LoopSpanVBE2SSE2:
+  movdqa  xmm2,xmm0
+  psrld   xmm2,26               ; horizontal components of the positions
+  movdqa  xmm3,xmm0
+  psrld   xmm3,4
+  pand    xmm3,xmm4             ; vertical components of the positions
+  por     xmm2,xmm3             ; texture offsets of the four pixels
+  paddd   xmm0,xmm1             ; positions of the next four pixels
+
+  movd    ecx,xmm2              ; offset of the first pixel
+  psrldq  xmm2,4
+  movd    edx,xmm2              ; offset of the second pixel
+
+  ; the source pixels are gotten with the low byte of the base of the
+  ; color table in the eax and ebx registers of them, with the two
+  ; colors of them kept in xmm5 while the offsets are gotten
+
+  mov     al,[esi+ecx]          ; get first source pixel
+  mov     bl,[esi+edx]          ; get second source pixel
+  mov     cl,[eax]              ; translate color of the first pixel
+  mov     ch,[ebx]              ; translate color of the second pixel
+  movd    xmm5,ecx              ; the first two colors of them
+
+  psrldq  xmm2,4
+  movd    ecx,xmm2              ; offset of the third pixel
+  psrldq  xmm2,4
+  movd    edx,xmm2              ; offset of the fourth pixel
+
+  mov     al,[esi+ecx]          ; get third source pixel
+  mov     bl,[esi+edx]          ; get fourth source pixel
+  mov     dl,[eax]              ; translate color of the third pixel
+  mov     dh,[ebx]              ; translate color of the fourth pixel
+
+  ; the four colors of them joined in a dword, two of them in the low
+  ; half of it and the other two in the high half of it
+
+  movd    ecx,xmm5              ; the first two colors of them
+  movzx   ecx,cx
+  shl     edx,16                ; the last two colors of them
+  or      edx,ecx
+  mov     [edi],edx             ; write four pixels of them
+  add     edi,4
+
+  dec     ebp
+  jns   LoopSpanVBE2SSE2
+
+  ; the pixels which are not a multiple of four of them, one by one,
+  ; with the positions of them in the dwords of xmm0
+
+TailSpanVBE2SSE2:
+  pop   ecx                     ; pixels which are not a full group of four
+
+  test  ecx,ecx
+  je    EndSpanVBE2SSE2
+
+  ; the base of the color table is in eax, the source is in esi and the
+  ; destination of the pixels is in edi
+
+LoopTailSpanVBE2SSE2:
+  movd  edx,xmm0                ; position of the pixel
+  psrldq xmm0,4                 ; positions of the following pixels
+  mov   ebx,edx
+  shr   edx,26                  ; horizontal component of the position
+  shr   ebx,4
+  and   ebx,0xFC0               ; vertical component of the position
+  or    edx,ebx                 ; texture offset of the pixel
+
+  mov   al,[esi+edx]            ; get source pixel
+  mov   al,[eax]                ; translate color
+  mov   [edi],al                ; write the pixel
+  inc   edi
+
+  dec ecx
+  jnz LoopTailSpanVBE2SSE2
+
+EndSpanVBE2SSE2:
+  pop   ebp
+  pop   edi
+  pop   esi
+  pop   edx
+  pop   ecx
+  pop   ebx
+  ret
+
 %endif

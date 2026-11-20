@@ -75,6 +75,7 @@ void R_DrawSpanBackbufferRoll(void);
 
 void R_DrawColumnBackbufferMMX(void);
 void R_DrawSpanBackbufferMMX(void);
+void R_DrawSpanBackbufferSSE2(void);
 
 void R_DrawColumnSkyFullDirect(void);
 void R_DrawColumnLowSkyFullDirect(void);
@@ -221,6 +222,7 @@ void R_DrawColumnPotatoVBE2(void);
 void R_DrawColumnPotatoVBE2NS(void);
 void R_DrawColumnPotatoVBE2FastLEA(void);
 void R_DrawSpanVBE2MMX(void);
+void R_DrawSpanVBE2SSE2(void);
 void R_DrawSpanVBE2(void);
 void R_DrawSpanVBE2Roll(void);
 void R_DrawSpanLowVBE2(void);
