@@ -690,6 +690,7 @@ void VBE2_InitGraphics(void)
               case RISE_MP6:
               case INTEL_PENTIUM_MMX:
               case INTEL_PENTIUM_II:
+              case INTEL_PENTIUM_4:
               case AMD_K6:
                 finishfunc = I_FinishUpdate8bppLinearMMX;
                 break;
