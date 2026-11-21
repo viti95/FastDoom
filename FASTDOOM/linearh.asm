@@ -53,6 +53,12 @@ scalecalls:
   %assign LINE LINE+1
   %endrep
 
+; The rows of the column left to the loop of four of them, which is not of a
+; register of the machine, of the five registers of them which the loop keeps
+; being the source, the destination, the light table and the four texels of it
+align 4
+columnRowsSSE2: dd 0
+
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF R_PatchLinearHigh
@@ -64,6 +70,8 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   eax,patchCenteryRoll+1
   mov   [eax],ebx
   mov   eax,patchCenteryMMX+1
+  mov   [eax],ebx
+  mov   eax,patchCenterySSE2+1
   mov   [eax],ebx
 
   mov   ebx,[_columnofs]
@@ -490,6 +498,182 @@ SinglePixel:
   mov  [edi],al  ; draw a pixel to the buffer
   pop		edi
   ret
+
+; =========================
+;
+; R_DrawColumnBackbufferSSE2
+;
+; Four pixels per iteration of the loop, of the positions of the four rows of
+; them in the four dwords of one register of SSE2, walked with one "paddd" of
+; the step of a row broadcasted to the four dwords of another one.
+;
+; The texels of the four of them are out of the positions with one "psrld",
+; joined in the four bytes of one dword with one "packssdw" and one
+; "packuswb", of the texels being of seven bits only, the graphics wrapping
+; vertically at 128 pixels, and gotten to the registers of the machine with
+; one "movd", three "movzx" and one "shr".  The byte of the source of every
+; one of them names its pixel of the light table with the address of it, the
+; table being of 256 bytes, which the renderer of the mode of the file names
+; with its low byte written over.
+;
+; The rows of the column which are not a full group of four of them are
+; rendered one by one with a scalar loop at the end, of their positions in the
+; dwords of the register which the loop of the groups leaves, the last group
+; of them having stepped to the rows of them.
+;
+; eax   the rows of the column and a register of the texels
+; ebx   a register of the texels
+; ecx   a register of the texels
+; edx   a register of the texels
+; esi   the source of the column
+; edi   the pixel of the row of the view
+; ebp   the light table, of its low byte zero
+;
+; xmm0  the positions of the four rows, one of them in each dword
+; xmm1  the step of a row, of the four dwords of it
+; xmm2  the positions of the four rows, of their texels in the bytes of them
+; =========================
+CODE_SYM_DEF R_DrawColumnBackbufferSSE2
+  push    edi
+  push    ebx
+  push    ecx
+  push    edx
+  push    esi
+  push    ebp
+
+  mov     ebp,[_dc_yh]
+  mov     eax,[_dc_yl]
+  mov     edi,[_ylookup+eax*4]
+  sub     ebp,eax         ; ebp = pixels of the column less one
+  js      near donehs     ; a column of no rows
+  inc     ebp             ; ebp = the rows of the column
+
+  mov     ebx,[_dc_x]
+  mov     ecx,[_dc_iscale]
+  add     edi,[_columnofs+ebx*4]
+
+patchCenterySSE2:
+  sub     eax,0x12345678
+  imul    ecx
+  mov     edx,[_dc_texturemid]
+  shl     ecx,9 ; 7 significant bits, 25 frac
+  add     edx,eax
+  mov     esi,[_dc_source]
+  shl     edx,9 ; 7 significant bits, 25 frac
+  mov     eax,[_dc_colormap]
+  and     eax,-256 ; the tables of the game are of 256 bytes, as the byte of
+                   ; the source naming its pixel of the table is of one "movzx"
+  xchg    eax,ebp ; the light table of the column in ebp, the rows in eax
+
+  mov     ebx,eax
+  and     eax,3 ; the rows of the column which are not a full group of four
+  shr     ebx,2 ; groups of four rows
+  dec     ebx   ; iterations of the loop less one
+  mov     [columnRowsSSE2],ebx
+  push    eax   ; the rows of the column left for the scalar loop
+
+  ; xmm0 has the positions of the first group of four rows, one of them in
+  ; each dword of it, and xmm1 the step of a row in all of the four of them
+
+  movd    xmm0,edx          ; the position of the first row
+  lea     eax,[edx+ecx]
+  movd    xmm1,eax          ; ... of the second one
+  lea     eax,[eax+ecx]
+  movd    xmm2,eax          ; ... of the third one
+  lea     eax,[eax+ecx]
+  movd    xmm3,eax          ; ... of the fourth one
+  shufps  xmm0,xmm1,0       ; the two first positions of them
+  shufps  xmm2,xmm3,0       ; the two last positions of them
+  shufps  xmm0,xmm2,0x88    ; the four positions of them
+  lea     eax,[ecx*4]       ; the step of four rows
+  movd    xmm1,eax
+  shufps  xmm1,xmm1,0       ; it broadcasted to the four dwords
+
+  ; the instructions of them above do not modify the flags, so the sign of
+  ; the iterations of the loop less one calculated with them is still in them
+
+  js      near TailColumnSSE2 ; there are not groups of four rows
+
+align 16
+LoopColumnSSE2:
+  movdqa  xmm2,xmm0
+  psrld   xmm2,25             ; the texels of the four rows
+  paddd   xmm0,xmm1           ; the positions of the four rows to come
+  packssdw xmm2,xmm2
+  packuswb xmm2,xmm2          ; the four texels of them, one in each byte
+
+  movd    eax,xmm2
+  movzx   edx,al              ; the texel of the first row
+  movzx   ebx,ah              ; ... of the second one
+  shr     eax,16
+  movzx   ecx,al              ; ... of the third one
+  movzx   eax,ah              ; ... of the fourth one
+
+  movzx   edx,byte [esi+edx]  ; the byte of the source of the first row
+  movzx   edx,byte [ebp+edx]  ; its pixel of the light table
+  mov     [edi],dl            ; the pixel of the row
+
+  movzx   ebx,byte [esi+ebx]  ; the byte of the source of the second row
+  movzx   ebx,byte [ebp+ebx]  ; its pixel of the light table
+  mov     [edi+SCREENWIDTH],bl
+
+  movzx   ecx,byte [esi+ecx]  ; the byte of the source of the third row
+  movzx   ecx,byte [ebp+ecx]  ; its pixel of the light table
+  mov     [edi+2*SCREENWIDTH],cl
+
+  movzx   eax,byte [esi+eax]  ; the byte of the source of the fourth row
+  movzx   eax,byte [ebp+eax]  ; its pixel of the light table
+  mov     [edi+3*SCREENWIDTH],al
+
+  add     edi,4*SCREENWIDTH
+
+  dec     dword [columnRowsSSE2]
+  jns     near LoopColumnSSE2
+
+  ; the rows of the column which are not a full group of four of them, one by
+  ; one, with the positions of them in the dwords of xmm0
+
+TailColumnSSE2:
+  pop     ecx                 ; the rows which are not a full group of four
+  test    ecx,ecx
+  je      near EndColumnSSE2
+
+  ; the source is in esi, the destination of the pixels in edi and the light
+  ; table in ebp
+
+align 16
+LoopTailColumnSSE2:
+  movd    edx,xmm0            ; the position of the row
+  psrldq  xmm0,4              ; the positions of the rows to come
+  shr     edx,25              ; the texel of the row
+  movzx   edx,byte [esi+edx]  ; the byte of the source
+  movzx   edx,byte [ebp+edx]  ; its pixel of the light table
+  mov     [edi],dl            ; the pixel of the row
+  add     edi,SCREENWIDTH
+
+  dec     ecx
+  jnz     near LoopTailColumnSSE2
+
+EndColumnSSE2:
+  pop     ebp
+  pop     esi
+  pop     edx
+  pop     ecx
+  pop     ebx
+  pop     edi
+  ret
+
+  ; a column of no rows, of the rows of it being in the sign of the flags
+
+donehs:
+  pop     ebp
+  pop     esi
+  pop     edx
+  pop     ecx
+  pop     ebx
+  pop     edi
+  ret
+; R_DrawColumnBackbufferSSE2 ends
 
 CODE_SYM_DEF R_DrawSpanBackbufferMMX
 	push		ebx

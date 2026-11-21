@@ -78,6 +78,7 @@ void R_FlushColumn4(void);
    renderers of a mode. */
 void R_DrawColumns4Mid(void);
 void R_DrawColumns4MidMMX(void);
+void R_DrawColumns4MidSSE2(void);
 extern void (*col4midfunc)(void);
 
 /* The middle rows of the same four columns kept, of a group which is not of
