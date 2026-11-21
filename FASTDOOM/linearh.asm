@@ -53,6 +53,12 @@ scalecalls:
   %assign LINE LINE+1
   %endrep
 
+; The rows of the column left to the loop of four of them, which is not of a
+; register of the machine, of the five registers of them which the loop keeps
+; being the source, the destination, the light table and the four texels of it
+align 4
+columnRowsSSE2: dd 0
+
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF R_PatchLinearHigh
@@ -65,11 +71,15 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   [eax],ebx
   mov   eax,patchCenteryMMX+1
   mov   [eax],ebx
+  mov   eax,patchCenterySSE2+1
+  mov   [eax],ebx
 
   mov   ebx,[_columnofs]
   mov   eax,patchColumnofs+2
   mov   [eax],ebx
   mov   eax,patchColumnofsMMX+3
+  mov   [eax],ebx
+  mov   eax,patchColumnofsSSE2+3
   mov   [eax],ebx
   mov   eax,patchColumnofsRoll+3
   mov   [eax],ebx
@@ -489,6 +499,182 @@ SinglePixel:
   pop		edi
   ret
 
+; =========================
+;
+; R_DrawColumnBackbufferSSE2
+;
+; Four pixels per iteration of the loop, of the positions of the four rows of
+; them in the four dwords of one register of SSE2, walked with one "paddd" of
+; the step of a row broadcasted to the four dwords of another one.
+;
+; The texels of the four of them are out of the positions with one "psrld",
+; joined in the four bytes of one dword with one "packssdw" and one
+; "packuswb", of the texels being of seven bits only, the graphics wrapping
+; vertically at 128 pixels, and gotten to the registers of the machine with
+; one "movd", three "movzx" and one "shr".  The byte of the source of every
+; one of them names its pixel of the light table with the address of it, the
+; table being of 256 bytes, which the renderer of the mode of the file names
+; with its low byte written over.
+;
+; The rows of the column which are not a full group of four of them are
+; rendered one by one with a scalar loop at the end, of their positions in the
+; dwords of the register which the loop of the groups leaves, the last group
+; of them having stepped to the rows of them.
+;
+; eax   the rows of the column and a register of the texels
+; ebx   a register of the texels
+; ecx   a register of the texels
+; edx   a register of the texels
+; esi   the source of the column
+; edi   the pixel of the row of the view
+; ebp   the light table, of its low byte zero
+;
+; xmm0  the positions of the four rows, one of them in each dword
+; xmm1  the step of a row, of the four dwords of it
+; xmm2  the positions of the four rows, of their texels in the bytes of them
+; =========================
+CODE_SYM_DEF R_DrawColumnBackbufferSSE2
+  push    edi
+  push    ebx
+  push    ecx
+  push    edx
+  push    esi
+  push    ebp
+
+  mov     ebp,[_dc_yh]
+  mov     eax,[_dc_yl]
+  mov     edi,[_ylookup+eax*4]
+  sub     ebp,eax         ; ebp = pixels of the column less one
+  js      near donehs     ; a column of no rows
+  inc     ebp             ; ebp = the rows of the column
+
+  mov     ebx,[_dc_x]
+  mov     ecx,[_dc_iscale]
+  add     edi,[_columnofs+ebx*4]
+
+patchCenterySSE2:
+  sub     eax,0x12345678
+  imul    ecx
+  mov     edx,[_dc_texturemid]
+  shl     ecx,9 ; 7 significant bits, 25 frac
+  add     edx,eax
+  mov     esi,[_dc_source]
+  shl     edx,9 ; 7 significant bits, 25 frac
+  mov     eax,[_dc_colormap]
+  and     eax,-256 ; the tables of the game are of 256 bytes, as the byte of
+                   ; the source naming its pixel of the table is of one "movzx"
+  xchg    eax,ebp ; the light table of the column in ebp, the rows in eax
+
+  mov     ebx,eax
+  and     eax,3 ; the rows of the column which are not a full group of four
+  shr     ebx,2 ; groups of four rows
+  dec     ebx   ; iterations of the loop less one
+  mov     [columnRowsSSE2],ebx
+  push    eax   ; the rows of the column left for the scalar loop
+
+  ; xmm0 has the positions of the first group of four rows, one of them in
+  ; each dword of it, and xmm1 the step of a row in all of the four of them
+
+  movd    xmm0,edx          ; the position of the first row
+  lea     eax,[edx+ecx]
+  movd    xmm1,eax          ; ... of the second one
+  lea     eax,[eax+ecx]
+  movd    xmm2,eax          ; ... of the third one
+  lea     eax,[eax+ecx]
+  movd    xmm3,eax          ; ... of the fourth one
+  shufps  xmm0,xmm1,0       ; the two first positions of them
+  shufps  xmm2,xmm3,0       ; the two last positions of them
+  shufps  xmm0,xmm2,0x88    ; the four positions of them
+  lea     eax,[ecx*4]       ; the step of four rows
+  movd    xmm1,eax
+  shufps  xmm1,xmm1,0       ; it broadcasted to the four dwords
+
+  ; the instructions of them above do not modify the flags, so the sign of
+  ; the iterations of the loop less one calculated with them is still in them
+
+  js      near TailColumnSSE2 ; there are not groups of four rows
+
+align 16
+LoopColumnSSE2:
+  movdqa  xmm2,xmm0
+  psrld   xmm2,25             ; the texels of the four rows
+  paddd   xmm0,xmm1           ; the positions of the four rows to come
+  packssdw xmm2,xmm2
+  packuswb xmm2,xmm2          ; the four texels of them, one in each byte
+
+  movd    eax,xmm2
+  movzx   edx,al              ; the texel of the first row
+  movzx   ebx,ah              ; ... of the second one
+  shr     eax,16
+  movzx   ecx,al              ; ... of the third one
+  movzx   eax,ah              ; ... of the fourth one
+
+  movzx   edx,byte [esi+edx]  ; the byte of the source of the first row
+  movzx   edx,byte [ebp+edx]  ; its pixel of the light table
+  mov     [edi],dl            ; the pixel of the row
+
+  movzx   ebx,byte [esi+ebx]  ; the byte of the source of the second row
+  movzx   ebx,byte [ebp+ebx]  ; its pixel of the light table
+  mov     [edi+SCREENWIDTH],bl
+
+  movzx   ecx,byte [esi+ecx]  ; the byte of the source of the third row
+  movzx   ecx,byte [ebp+ecx]  ; its pixel of the light table
+  mov     [edi+2*SCREENWIDTH],cl
+
+  movzx   eax,byte [esi+eax]  ; the byte of the source of the fourth row
+  movzx   eax,byte [ebp+eax]  ; its pixel of the light table
+  mov     [edi+3*SCREENWIDTH],al
+
+  add     edi,4*SCREENWIDTH
+
+  dec     dword [columnRowsSSE2]
+  jns     near LoopColumnSSE2
+
+  ; the rows of the column which are not a full group of four of them, one by
+  ; one, with the positions of them in the dwords of xmm0
+
+TailColumnSSE2:
+  pop     ecx                 ; the rows which are not a full group of four
+  test    ecx,ecx
+  je      near EndColumnSSE2
+
+  ; the source is in esi, the destination of the pixels in edi and the light
+  ; table in ebp
+
+align 16
+LoopTailColumnSSE2:
+  movd    edx,xmm0            ; the position of the row
+  psrldq  xmm0,4              ; the positions of the rows to come
+  shr     edx,25              ; the texel of the row
+  movzx   edx,byte [esi+edx]  ; the byte of the source
+  movzx   edx,byte [ebp+edx]  ; its pixel of the light table
+  mov     [edi],dl            ; the pixel of the row
+  add     edi,SCREENWIDTH
+
+  dec     ecx
+  jnz     near LoopTailColumnSSE2
+
+EndColumnSSE2:
+  pop     ebp
+  pop     esi
+  pop     edx
+  pop     ecx
+  pop     ebx
+  pop     edi
+  ret
+
+  ; a column of no rows, of the rows of it being in the sign of the flags
+
+donehs:
+  pop     ebp
+  pop     esi
+  pop     edx
+  pop     ecx
+  pop     ebx
+  pop     edi
+  ret
+; R_DrawColumnBackbufferSSE2 ends
+
 CODE_SYM_DEF R_DrawSpanBackbufferMMX
 	push		ebx
 	push		ecx
@@ -598,5 +784,169 @@ SinglePixelSpan:
 	pop		ecx
 	pop		ebx
   ret
+
+; =========================
+;
+; R_DrawSpanBackbufferSSE2
+;
+; Four pixels per iteration of the loop, with the texture offsets of the
+; four of them calculated at once with the SSE2 instructions and with
+; the two colors of them joined and written to the backbuffer with 32
+; bit writes.
+;
+; The pixels which are not a full group of four of them are rendered
+; one by one with a scalar loop at the end.
+; =========================
+CODE_SYM_DEF R_DrawSpanBackbufferSSE2
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov     eax,[_ds_x1]
+  mov     ebp,[_ds_x2]
+  mov     ecx,[_ds_frac]        ; build composite position
+  mov     esi,[_ds_source]
+  mov     edi,[_ds_y]
+
+  sub     ebp,eax               ; EBP has the number of pixels less one
+
+  mov     edi,[_ylookup+edi*4]
+
+  mov     edx,ecx
+  mov     ebx,ecx
+  shr     edx,4
+  shr     ebx,26
+  and     edx,0xFC0
+patchColumnofsSSE2:
+  lea     edi,[edi+eax+0x12345678]
+  or      ebx,edx               ; texture offset of the first pixel
+
+  mov     edx,[_ds_step]        ; build composite step
+
+  inc     ebp                   ; EBP has the number of pixels
+  mov     ebx,ebp
+  and     ebx,3                 ; pixels which are not a full group of four
+  push    ebx                   ; them kept in the stack for the scalar loop
+  shr     ebp,2                 ; groups of four pixels
+  dec     ebp                   ; iterations of the loop less one
+
+  ; xmm0 has the four positions of the loop, one in each dword of them,
+  ; and xmm1 has the step of the position multiplied by four in all of
+  ; them, with xmm4 having the mask of the vertical component
+
+  movd    xmm0,ecx              ; position of the first pixel
+  lea     eax,[ecx+edx]         ; position of the second pixel
+  movd    xmm1,eax
+  lea     eax,[eax+edx]         ; position of the third pixel
+  movd    xmm2,eax
+  lea     eax,[eax+edx]         ; position of the fourth pixel
+  movd    xmm3,eax
+  shufps  xmm0,xmm1,0           ; the first two positions of them
+  shufps  xmm2,xmm3,0           ; the last two positions of them
+  shufps  xmm0,xmm2,0x88        ; the four positions of them
+  lea     eax,[edx*4]           ; step of the position multiplied by four
+  movd    xmm1,eax
+  shufps  xmm1,xmm1,0           ; it broadcasted to the four dwords
+  mov     edx,0xFC0
+  movd    xmm4,edx
+  shufps  xmm4,xmm4,0           ; mask of the vertical component
+
+  mov     eax,[_ds_colormap]    ; base of the color table
+  mov     ebx,eax               ; the base of the color table for the pair
+                                ;  of source pixels of each two pixels
+
+  ; the instructions of them above do not modify the flags, so the sign
+  ; of the iterations of the loop less one calculated with them is still
+  ; in them
+
+  js    TailSpanSSE2            ; there are not groups of four pixels
+
+LoopSpanSSE2:
+  movdqa  xmm2,xmm0
+  psrld   xmm2,26               ; horizontal components of the positions
+  movdqa  xmm3,xmm0
+  psrld   xmm3,4
+  pand    xmm3,xmm4             ; vertical components of the positions
+  por     xmm2,xmm3             ; texture offsets of the four pixels
+  paddd   xmm0,xmm1             ; positions of the next four pixels
+
+  movd    ecx,xmm2              ; offset of the first pixel
+  psrldq  xmm2,4
+  movd    edx,xmm2              ; offset of the second pixel
+
+  ; the source pixels are gotten with the low byte of the base of the
+  ; color table in the eax and ebx registers of them, with the two
+  ; colors of them kept in xmm5 while the offsets are gotten
+
+  mov     al,[esi+ecx]          ; get first source pixel
+  mov     bl,[esi+edx]          ; get second source pixel
+  mov     cl,[eax]              ; translate color of the first pixel
+  mov     ch,[ebx]              ; translate color of the second pixel
+  movd    xmm5,ecx              ; the first two colors of them
+
+  psrldq  xmm2,4
+  movd    ecx,xmm2              ; offset of the third pixel
+  psrldq  xmm2,4
+  movd    edx,xmm2              ; offset of the fourth pixel
+
+  mov     al,[esi+ecx]          ; get third source pixel
+  mov     bl,[esi+edx]          ; get fourth source pixel
+  mov     dl,[eax]              ; translate color of the third pixel
+  mov     dh,[ebx]              ; translate color of the fourth pixel
+
+  ; the four colors of them joined in a dword, two of them in the low
+  ; half of it and the other two in the high half of it
+
+  movd    ecx,xmm5              ; the first two colors of them
+  movzx   ecx,cx
+  shl     edx,16                ; the last two colors of them
+  or      edx,ecx
+  mov     [edi],edx             ; write four pixels of them
+  add     edi,4
+
+  dec     ebp
+  jns   LoopSpanSSE2
+
+  ; the pixels which are not a multiple of four of them, one by one,
+  ; with the positions of them in the dwords of xmm0
+
+TailSpanSSE2:
+  pop   ecx                     ; pixels which are not a full group of four
+
+  test  ecx,ecx
+  je    EndSpanSSE2
+
+  ; the base of the color table is in eax, the source is in esi and the
+  ; destination of the pixels is in edi
+
+LoopTailSpanSSE2:
+  movd  edx,xmm0                ; position of the pixel
+  psrldq xmm0,4                 ; positions of the following pixels
+  mov   ebx,edx
+  shr   edx,26                  ; horizontal component of the position
+  shr   ebx,4
+  and   ebx,0xFC0               ; vertical component of the position
+  or    edx,ebx                 ; texture offset of the pixel
+
+  mov   al,[esi+edx]            ; get source pixel
+  mov   al,[eax]                ; translate color
+  mov   [edi],al                ; write the pixel
+  inc   edi
+
+  dec ecx
+  jnz LoopTailSpanSSE2
+
+EndSpanSSE2:
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+; R_DrawSpanBackbufferSSE2 ends
 
 %endif

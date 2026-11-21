@@ -11,6 +11,7 @@ extern boolean uncappedFPS;
 extern unsigned int hasCPUID;
 extern unsigned int hasFPU;
 extern unsigned int hasMMX;
+extern unsigned int hasSSE2;
 
 extern unsigned short *currentscreen;
 

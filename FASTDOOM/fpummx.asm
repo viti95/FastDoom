@@ -22,6 +22,7 @@ BITS 32
 extern _hasCPUID
 extern _hasFPU
 extern _hasMMX
+extern _hasSSE2
 
 BEGIN_CODE_SECTION
 
@@ -69,9 +70,12 @@ CODE_SYM_DEF GetCPUFeatures
     mov eax,0x1
     cpuid
     mov ebx,edx
-    and edx,0x800000
-    and ebx,0x000001
+    mov ecx,edx
+    and edx,0x00800000      ; the instructions of MMX
+    and ebx,0x00000001      ; the coprocessor
+    and ecx,0x04000000    ; the instructions of SSE2
     mov [_hasMMX],edx
     mov [_hasFPU],ebx
+    mov [_hasSSE2],ecx
     popad
-ret
+    ret

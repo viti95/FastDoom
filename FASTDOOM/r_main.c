@@ -1907,17 +1907,22 @@ static void R_SetupBackbufferFuncs(void)
     case DETAIL_HIGH:
 #ifdef USE_COLUMNS4
         /* the loop of the middle rows of the four columns, of the walls and
-           of the sky: of the CPUs of MMX the one of their registers, and the
-           one of the registers of the machine for the CPUs of no loop of their
-           own, as the renderers of the mode are of the CPUs which have a loop
-           tuned for them.  Of the views of the other detail levels the four
-           columns are not taken, so the loop of them is of no use */
+           of the sky: of the CPUs of MMX the one of their registers, of the
+           Pentium 4 the one of the instructions of SSE2 of four pixels of a
+           row at once, and the one of the registers of the machine for the
+           CPUs of no loop of their own, as the renderers of the mode are of
+           the CPUs which have a loop tuned for them.  Of the views of the
+           other detail levels the four columns are not taken, so the loop of
+           them is of no use */
         switch (selectedCPU)
         {
         case RISE_MP6:
         case INTEL_PENTIUM_MMX:
         case INTEL_PENTIUM_II:
             col4midfunc = R_DrawColumns4MidMMX;
+            break;
+        case INTEL_PENTIUM_4:
+            col4midfunc = R_DrawColumns4MidSSE2;
             break;
         default:
             col4midfunc = R_DrawColumns4Mid;
@@ -1945,6 +1950,9 @@ static void R_SetupBackbufferFuncs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_II:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
+                break;
+            case INTEL_PENTIUM_4:
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferSSE2);
                 break;
             case AMD_K6:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferFastLEA);
@@ -1979,6 +1987,7 @@ static void R_SetupBackbufferFuncs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferMMX;
                 break;
             default:
@@ -2018,6 +2027,7 @@ static void R_SetupBackbufferFuncs(void)
                 case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
                 case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_4:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
                     break;
                 default:
@@ -2042,6 +2052,7 @@ static void R_SetupBackbufferFuncs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
                 break;
             default:
@@ -2079,6 +2090,9 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_II:
             case AMD_K6:
                 spanfunc = R_DrawSpanBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanBackbufferSSE2;
                 break;
             default:
                 spanfunc = R_DrawSpanBackbuffer;
@@ -2151,6 +2165,7 @@ static void R_SetupBackbufferFuncs(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferMMX);
 #else
@@ -2300,6 +2315,7 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2480,6 +2496,7 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2569,13 +2586,16 @@ static void R_SetupVBE2Funcs(void)
     case DETAIL_HIGH:
 #ifdef USE_COLUMNS4
         /* the loop of the middle rows of the four columns, as of the buffered
-           modes above */
+           modes above, of the Pentium 4 the one of the instructions of SSE2 */
         switch (selectedCPU)
         {
         case RISE_MP6:
         case INTEL_PENTIUM_MMX:
         case INTEL_PENTIUM_II:
             col4midfunc = R_DrawColumns4MidMMX;
+            break;
+        case INTEL_PENTIUM_4:
+            col4midfunc = R_DrawColumns4MidSSE2;
             break;
         default:
             col4midfunc = R_DrawColumns4Mid;
@@ -2605,6 +2625,9 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_II:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
                 break;
+            case INTEL_PENTIUM_4:
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2SSE2);
+                break;
             case AMD_K6:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2FastLEA);
                 break;
@@ -2633,6 +2656,7 @@ static void R_SetupVBE2Funcs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
                 spritefunc = basespritefunc = R_DrawColumnVBE2MMX;
                 break;
             case UMC_GREEN_486:
@@ -2672,6 +2696,7 @@ static void R_SetupVBE2Funcs(void)
                 case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
                 case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_4:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                     break;
                 case UMC_GREEN_486:
@@ -2696,6 +2721,7 @@ static void R_SetupVBE2Funcs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                 break;
             case UMC_GREEN_486:
@@ -2738,6 +2764,9 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_II:
             case AMD_K6:
                 spanfunc = R_DrawSpanVBE2MMX;
+                break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanVBE2SSE2;
                 break;
             default:
                 spanfunc = R_DrawSpanVBE2;
@@ -2796,6 +2825,7 @@ static void R_SetupVBE2Funcs(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2MMX);
 #else
@@ -2953,6 +2983,7 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -3128,6 +3159,7 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -3371,6 +3403,38 @@ void R_ExecuteSetViewSize(void)
 #endif
 
     // Avoid crashes due to missing instruction sets
+    if (!hasSSE2) {
+
+#if defined(USE_BACKBUFFER)
+        // Backbuffer
+        if (spanfunc == R_DrawSpanBackbufferSSE2)
+            spanfunc = R_DrawSpanBackbuffer;
+
+        /* the renderer of the column of the instructions of SSE2 is of the
+           Pentium 4, of the CPU of the machine not having them the model of
+           the CPU named by the user of the menu being of the MMX of them */
+        if (colfunc == R_DrawColumnBackbufferSSE2)
+            colfunc = R_DrawColumnBackbuffer;
+#endif
+
+#if defined(MODE_VBE2_DIRECT)
+        // VBE2
+        if (spanfunc == R_DrawSpanVBE2SSE2)
+            spanfunc = R_DrawSpanVBE2;
+
+        if (colfunc == R_DrawColumnVBE2SSE2)
+            colfunc = R_DrawColumnVBE2MMX;
+#endif
+
+#if defined(USE_COLUMNS4)
+        /* the renderer of the middle rows of the four columns of the
+           instructions of SSE2, of the CPU of the machine not having them the
+           loop of the registers of MMX of them */
+        if (col4midfunc == R_DrawColumns4MidSSE2)
+            col4midfunc = R_DrawColumns4MidMMX;
+#endif
+    }
+
     if (!hasMMX) {
 
 #if defined(USE_BACKBUFFER)

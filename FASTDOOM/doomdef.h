@@ -442,6 +442,7 @@ typedef enum
     UMC_GREEN_486,
     IDT_WINCHIP,
     RISE_MP6,
+    INTEL_PENTIUM_4,
     NUM_CPU
 } cpu_t;
 
