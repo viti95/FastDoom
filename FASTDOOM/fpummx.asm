@@ -50,6 +50,18 @@ CODE_SYM_DEF CopyQWordsFPU
 
 ret
 
+CODE_SYM_DEF CopyOWordsSSE2
+
+.copy_loop_sse2:
+    movdqu  xmm0, [eax]
+    add     eax, 16
+    movdqu  [edx], xmm0
+    add     edx, 16
+    dec     ebx
+    jnz     .copy_loop_sse2
+
+ret
+
 CODE_SYM_DEF GetCPUID
     pushfd                  ;push the flags onto the stack
     pop eax                 ;pop them back out, into EAX

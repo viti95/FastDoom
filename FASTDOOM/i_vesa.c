@@ -690,9 +690,11 @@ void VBE2_InitGraphics(void)
               case RISE_MP6:
               case INTEL_PENTIUM_MMX:
               case INTEL_PENTIUM_II:
-              case INTEL_PENTIUM_4:
               case AMD_K6:
                 finishfunc = I_FinishUpdate8bppLinearMMX;
+                break;
+              case INTEL_PENTIUM_4:
+                finishfunc = I_FinishUpdate8bppLinearSSE2;
                 break;
               default:
                 finishfunc = I_FinishUpdate8bppLinear;
@@ -705,6 +707,15 @@ void VBE2_InitGraphics(void)
 
           if (!hasMMX && finishfunc == I_FinishUpdate8bppLinearMMX)
             finishfunc = I_FinishUpdate8bppLinear;
+
+          /* the blit of the instructions of SSE2 is of the Pentium 4: of the
+             CPU of the machine named by the user of the menu not having them,
+             the routine of the registers of MMX of the CPU of the machine is
+             the taken, and of the machine not having the instructions of them
+             of the two, the general one of the dwords of it */
+          if (!hasSSE2 && finishfunc == I_FinishUpdate8bppLinearSSE2)
+            finishfunc = hasMMX ? I_FinishUpdate8bppLinearMMX
+                                : I_FinishUpdate8bppLinear;
 
           processpalette = I_ProcessPalette8bpp;
           setpalette = I_SetPalette8bpp;
@@ -1874,6 +1885,65 @@ void I_FinishUpdate8bppLinearMMX(void)
   if (updatestate & I_MESSAGES)
   {
     CopyQWordsMMX(backbuffer, pcscreen, (SCREENWIDTH * 28) / 8);
+    updatestate &= ~I_MESSAGES;
+  }
+}
+
+/*
+ * The finish of the view of the modes of the frame buffer of the memory
+ * linear and of one byte of the pixel of them, of the blit of the buffer of
+ * the game to the video memory with the instructions of SSE2 of CopyOWordsSSE2,
+ * of the owords of them, of the 16 bytes of them, one in an iteration of the
+ * loop of it, in one register of SSE2 of the 128 bits of it.
+ *
+ * The boxes of the view of the state of them of the update of them being of
+ * the rows of the screen of the width of the pixels of them, the widths of the
+ * pixels of the modes of the blit of them are of the multiples of the units of
+ * 16 bytes of them of the count of the routine of the copy, as of the routine
+ * of the registers of MMX of them the multiples of the units of 8 of it.
+ *
+ * The same of the routine of the registers of MMX of them, the blit of the
+ * view of the screen of the pixels of them being the whole of it of the
+ * buffer of the game, the rows of the view of the messages of the screen
+ * over the whole of it, the rows of the bar of the state of them and the
+ * rows of the messages of them of their own.
+ */
+void I_FinishUpdate8bppLinearSSE2(void)
+{
+  if (updatestate & I_FULLSCRN)
+  {
+    CopyOWordsSSE2(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 16);
+    updatestate = I_NOUPDATE; /* clear out all draw types */
+  }
+  if (updatestate & I_FULLVIEW)
+  {
+    int i;
+
+    if (updatestate & I_MESSAGES && screenblocks > 7)
+    {
+      for (i = 0; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyOWordsSSE2(backbuffer + i, pcscreen + i, SCREENWIDTH / 16);
+      }
+      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+    }
+    else
+    {
+      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyOWordsSSE2(backbuffer + i, pcscreen + i, SCREENWIDTH / 16);
+      }
+      updatestate &= ~I_FULLVIEW;
+    }
+  }
+  if (updatestate & I_STATBAR)
+  {
+    CopyOWordsSSE2(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 16);
+    updatestate &= ~I_STATBAR;
+  }
+  if (updatestate & I_MESSAGES)
+  {
+    CopyOWordsSSE2(backbuffer, pcscreen, (SCREENWIDTH * 28) / 16);
     updatestate &= ~I_MESSAGES;
   }
 }
