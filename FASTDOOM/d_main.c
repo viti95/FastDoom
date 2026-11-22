@@ -1520,9 +1520,12 @@ void D_DoomMain(void)
     if (hasMMX)
         printf(I_LoadTextProgram(197));
     if (hasSSE)
-        printf(I_LoadTextProgram(234));
-    if (hasSSE2)
         printf(I_LoadTextProgram(233));
+    if (hasSSE2)
+        printf(I_LoadTextProgram(234));
+    if (hasFPU || hasMMX || hasSSE || hasSSE2)
+        printf("\n");
+
 #if DEBUG_ENABLED == 1
     printf(I_LoadTextProgram(19));
     I_DebugInit();
