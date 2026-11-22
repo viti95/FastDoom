@@ -257,6 +257,8 @@ void M_ChangeValueFile(unsigned int position, char *token)
             selectedCPU = RISE_MP6;
         if (M_CheckValue(token, "pentium4"))
             selectedCPU = INTEL_PENTIUM_4;
+        if (M_CheckValue(token, "pentiumIII"))
+            selectedCPU = INTEL_PENTIUM_III;
 
         R_ExecuteSetViewSize();
         R_SetViewSize(screenblocks, detailLevel);

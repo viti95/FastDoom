@@ -23,6 +23,7 @@ extern _hasCPUID
 extern _hasFPU
 extern _hasMMX
 extern _hasSSE2
+extern _hasSSE
 
 BEGIN_CODE_SECTION
 
@@ -62,6 +63,18 @@ CODE_SYM_DEF CopyOWordsSSE2
 
 ret
 
+CODE_SYM_DEF CopyOWordsSSE
+
+.copy_loop_sse:
+    movups  xmm0, [eax]
+    add     eax, 16
+    movups  [edx], xmm0
+    add     edx, 16
+    dec     ebx
+    jnz     .copy_loop_sse
+
+ret
+
 CODE_SYM_DEF GetCPUID
     pushfd                  ;push the flags onto the stack
     pop eax                 ;pop them back out, into EAX
@@ -83,11 +96,14 @@ CODE_SYM_DEF GetCPUFeatures
     cpuid
     mov ebx,edx
     mov ecx,edx
+    mov esi,edx
     and edx,0x00800000      ; the instructions of MMX
     and ebx,0x00000001      ; the coprocessor
     and ecx,0x04000000    ; the instructions of SSE2
+    and esi,0x02000000    ; the instructions of SSE
     mov [_hasMMX],edx
     mov [_hasFPU],ebx
     mov [_hasSSE2],ecx
+    mov [_hasSSE],esi
     popad
     ret

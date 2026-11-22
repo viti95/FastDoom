@@ -649,6 +649,7 @@ unsigned int hasCPUID = 0;
 unsigned int hasFPU = 0;
 unsigned int hasMMX = 0;
 unsigned int hasSSE2 = 0;
+unsigned int hasSSE = 0;
 
 void I_GetCPU(void)
 {

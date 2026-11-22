@@ -1295,9 +1295,9 @@ static char *const invisiblenames[] = { "FUZZY", "FLAT", "FLAT SATURN", "SATURN"
 static char *const fpsnames[] = { "OFF", "SCREEN", "DEBUG CARD 2N", "DEBUG CARD 4N", "SCREEN + DC2N", "SCREEN + DC4N" };
 static char *const cpunames[] = {
     "INTEL 386SX", "INTEL 386DX", "INTEL 486", "PENTIUM P5/4C", "PENTIUM P54CS",
-    "PENTIUM MMX", "PENTIUM II / III", "AMD K5", "AMD K6", "CYRIX 386DLC",
+    "PENTIUM MMX", "PENTIUM II", "AMD K5", "AMD K6", "CYRIX 386DLC",
     "CYRIX 486", "CYRIX 5X86", "CYRIX 6X86", "CYRIX 6X86MX", "UMC 486",
-    "IDT WINCHIP", "RISE MP6", "PENTIUM 4"
+    "IDT WINCHIP", "RISE MP6", "PENTIUM 4", "PENTIUM III"
 };
 #endif
 

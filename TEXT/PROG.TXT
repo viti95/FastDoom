@@ -196,7 +196,6 @@ THE CYBERDEMON
 OUR HERO
     FPU available\n
     MMX available\n
-    SSE2 available\n
 Exiting...
 The selected IWAD was not found
 Bad savegame
@@ -232,3 +231,5 @@ Invalid -gamemode parameter
 Invalid -gamemission parameter
 Invalid -complevel parameter
 Unknown IWAD %s. Please select complevel, gamemode and gamemission.
+    SSE2 available\n
+    SSE available\n

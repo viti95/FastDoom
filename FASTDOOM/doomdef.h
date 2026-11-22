@@ -443,6 +443,7 @@ typedef enum
     IDT_WINCHIP,
     RISE_MP6,
     INTEL_PENTIUM_4,
+    INTEL_PENTIUM_III,
     NUM_CPU
 } cpu_t;
 

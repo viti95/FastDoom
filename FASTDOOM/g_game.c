@@ -1681,7 +1681,8 @@ static const char *const cpunames[NUM_CPU] =
 {
     "386sx", "386dx", "intel486", "pentium", "pentiump54cs", "pentiummmx",
     "pentiumii", "k5", "k6", "cyrix386", "cyrix486", "cyrix5x86",
-    "cyrix6x86", "cyrix6x86mx", "umc486", "winchip", "mp6"
+    "cyrix6x86", "cyrix6x86mx", "umc486", "winchip", "mp6",
+    "pentium4", "pentium3"
 };
 
 static const char *const detailnames[NUM_DETAIL] = { "high", "low", "potato" };

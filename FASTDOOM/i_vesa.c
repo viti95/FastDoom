@@ -693,6 +693,9 @@ void VBE2_InitGraphics(void)
               case AMD_K6:
                 finishfunc = I_FinishUpdate8bppLinearMMX;
                 break;
+              case INTEL_PENTIUM_III:
+                finishfunc = I_FinishUpdate8bppLinearSSE;
+                break;
               case INTEL_PENTIUM_4:
                 finishfunc = I_FinishUpdate8bppLinearSSE2;
                 break;
@@ -708,14 +711,11 @@ void VBE2_InitGraphics(void)
           if (!hasMMX && finishfunc == I_FinishUpdate8bppLinearMMX)
             finishfunc = I_FinishUpdate8bppLinear;
 
-          /* the blit of the instructions of SSE2 is of the Pentium 4: of the
-             CPU of the machine named by the user of the menu not having them,
-             the routine of the registers of MMX of the CPU of the machine is
-             the taken, and of the machine not having the instructions of them
-             of the two, the general one of the dwords of it */
+          if (!hasSSE && finishfunc == I_FinishUpdate8bppLinearSSE)
+            finishfunc = I_FinishUpdate8bppLinear;
+
           if (!hasSSE2 && finishfunc == I_FinishUpdate8bppLinearSSE2)
-            finishfunc = hasMMX ? I_FinishUpdate8bppLinearMMX
-                                : I_FinishUpdate8bppLinear;
+            finishfunc = I_FinishUpdate8bppLinear;
 
           processpalette = I_ProcessPalette8bpp;
           setpalette = I_SetPalette8bpp;
@@ -1885,6 +1885,67 @@ void I_FinishUpdate8bppLinearMMX(void)
   if (updatestate & I_MESSAGES)
   {
     CopyQWordsMMX(backbuffer, pcscreen, (SCREENWIDTH * 28) / 8);
+    updatestate &= ~I_MESSAGES;
+  }
+}
+
+/*
+ * The finish of the view of the modes of the frame buffer of the memory
+ * linear and of one byte of the pixel of them, of the blit of the buffer of
+ * the game to the video memory with the instructions of SSE of CopyOWordsSSE,
+ * of the owords of them, of the 16 bytes of them, one in an iteration of the
+ * loop of it, in one register of SSE of the 128 bits of it, as of the routine
+ * of the instructions of SSE2 of them.
+ *
+ * The instructions of SSE of the Pentium III of them not having the "movdqu"
+ * of them, which is of the instructions of SSE2 of them, the "movups" of them
+ * of the accesses not aligned of the 16 bytes of them is the taken, the fault
+ * of the alignment of them of the machine being avoided, and of the registers
+ * of SSE being the ones of them and not the ones of the registers of MMX, one
+ * "emms" of them is not needed of the return of the routine of them.
+ *
+ * The boxes of the view of the state of them of the update of them being of
+ * the rows of the screen of the width of the pixels of them, the widths of the
+ * pixels of the modes of the blit of them are of the multiples of the units of
+ * 16 bytes of them of the count of the routine of the copy, as of the routine
+ * of the registers of MMX of them the multiples of the units of 8 of it.
+ */
+void I_FinishUpdate8bppLinearSSE(void)
+{
+  if (updatestate & I_FULLSCRN)
+  {
+    CopyOWordsSSE(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 16);
+    updatestate = I_NOUPDATE; /* clear out all draw types */
+  }
+  if (updatestate & I_FULLVIEW)
+  {
+    int i;
+
+    if (updatestate & I_MESSAGES && screenblocks > 7)
+    {
+      for (i = 0; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyOWordsSSE(backbuffer + i, pcscreen + i, SCREENWIDTH / 16);
+      }
+      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+    }
+    else
+    {
+      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyOWordsSSE(backbuffer + i, pcscreen + i, SCREENWIDTH / 16);
+      }
+      updatestate &= ~I_FULLVIEW;
+    }
+  }
+  if (updatestate & I_STATBAR)
+  {
+    CopyOWordsSSE(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 16);
+    updatestate &= ~I_STATBAR;
+  }
+  if (updatestate & I_MESSAGES)
+  {
+    CopyOWordsSSE(backbuffer, pcscreen, (SCREENWIDTH * 28) / 16);
     updatestate &= ~I_MESSAGES;
   }
 }

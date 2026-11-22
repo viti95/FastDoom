@@ -1919,6 +1919,7 @@ static void R_SetupBackbufferFuncs(void)
         case RISE_MP6:
         case INTEL_PENTIUM_MMX:
         case INTEL_PENTIUM_II:
+        case INTEL_PENTIUM_III:
             col4midfunc = R_DrawColumns4MidMMX;
             break;
         case INTEL_PENTIUM_4:
@@ -1949,6 +1950,7 @@ static void R_SetupBackbufferFuncs(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbufferMMX);
                 break;
             case INTEL_PENTIUM_4:
@@ -1987,6 +1989,7 @@ static void R_SetupBackbufferFuncs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferMMX;
                 break;
@@ -2027,6 +2030,7 @@ static void R_SetupBackbufferFuncs(void)
                 case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
                 case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_III:
                 case INTEL_PENTIUM_4:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
                     break;
@@ -2052,6 +2056,7 @@ static void R_SetupBackbufferFuncs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
                 break;
@@ -2088,6 +2093,7 @@ static void R_SetupBackbufferFuncs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case AMD_K6:
                 spanfunc = R_DrawSpanBackbufferMMX;
                 break;
@@ -2165,6 +2171,7 @@ static void R_SetupBackbufferFuncs(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferMMX);
@@ -2315,6 +2322,7 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
@@ -2496,6 +2504,7 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
@@ -2592,6 +2601,7 @@ static void R_SetupVBE2Funcs(void)
         case RISE_MP6:
         case INTEL_PENTIUM_MMX:
         case INTEL_PENTIUM_II:
+        case INTEL_PENTIUM_III:
             col4midfunc = R_DrawColumns4MidMMX;
             break;
         case INTEL_PENTIUM_4:
@@ -2623,6 +2633,7 @@ static void R_SetupVBE2Funcs(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
                 colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2MMX);
                 break;
             case INTEL_PENTIUM_4:
@@ -2656,6 +2667,7 @@ static void R_SetupVBE2Funcs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
                 spritefunc = basespritefunc = R_DrawColumnVBE2MMX;
                 break;
@@ -2696,6 +2708,7 @@ static void R_SetupVBE2Funcs(void)
                 case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
                 case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_III:
                 case INTEL_PENTIUM_4:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                     break;
@@ -2721,6 +2734,7 @@ static void R_SetupVBE2Funcs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                 break;
@@ -2762,6 +2776,7 @@ static void R_SetupVBE2Funcs(void)
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case AMD_K6:
                 spanfunc = R_DrawSpanVBE2MMX;
                 break;
@@ -2825,6 +2840,7 @@ static void R_SetupVBE2Funcs(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = R_CHOOSE_COLUMNS4((screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2MMX);
@@ -2983,6 +2999,7 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
@@ -3159,6 +3176,7 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
             case INTEL_PENTIUM_4:
             case IDT_WINCHIP:
             case CYRIX_6X86:
