@@ -36,8 +36,10 @@
 //	assembly of col4.asm, which draws a group of one light table and of one
 //	step of the registers of the machine and of the registers of MMX, r_main.c
 //	choosing between the two of them as it chooses the other renderers of a
-//	mode, and of the loop of the registers of the machine the groups of light
-//	tables, of steps and of sources of their own.
+//	mode, and of the loop of the registers of the machine, of the registers of
+//	MMX and of the instructions of SSE2 the groups of light tables, of steps
+//	and of sources of their own, r_main.c choosing between the three of them
+//	of the same way.
 */
 
 #include "doomdef.h"
@@ -163,6 +165,18 @@ static int rowbot[COL4_GROUP];
    of the mode. */
 void (*col4midfunc)(void) = R_DrawColumns4Mid;
 
+/* The renderer of the middle rows of a group of four columns of light tables,
+   of steps and of sources of their own, of the assembly of col4.asm: of the
+   registers of the machine here, of the registers of MMX for the CPUs of MMX,
+   which walk the four positions of the row and take the four texels of them,
+   and of the instructions of SSE2 for the Pentium 4, the loads of the bytes
+   of the sources and of the pixels of the tables being of the registers of
+   the machine of the three of them, every one of them writing the four bytes
+   of a row of the view with one store of 32 bits.  r_main.c chooses between
+   the three of them of its own switch of the CPU, as it chooses the renderer
+   of the group of one light table and of one step. */
+void (*col4midallfunc)(void) = R_DrawColumns4MidAll;
+
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */
 static int alignx;
 
@@ -227,8 +241,10 @@ static int alignx;
    the columns of the group shows.  Of the light table, of the step and of the
    source the group takes of the shape it is: the loop of the middle rows of
    col4.asm of one table and of one step walks the four of the columns at once,
-   and the loop of the four of them of their own walks the rest, both of them
-   writing the four bytes of a row, as COL4_MID tells. */
+   and the loop of the four of them of their own walks the rest, of the
+   registers of the machine, of the registers of MMX and of the instructions
+   of SSE2, all of them writing the four bytes of a row with one store of 32
+   bits, as COL4_MID tells. */
 #define COL4_MATCH(g)                                                      \
     (pending[g] && dc_x == slotx[g] + pending[g]                           \
      && dc_yl <= bandbot[g] && dc_yh >= bandtop[g])
@@ -361,13 +377,15 @@ static void R_DrawColumns4Alone(int x, col4slot_t *slot)
 /* the middle rows of the four columns of the view of x, of the rows of ylo to
    yhi, of a group which is not of the shape of the loop above: of more than
    one light table or of more than one step, so every one of its columns is
-   walked on its own */
+   walked on its own, of the loop of the registers of the machine, of the
+   registers of MMX or of the instructions of SSE2, r_main.c writing the
+   pointer of the loop of them as it writes the pointer of the loop above */
 #define COL4_ALL_DRAW(x, ylo, yhi)    \
     do {                              \
         col4x = (x);                  \
         col4y = (ylo);                \
         col4rows = (yhi) - (ylo) + 1; \
-        R_DrawColumns4MidAll();       \
+        col4midallfunc();             \
     } while (0)
 
 /* the group of four columns of the slots (slot) of the view of x, with 32 bit

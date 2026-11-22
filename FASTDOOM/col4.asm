@@ -604,10 +604,13 @@ done4midsse2:
 ; and of the pixel of the light table of the byte, as of the loops above, and
 ; of one load more of the source of it and of one more of its table, the four
 ; columns being of sources of their own and of tables of their own.  The
-; registers of MMX are of no help here, which are of no load of a byte of a
-; table: the loop of the middle rows of one table and of one step is of them,
-; the loop of the groups of every table of its own is of the registers of the
-; machine.
+; walking of the four positions and the taking of the four texels of them are
+; of the registers of MMX and of the registers of SSE2 of the loops of the
+; CPUs of them, as of the loop of the middle rows of one table and of one step
+; above, the loads of the bytes of the sources and of the pixels of the tables
+; being of the registers of the machine of the three of the loops of them, of
+; the registers of MMX and of SSE2 being none of them of a load of a byte of a
+; table.
 ;
 ; The pixels of the row go in from the leftmost column to the last one, the
 ; byte of the light table of every column going over the byte of the row of
@@ -634,6 +637,11 @@ done4midsse2:
 ; The texel of a row is out of its position with the "shr ebx,25" of the byte
 ; renderers, and the byte of the source names its pixel of the light table as
 ; the renderers of the mode name it, of the table being of 256 bytes.
+;
+; The same rows of the CPUs of MMX and of the CPUs of the instructions of SSE2
+; are of the two renderers of the end of the file, of the same setup of them,
+; SetupColumns4All, and of the same one 32 bit store of the four bytes of a
+; row, r_main.c choosing between the three of them of its switch of the CPU.
 ;============================================================================
 CODE_SYM_DEF R_DrawColumns4MidAll
 	push	ebx
@@ -768,5 +776,300 @@ SetupColumns4AllDone:
   mov  eax,[c4aleft] ; the rows left, of none a negative number for the call
   test eax,eax ; the sign of the rows left, for the caller of the renderer
   ret
+
+;============================================================================
+;
+; R_DrawColumns4MidAllMMX
+;
+; The same rows of the group of a light table, a step and a source of their
+; own, for the CPUs of MMX: of the registers of MMX the four positions of the
+; row drawn and the four texels of them, and of the registers of the machine
+; the eight loads of the bytes of the sources and of the pixels of the tables,
+; which the registers of MMX of the two bytes and of the two words do not
+; name.
+;
+; The four positions are of two registers, two of them in each one of them,
+; and the four steps of two more, of the columns of the left in the one of
+; them and of the columns of the right in the other, so a row of the group
+; walks the four of the positions with two "paddd" of their own, and the
+; texels of the columns of the one pair go out of their positions with one
+; "psrld".  The eight dwords of the texels of a row become four words of one
+; register with one "packssdw" and four bytes of it with one "packuswb", the
+; graphics wrapping vertically at 128 pixels, and the four of them go to one
+; register of the machine with one "movd", of the bytes of it three "movzx"
+; and two "shr" of their own, the two of them of the shifting of the register
+; of the four bytes, of no register of MMX being moved to the other.
+;
+; The positions being of the registers of MMX, the loop is of seven registers
+; of the machine, one of them for the four bytes of the row of the view, one of
+; them for the rows of the group left, one of them for the source and the
+; table of the column drawn and four of them for the texel and the pixel of
+; every one of the four columns, the four pixels being joined with a shift and
+; with an "or" of their own as of the loops above, the four of them in the
+; register of the pixel of the first column, of the byte of the source of it
+; naming the pixel of the table of it.
+;
+; eax   the texel of the first column, the pixel of it, the four columns of
+;       the row joined, the register written to the row of the view
+; ebx   the source of a column, the light table of a column, the base of a load
+; ecx   the texels of the two first columns out of the register of MMX, the
+;       texel of the third column, the pixel of the last column for the shift
+;       of the byte of it and for the "or" of it over the row
+; edx   the texel of the second column, the pixel of it for the shift of the
+;       byte of it and for the "or" of it over the row
+; esi   the texel of the third column, the pixel of it for the shift of the
+;       byte of it and for the "or" of it over the row
+; edi   the four bytes of the row of the view
+; ebp   the rows of the group left, the loop of a register
+;
+; mm0   the positions of the first and of the second column
+; mm1   the steps of a row of the first and of the second column
+; mm2   the positions of the third and of the fourth column
+; mm3   the steps of a row of the third and of the fourth column
+; mm4   the texels of the two first columns, the four texels of them packed
+; mm5   the texels of the two last columns, of the packing of them
+;
+; "emms" is not of the renderers of the project, which are of no x87 code of
+; their own, and this renderer is of the same kind.
+;============================================================================
+CODE_SYM_DEF R_DrawColumns4MidAllMMX
+	push	ebx
+	push	esi
+	push	edi
+	push	ebp
+
+  call	near SetupColumns4All
+  js	near done4allmmx ; a group without a row is not to be drawn
+
+  ; the positions of the four columns of the first row of the group, two of
+  ; them in each one of the two registers of them
+  mov  esi,[c4apos]
+  mov  eax,[c4apos+4]
+  movd mm0,esi
+  movd mm1,eax
+  punpckldq mm0,mm1 ; mm0 = [pos1 | pos0]
+  mov  esi,[c4apos+8]
+  mov  eax,[c4apos+12]
+  movd mm2,esi
+  movd mm3,eax
+  punpckldq mm2,mm3 ; mm2 = [pos3 | pos2]
+
+  ; the step of a row of every one of the columns, of the two registers of the
+  ; two of them, the columns of the group being of steps of their own
+  mov  esi,[c4astep]
+  mov  eax,[c4astep+4]
+  movd mm1,esi
+  movd mm4,eax
+  punpckldq mm1,mm4 ; mm1 = [step1 | step0]
+  mov  esi,[c4astep+8]
+  mov  eax,[c4astep+12]
+  movd mm3,esi
+  movd mm4,eax
+  punpckldq mm3,mm4 ; mm3 = [step3 | step2]
+
+  mov  edi,[c4adest] ; the four bytes of the first row of the view
+  mov  ebp,[c4aleft] ; the rows of the group left, the loop of a register
+
+align 16
+LoopColumns4MidAllMMX:
+  ; the texels of the four columns of the row, and the positions of the rows
+  ; of the four columns to come
+  movq  mm4,mm0
+  psrld mm4,25
+  paddd mm0,mm1
+  movq  mm5,mm2
+  psrld mm5,25
+  paddd mm2,mm3
+  packssdw mm4,mm5 ; the four texels of them, one in each one of the words
+  packuswb mm4,mm4 ; ... and of the bytes of it, of the leftmost column low
+  movd  ecx,mm4
+
+  movzx eax,cl ; the texel of the first column
+  movzx edx,ch ; ... of the second one
+  shr   ecx,16
+  movzx esi,cl ; ... of the third one
+  mov   ebx,[c4asrc]
+  shr   ecx,8  ; ... of the last one
+  movzx eax,byte [ebx+eax] ; the byte of the source of the column
+  mov   ebx,[c4amap] ; the light table of the column, of its low byte zero
+  movzx eax,byte [ebx+eax] ; its pixel, to the low byte of the row
+
+  mov   ebx,[c4asrc+4]
+  movzx edx,byte [ebx+edx]
+  mov   ebx,[c4amap+4]
+  movzx edx,byte [ebx+edx]
+  shl   edx,8
+  or    eax,edx ; over the byte above of the row
+
+  mov   ebx,[c4asrc+8]
+  movzx esi,byte [ebx+esi]
+  mov   ebx,[c4amap+8]
+  movzx esi,byte [ebx+esi]
+  shl   esi,16
+  or    eax,esi ; over the two bytes above of the row
+
+  mov   ebx,[c4asrc+12]
+  movzx ecx,byte [ebx+ecx]
+  mov   ebx,[c4amap+12]
+  movzx ecx,byte [ebx+ecx]
+  shl   ecx,24
+  or    eax,ecx ; over the byte above of the row
+
+  mov   [edi],eax ; the four bytes of the row of the view at once
+  add   edi,SCREENWIDTH
+
+  dec   ebp ; the rows of the group left
+  jns   near LoopColumns4MidAllMMX
+
+done4allmmx:
+  pop  ebp
+  pop  edi
+  pop  esi
+  pop  ebx
+  ret
+; R_DrawColumns4MidAllMMX ends
+
+;============================================================================
+;
+; R_DrawColumns4MidAllSSE2
+;
+; The same rows for the CPUs of the instructions of SSE2, of the four
+; positions of the row drawn in the four dwords of one register of them, of
+; the four steps of them in the four dwords of another one, and of the loop
+; walking the four of the positions with one "paddd" of their own, the columns
+; of the group being of steps of their own, as the group is of light tables of
+; their own and of sources of their own.
+;
+; The texels of a row are out of the positions with one "psrld", joined in the
+; four bytes of one dword with one "packssdw" and one "packuswb", the graphics
+; wrapping vertically at 128 pixels, and gotten to the registers of the
+; machine with one "movd", three "movzx" and one "shr".  The eight loads of
+; the bytes of the sources and of the pixels of the tables are of the
+; registers of the machine, the registers of SSE2 being of no load of a byte
+; of a table, and the four pixels of the row are joined of their own, the four
+; of them in the register of the pixel of the first column.
+;
+; ecx   the texel of the first column, the pixel of it, the two columns of the
+;       left of the row joined over it
+; edx   the texel of the second column, the pixel of it, the two columns of
+;       the left of the row joined in it, the four of them joined over it
+; esi   the texel of the third column, the pixel of it, of the row joined over
+;       it
+; eax   the texel of the fourth column, the pixel of it, the four columns of
+;       the row joined, the register written to the row of the view
+; ebx   the four bytes of the row of the view
+; edi   the source of a column, the light table of a column, the base of a load
+; ebp   the rows of the group left, the loop of a register
+;
+; xmm0  the positions of the four columns, one of them in each dword
+; xmm1  the steps of a row of the four of them, one of them in each dword
+; xmm2  the positions of the four columns, of their texels in the bytes of it
+;       (xmm3 and xmm4 are of the building of the four dwords of the two of
+;       them above, of the setup of them, and of the loop of none of them)
+;
+; "emms" is not of the renderers of the project, which are of no x87 code of
+; their own, and this renderer is of the same kind.
+;============================================================================
+CODE_SYM_DEF R_DrawColumns4MidAllSSE2
+	push	ebx
+	push	esi
+	push	edi
+	push	ebp
+
+  call	near SetupColumns4All
+  js	near done4allsse2 ; a group without a row is not to be drawn
+
+  ; the positions of the four columns of the first row of the group, one of
+  ; them in each dword of the register of them
+  mov  esi,[c4apos]
+  mov  eax,[c4apos+4]
+  mov  ecx,[c4apos+8]
+  mov  edx,[c4apos+12]
+  movd xmm0,esi
+  movd xmm1,eax
+  movd xmm2,ecx
+  movd xmm3,edx
+  shufps xmm0,xmm1,0
+  shufps xmm2,xmm3,0
+  shufps xmm0,xmm2,0x88
+
+  ; the step of a row of every one of the four columns, of the same shape, the
+  ; columns of the group being of steps of their own
+  mov  esi,[c4astep]
+  mov  eax,[c4astep+4]
+  mov  ecx,[c4astep+8]
+  mov  edx,[c4astep+12]
+  movd xmm1,esi
+  movd xmm2,eax
+  movd xmm3,ecx
+  movd xmm4,edx
+  shufps xmm1,xmm2,0
+  shufps xmm3,xmm4,0
+  shufps xmm1,xmm3,0x88
+
+  mov  ebx,[c4adest] ; the four bytes of the first row of the view
+  mov  ebp,[c4aleft] ; the rows of the group left, the loop of a register
+
+align 16
+LoopColumns4MidAllSSE2:
+  movdqa  xmm2,xmm0
+  psrld   xmm2,25     ; the texels of the four columns
+  paddd   xmm0,xmm1   ; the positions of the columns of the row to come
+  packssdw xmm2,xmm2
+  packuswb xmm2,xmm2  ; the four texels of them, one in each byte
+
+  movd    eax,xmm2
+  movzx   ecx,al      ; the texel of the first column
+  movzx   edx,ah      ; ... of the second one
+  shr     eax,16
+  movzx   esi,al      ; ... of the third one
+  movzx   eax,ah      ; ... of the fourth one
+
+  mov     edi,[c4asrc]
+  movzx   ecx,byte [edi+ecx] ; the byte of the source of the first column
+  mov     edi,[c4amap] ; the light table of the column, of its low byte zero
+  movzx   ecx,byte [edi+ecx] ; its pixel of the light table
+
+  mov     edi,[c4asrc+4]
+  movzx   edx,byte [edi+edx]
+  mov     edi,[c4amap+4]
+  movzx   edx,byte [edi+edx]
+
+  mov     edi,[c4asrc+8]
+  movzx   esi,byte [edi+esi]
+  mov     edi,[c4amap+8]
+  movzx   esi,byte [edi+esi]
+
+  mov     edi,[c4asrc+12]
+  movzx   eax,byte [edi+eax]
+  mov     edi,[c4amap+12]
+  movzx   eax,byte [edi+eax]
+
+  ; the four pixels of the row, joined in one register of the low byte to the
+  ; high one, the leftmost column of the low byte of them, and written to the
+  ; row of the view with one store of 32 bits, the row of the view being of
+  ; four bytes and the group of the columns kept being of the alignment of a
+  ; row of it.  The shifts of the three columns of the right and the two "or"
+  ; of them are of their own, so the tree of them is of two levels only.
+  shl     edx,8       ; the pixel of the second column to its byte
+  shl     esi,16      ; ... of the third one
+  shl     eax,24      ; ... of the fourth one
+  or      edx,ecx     ; the two columns of the left
+  or      eax,esi     ; the two columns of the right
+  or      eax,edx     ; the four columns of the row
+  mov     [ebx],eax   ; the four bytes of the row of the view
+
+  add     ebx,SCREENWIDTH ; the row to come
+
+  dec     ebp       ; the rows of the group left
+  jns     near LoopColumns4MidAllSSE2
+
+done4allsse2:
+  pop  ebp
+  pop  edi
+  pop  esi
+  pop  ebx
+  ret
+; R_DrawColumns4MidAllSSE2 ends
 
 %endif

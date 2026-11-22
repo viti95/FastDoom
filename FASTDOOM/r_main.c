@@ -1913,7 +1913,15 @@ static void R_SetupBackbufferFuncs(void)
            CPUs of no loop of their own, as the renderers of the mode are of
            the CPUs which have a loop tuned for them.  Of the views of the
            other detail levels the four columns are not taken, so the loop of
-           them is of no use */
+           them is of no use.
+
+           The same of the loop of the columns of light tables, of steps and
+           of sources of their own, the four positions of a row and the four
+           texels of them being of the registers of MMX and of the registers
+           of SSE2, the loads of the bytes of the sources and of the pixels of
+           the tables of the three of them being of the registers of the
+           machine, every one of them writing the four bytes of a row with one
+           store of 32 bits */
         switch (selectedCPU)
         {
         case RISE_MP6:
@@ -1921,12 +1929,15 @@ static void R_SetupBackbufferFuncs(void)
         case INTEL_PENTIUM_II:
         case INTEL_PENTIUM_III:
             col4midfunc = R_DrawColumns4MidMMX;
+            col4midallfunc = R_DrawColumns4MidAllMMX;
             break;
         case INTEL_PENTIUM_4:
             col4midfunc = R_DrawColumns4MidSSE2;
+            col4midallfunc = R_DrawColumns4MidAllSSE2;
             break;
         default:
             col4midfunc = R_DrawColumns4Mid;
+            col4midallfunc = R_DrawColumns4MidAll;
             break;
         }
 #endif
@@ -2595,7 +2606,11 @@ static void R_SetupVBE2Funcs(void)
     case DETAIL_HIGH:
 #ifdef USE_COLUMNS4
         /* the loop of the middle rows of the four columns, as of the buffered
-           modes above, of the Pentium 4 the one of the instructions of SSE2 */
+           modes above, of the Pentium 4 the one of the instructions of SSE2,
+           and of the same choice the loop of the columns of light tables, of
+           steps and of sources of their own, the four bytes of a row of the
+           three of the loops of them being of one store of 32 bits to the
+           memory linear of the mode */
         switch (selectedCPU)
         {
         case RISE_MP6:
@@ -2603,12 +2618,15 @@ static void R_SetupVBE2Funcs(void)
         case INTEL_PENTIUM_II:
         case INTEL_PENTIUM_III:
             col4midfunc = R_DrawColumns4MidMMX;
+            col4midallfunc = R_DrawColumns4MidAllMMX;
             break;
         case INTEL_PENTIUM_4:
             col4midfunc = R_DrawColumns4MidSSE2;
+            col4midallfunc = R_DrawColumns4MidAllSSE2;
             break;
         default:
             col4midfunc = R_DrawColumns4Mid;
+            col4midallfunc = R_DrawColumns4MidAll;
             break;
         }
 #endif
@@ -3447,9 +3465,13 @@ void R_ExecuteSetViewSize(void)
 #if defined(USE_COLUMNS4)
         /* the renderer of the middle rows of the four columns of the
            instructions of SSE2, of the CPU of the machine not having them the
-           loop of the registers of MMX of them */
+           loop of the registers of MMX of them, and the same of the loop of
+           the columns of light tables, of steps and of sources of their own */
         if (col4midfunc == R_DrawColumns4MidSSE2)
             col4midfunc = R_DrawColumns4MidMMX;
+
+        if (col4midallfunc == R_DrawColumns4MidAllSSE2)
+            col4midallfunc = R_DrawColumns4MidAllMMX;
 #endif
     }
 
@@ -3499,6 +3521,9 @@ void R_ExecuteSetViewSize(void)
         // instructions of the CPU of the machine
         if (col4midfunc == R_DrawColumns4MidMMX)
             col4midfunc = R_DrawColumns4Mid;
+
+        if (col4midallfunc == R_DrawColumns4MidAllMMX)
+            col4midallfunc = R_DrawColumns4MidAll;
 #endif
     }
 

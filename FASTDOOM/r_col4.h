@@ -56,7 +56,12 @@
  * the groups of columns of more than one light table, of more than one step
  * or of sources of more than one stride are of the loop of the registers of
  * the machine of col4.asm, of the source, of the table and of the step of
- * every column of its own.
+ * every column of its own, of the same choice of r_main.c of the pointer of
+ * them, col4midallfunc, the loop of the CPUs of MMX and of the CPUs of SSE2
+ * walking the four positions of the row and taking the four texels of them
+ * of their registers, the loads of the bytes of the sources and of the
+ * pixels of the light tables being of the registers of the machine of the
+ * three of them.
  */
 
 /* The modes of the renderer, of the reason of the paragraph above: of the
@@ -85,9 +90,18 @@ extern void (*col4midfunc)(void);
    one light table, of one step, or of sources of one stride, so of every
    column of the group the source, the table, the step and the position of a
    row are walked on their own: of the loop of the registers of the machine of
-   col4.asm, of the same x, of the same first row and of the same number of
-   rows of the data of the file. */
+   col4.asm, of the loop of the registers of MMX of the CPUs of them, or of
+   the loop of the instructions of SSE2 of the Pentium 4, of the same x, of
+   the same first row and of the same number of rows of the data of the file.
+   Every one of the three of them writes the four bytes of a row of the view
+   with one store of 32 bits; the loop of them is kept in col4midallfunc, of
+   the loop of the registers of the machine by default, and r_main.c chooses
+   it of its own switch of the CPU, as it chooses the loop of the columns of
+   one light table and of one step above. */
 void R_DrawColumns4MidAll(void);
+void R_DrawColumns4MidAllMMX(void);
+void R_DrawColumns4MidAllSSE2(void);
+extern void (*col4midallfunc)(void);
 
 /* the number of the columns of the seg loops kept of the view */
 extern int col4pending;
