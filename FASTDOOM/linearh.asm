@@ -718,6 +718,9 @@ patchColumnofsMMX:
 
   inc   edi
 
+  add   ecx,edx                 ; position of the pixel which the loop of the
+                                ;  two of them renders next
+
   ; MMX 2 pixels render
 EvenSpan:
 

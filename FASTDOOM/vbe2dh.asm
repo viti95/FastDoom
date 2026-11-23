@@ -707,6 +707,9 @@ CODE_SYM_DEF R_DrawSpanVBE2MMX
 
   inc   edi
 
+  add   ecx,edx                 ; position of the pixel which the loop of the
+                                ;  two of them renders next
+
   ; MMX 2 pixels render
 EvenSpan:
 
