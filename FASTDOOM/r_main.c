@@ -2232,8 +2232,16 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
                 colfunc = R_DrawColumnLowBackbufferFastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                colfunc = R_DrawColumnLowBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_4:
+                colfunc = R_DrawColumnLowBackbufferSSE2;
                 break;
             default:
                 colfunc = R_DrawColumnLowBackbuffer;
@@ -2257,8 +2265,16 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnLowBackbufferFastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                spritefunc = basespritefunc = R_DrawColumnLowBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_4:
+                spritefunc = basespritefunc = R_DrawColumnLowBackbufferSSE2;
                 break;
             default:
                 spritefunc = basespritefunc = R_DrawColumnLowBackbuffer;
@@ -2289,8 +2305,16 @@ static void R_SetupBackbufferFuncs(void)
                 case CYRIX_6X86MX:
                 case AMD_K5:
                 case AMD_K6:
-                case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferFastLEA;
+                    break;
+                case INTEL_PENTIUM_MMX:
+                case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_III:
+                case RISE_MP6:
+                    pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferMMX;
+                    break;
+                case INTEL_PENTIUM_4:
+                    pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferSSE2;
                     break;
                 default:
                     pspritefunc = basepspritefunc = R_DrawColumnLowBackbuffer;
@@ -2306,8 +2330,16 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferFastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_4:
+                pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferSSE2;
                 break;
             default:
                 pspritefunc = basepspritefunc = R_DrawColumnLowBackbuffer;
@@ -2381,11 +2413,27 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnLowBackbufferFastLEA;
+#endif
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferMMX;
+#else
+                skyfunc = R_DrawColumnLowBackbufferMMX;
+#endif
+                break;
+            case INTEL_PENTIUM_4:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferSSE2;
+#else
+                skyfunc = R_DrawColumnLowBackbufferSSE2;
 #endif
                 break;
             default:
@@ -2429,6 +2477,15 @@ static void R_SetupBackbufferFuncs(void)
             case AMD_K6:
                 colfunc = R_DrawColumnPotatoBackbufferFastLEA;
                 break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                colfunc = R_DrawColumnPotatoBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_4:
+                colfunc = R_DrawColumnPotatoBackbufferSSE2;
+                break;
             default:
                 colfunc = R_DrawColumnPotatoBackbuffer;
                 break;
@@ -2449,6 +2506,15 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_5X86:
             case AMD_K6:
                 spritefunc = basespritefunc = R_DrawColumnPotatoBackbufferFastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                spritefunc = basespritefunc = R_DrawColumnPotatoBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_4:
+                spritefunc = basespritefunc = R_DrawColumnPotatoBackbufferSSE2;
                 break;
             default:
                 spritefunc = basespritefunc = R_DrawColumnPotatoBackbuffer;
@@ -2478,6 +2544,15 @@ static void R_SetupBackbufferFuncs(void)
                 case AMD_K6:
                     pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferFastLEA;
                     break;
+                case INTEL_PENTIUM_MMX:
+                case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_III:
+                case RISE_MP6:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferMMX;
+                    break;
+                case INTEL_PENTIUM_4:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferSSE2;
+                    break;
                 default:
                     pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
                     break;
@@ -2490,6 +2565,15 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_5X86:
             case AMD_K6:
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferFastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_4:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferSSE2;
                 break;
             default:
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
@@ -2559,6 +2643,23 @@ static void R_SetupBackbufferFuncs(void)
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnPotatoBackbufferFastLEA;
+#endif
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbufferMMX;
+#else
+                skyfunc = R_DrawColumnPotatoBackbufferMMX;
+#endif
+                break;
+            case INTEL_PENTIUM_4:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbufferSSE2;
+#else
+                skyfunc = R_DrawColumnPotatoBackbufferSSE2;
 #endif
                 break;
             default:
@@ -2916,8 +3017,16 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
                 colfunc = R_DrawColumnLowVBE2FastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                colfunc = R_DrawColumnLowVBE2MMX;
+                break;
+            case INTEL_PENTIUM_4:
+                colfunc = R_DrawColumnLowVBE2SSE2;
                 break;
             default:
                 colfunc = R_DrawColumnLowVBE2;
@@ -2941,8 +3050,16 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnLowVBE2FastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                spritefunc = basespritefunc = R_DrawColumnLowVBE2MMX;
+                break;
+            case INTEL_PENTIUM_4:
+                spritefunc = basespritefunc = R_DrawColumnLowVBE2SSE2;
                 break;
             default:
                 spritefunc = basespritefunc = R_DrawColumnLowVBE2;
@@ -2973,8 +3090,16 @@ static void R_SetupVBE2Funcs(void)
                 case CYRIX_6X86MX:
                 case AMD_K5:
                 case AMD_K6:
-                case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnLowVBE2FastLEA;
+                    break;
+                case INTEL_PENTIUM_MMX:
+                case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_III:
+                case RISE_MP6:
+                    pspritefunc = basepspritefunc = R_DrawColumnLowVBE2MMX;
+                    break;
+                case INTEL_PENTIUM_4:
+                    pspritefunc = basepspritefunc = R_DrawColumnLowVBE2SSE2;
                     break;
                 default:
                     pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
@@ -2990,8 +3115,16 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnLowVBE2FastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                pspritefunc = basepspritefunc = R_DrawColumnLowVBE2MMX;
+                break;
+            case INTEL_PENTIUM_4:
+                pspritefunc = basepspritefunc = R_DrawColumnLowVBE2SSE2;
                 break;
             default:
                 pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
@@ -3060,11 +3193,27 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
-            case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2FastLEA;
 #else
                 skyfunc = R_DrawColumnLowVBE2FastLEA;
+#endif
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2MMX;
+#else
+                skyfunc = R_DrawColumnLowVBE2MMX;
+#endif
+                break;
+            case INTEL_PENTIUM_4:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2SSE2;
+#else
+                skyfunc = R_DrawColumnLowVBE2SSE2;
 #endif
                 break;
             default:
@@ -3108,6 +3257,15 @@ static void R_SetupVBE2Funcs(void)
             case AMD_K6:
                 colfunc = R_DrawColumnPotatoVBE2FastLEA;
                 break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                colfunc = R_DrawColumnPotatoVBE2MMX;
+                break;
+            case INTEL_PENTIUM_4:
+                colfunc = R_DrawColumnPotatoVBE2SSE2;
+                break;
             default:
                 colfunc = R_DrawColumnPotatoVBE2;
                 break;
@@ -3128,6 +3286,15 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_5X86:
             case AMD_K6:
                 spritefunc = basespritefunc = R_DrawColumnPotatoVBE2FastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                spritefunc = basespritefunc = R_DrawColumnPotatoVBE2MMX;
+                break;
+            case INTEL_PENTIUM_4:
+                spritefunc = basespritefunc = R_DrawColumnPotatoVBE2SSE2;
                 break;
             default:
                 spritefunc = basespritefunc = R_DrawColumnPotatoVBE2;
@@ -3157,6 +3324,15 @@ static void R_SetupVBE2Funcs(void)
                 case AMD_K6:
                     pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2FastLEA;
                     break;
+                case INTEL_PENTIUM_MMX:
+                case INTEL_PENTIUM_II:
+                case INTEL_PENTIUM_III:
+                case RISE_MP6:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2MMX;
+                    break;
+                case INTEL_PENTIUM_4:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2SSE2;
+                    break;
                 default:
                     pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
                     break;
@@ -3169,6 +3345,15 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_5X86:
             case AMD_K6:
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2FastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2MMX;
+                break;
+            case INTEL_PENTIUM_4:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2SSE2;
                 break;
             default:
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
@@ -3238,6 +3423,23 @@ static void R_SetupVBE2Funcs(void)
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2FastLEA;
 #else
                 skyfunc = R_DrawColumnPotatoVBE2FastLEA;
+#endif
+                break;
+            case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2MMX;
+#else
+                skyfunc = R_DrawColumnPotatoVBE2MMX;
+#endif
+                break;
+            case INTEL_PENTIUM_4:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2SSE2;
+#else
+                skyfunc = R_DrawColumnPotatoVBE2SSE2;
 #endif
                 break;
             default:
@@ -3451,6 +3653,34 @@ void R_ExecuteSetViewSize(void)
            the CPU named by the user of the menu being of the MMX of them */
         if (colfunc == R_DrawColumnBackbufferSSE2)
             colfunc = R_DrawColumnBackbuffer;
+
+        /* the renderers of the columns of the detail of the low of the
+           instructions of SSE2 are of the Pentium 4, the CPU of the machine
+           not having them being of the MMX of them, the MMX of the CPU not
+           having it being of the general one of the mode of the file */
+        if (colfunc == R_DrawColumnPotatoBackbufferSSE2)
+            colfunc = R_DrawColumnPotatoBackbufferMMX;
+
+        if (spritefunc == R_DrawColumnPotatoBackbufferSSE2)
+            spritefunc = basespritefunc = R_DrawColumnPotatoBackbufferMMX;
+
+        if (pspritefunc == R_DrawColumnPotatoBackbufferSSE2)
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferMMX;
+
+        if (skyfunc == R_DrawColumnPotatoBackbufferSSE2)
+            skyfunc = R_DrawColumnPotatoBackbufferMMX;
+
+        if (colfunc == R_DrawColumnLowBackbufferSSE2)
+            colfunc = R_DrawColumnLowBackbufferMMX;
+
+        if (spritefunc == R_DrawColumnLowBackbufferSSE2)
+            spritefunc = basespritefunc = R_DrawColumnLowBackbufferMMX;
+
+        if (pspritefunc == R_DrawColumnLowBackbufferSSE2)
+            pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferMMX;
+
+        if (skyfunc == R_DrawColumnLowBackbufferSSE2)
+            skyfunc = R_DrawColumnLowBackbufferMMX;
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
@@ -3460,6 +3690,34 @@ void R_ExecuteSetViewSize(void)
 
         if (colfunc == R_DrawColumnVBE2SSE2)
             colfunc = R_DrawColumnVBE2MMX;
+
+        /* the renderers of the columns of the detail of the low of the
+           instructions of SSE2 are of the Pentium 4, the CPU of the machine
+           not having them being of the MMX of them, the MMX of the CPU not
+           having it being of the general one of the mode of the file */
+        if (colfunc == R_DrawColumnPotatoVBE2SSE2)
+            colfunc = R_DrawColumnPotatoVBE2MMX;
+
+        if (spritefunc == R_DrawColumnPotatoVBE2SSE2)
+            spritefunc = basespritefunc = R_DrawColumnPotatoVBE2MMX;
+
+        if (pspritefunc == R_DrawColumnPotatoVBE2SSE2)
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2MMX;
+
+        if (skyfunc == R_DrawColumnPotatoVBE2SSE2)
+            skyfunc = R_DrawColumnPotatoVBE2MMX;
+
+        if (colfunc == R_DrawColumnLowVBE2SSE2)
+            colfunc = R_DrawColumnLowVBE2MMX;
+
+        if (spritefunc == R_DrawColumnLowVBE2SSE2)
+            spritefunc = basespritefunc = R_DrawColumnLowVBE2MMX;
+
+        if (pspritefunc == R_DrawColumnLowVBE2SSE2)
+            pspritefunc = basepspritefunc = R_DrawColumnLowVBE2MMX;
+
+        if (skyfunc == R_DrawColumnLowVBE2SSE2)
+            skyfunc = R_DrawColumnLowVBE2MMX;
 #endif
 
 #if defined(USE_COLUMNS4)
@@ -3481,6 +3739,30 @@ void R_ExecuteSetViewSize(void)
         // Backbuffer
         if (colfunc == R_DrawColumnBackbufferMMX)
             colfunc = R_DrawColumnBackbuffer;
+
+        if (colfunc == R_DrawColumnLowBackbufferMMX)
+            colfunc = R_DrawColumnLowBackbuffer;
+        
+        if (spritefunc == R_DrawColumnLowBackbufferMMX)
+            spritefunc = basespritefunc = R_DrawColumnLowBackbuffer;
+
+        if (pspritefunc == R_DrawColumnLowBackbufferMMX)
+            pspritefunc = basepspritefunc = R_DrawColumnLowBackbuffer;
+
+        if (skyfunc == R_DrawColumnLowBackbufferMMX)
+            skyfunc = R_DrawColumnLowBackbuffer;
+
+        if (colfunc == R_DrawColumnPotatoBackbufferMMX)
+            colfunc = R_DrawColumnPotatoBackbuffer;
+
+        if (spritefunc == R_DrawColumnPotatoBackbufferMMX)
+            spritefunc = basespritefunc = R_DrawColumnPotatoBackbuffer;
+
+        if (pspritefunc == R_DrawColumnPotatoBackbufferMMX)
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+
+        if (skyfunc == R_DrawColumnPotatoBackbufferMMX)
+            skyfunc = R_DrawColumnPotatoBackbuffer;
         
         if (spritefunc == R_DrawColumnBackbufferMMX)
             spritefunc = basespritefunc = R_DrawColumnBackbuffer;
@@ -3499,6 +3781,30 @@ void R_ExecuteSetViewSize(void)
         // VBE2
         if (colfunc == R_DrawColumnVBE2MMX)
             colfunc = R_DrawColumnVBE2;
+
+        if (colfunc == R_DrawColumnLowVBE2MMX)
+            colfunc = R_DrawColumnLowVBE2;
+        
+        if (spritefunc == R_DrawColumnLowVBE2MMX)
+            spritefunc = basespritefunc = R_DrawColumnLowVBE2;
+
+        if (pspritefunc == R_DrawColumnLowVBE2MMX)
+            pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
+
+        if (skyfunc == R_DrawColumnLowVBE2MMX)
+            skyfunc = R_DrawColumnLowVBE2;
+
+        if (colfunc == R_DrawColumnPotatoVBE2MMX)
+            colfunc = R_DrawColumnPotatoVBE2;
+
+        if (spritefunc == R_DrawColumnPotatoVBE2MMX)
+            spritefunc = basespritefunc = R_DrawColumnPotatoVBE2;
+
+        if (pspritefunc == R_DrawColumnPotatoVBE2MMX)
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
+
+        if (skyfunc == R_DrawColumnPotatoVBE2MMX)
+            skyfunc = R_DrawColumnPotatoVBE2;
         
         if (spritefunc == R_DrawColumnVBE2MMX)
             spritefunc = basespritefunc = R_DrawColumnVBE2;
