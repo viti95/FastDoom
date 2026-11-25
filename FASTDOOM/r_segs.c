@@ -215,7 +215,10 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 			{
 				/* the cache can purge the lumps of the columns kept */
 				if (texbase != lumpcache[lump])
+				{
 					R_FLUSH_COLUMNS4();
+					R_FLUSH_COLUMNS2();
+				}
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -356,6 +359,7 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 	{
 		/* the cache purges the lumps of the columns kept */
 		R_FLUSH_COLUMNS4();
+		R_FLUSH_COLUMNS2();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -457,7 +461,10 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 			{
 				/* the cache can purge the lumps of the columns kept */
 				if (texbase != lumpcache[lump])
+				{
 					R_FLUSH_COLUMNS4();
+					R_FLUSH_COLUMNS2();
+				}
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -595,6 +602,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 	{
 		/* the cache purges the lumps of the columns kept */
 		R_FLUSH_COLUMNS4();
+		R_FLUSH_COLUMNS2();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -659,7 +667,10 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 			{
 				/* the cache can purge the lumps of the columns kept */
 				if (texbase != lumpcache[lump])
+				{
 					R_FLUSH_COLUMNS4();
+					R_FLUSH_COLUMNS2();
+				}
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -873,7 +884,10 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 			{
 				/* the cache can purge the lumps of the columns kept */
 				if (texbase != lumpcache[lump])
+				{
 					R_FLUSH_COLUMNS4();
+					R_FLUSH_COLUMNS2();
+				}
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -1012,6 +1026,7 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 	{
 		/* the cache purges the lumps of the columns kept */
 		R_FLUSH_COLUMNS4();
+		R_FLUSH_COLUMNS2();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -1112,7 +1127,10 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 			{
 				/* the cache can purge the lumps of the columns kept */
 				if (texbase != lumpcache[lump])
+				{
 					R_FLUSH_COLUMNS4();
+					R_FLUSH_COLUMNS2();
+				}
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -1248,6 +1266,7 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 	{
 		/* the cache purges the lumps of the columns kept */
 		R_FLUSH_COLUMNS4();
+		R_FLUSH_COLUMNS2();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -1312,7 +1331,10 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 			{
 				/* the cache can purge the lumps of the columns kept */
 				if (texbase != lumpcache[lump])
+				{
 					R_FLUSH_COLUMNS4();
+					R_FLUSH_COLUMNS2();
+				}
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -1570,7 +1592,10 @@ void R_RenderSegLoop(void)
 				{
 					/* the cache can purge the lumps of the columns kept */
 					if (midbase != lumpcache[lump])
+					{
 						R_FLUSH_COLUMNS4();
+						R_FLUSH_COLUMNS2();
+					}
 					dc_source = W_CachedLumpBase(midbase, lump, ofs);
 				}
 				else
@@ -1648,7 +1673,10 @@ void R_RenderSegLoop(void)
 					{
 						/* the cache can purge the lumps of the columns kept */
 						if (topbase != lumpcache[lump])
+						{
 							R_FLUSH_COLUMNS4();
+							R_FLUSH_COLUMNS2();
+						}
 						dc_source = W_CachedLumpBase(topbase, lump, ofs);
 					}
 					else
@@ -1730,7 +1758,10 @@ void R_RenderSegLoop(void)
 					{
 						/* the cache can purge the lumps of the columns kept */
 						if (botbase != lumpcache[lump])
+						{
 							R_FLUSH_COLUMNS4();
+							R_FLUSH_COLUMNS2();
+						}
 						dc_source = W_CachedLumpBase(botbase, lump, ofs);
 					}
 					else
@@ -1841,6 +1872,7 @@ void R_RenderSegLoopFlat(void)
 	{
 		/* the cache purges the lumps of the columns kept */
 		R_FLUSH_COLUMNS4();
+		R_FLUSH_COLUMNS2();
 		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 	}
 	else
@@ -2066,6 +2098,7 @@ void R_RenderSegLoopFlatter(void)
 	{
 		/* the cache purges the lumps of the columns kept */
 		R_FLUSH_COLUMNS4();
+		R_FLUSH_COLUMNS2();
 		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 	}
 	else

@@ -2231,17 +2231,25 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
                 colfunc = R_DrawColumnLowBackbufferFastLEA;
                 break;
+            /* of the CPUs of no renderer of the detail of the low tuned for
+               them the two columns of a row at a time, the four bytes of them
+               of one store of 32 bits to the buffer of the screen, as of the
+               four columns of the detail of one pixel of each row above */
+            case AMD_K6:
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferFastLEA);
+                break;
             case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnLowBackbufferMMX;
+                break;
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
             case RISE_MP6:
-                colfunc = R_DrawColumnLowBackbufferMMX;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferMMX);
                 break;
             case INTEL_PENTIUM_4:
-                colfunc = R_DrawColumnLowBackbufferSSE2;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferSSE2);
                 break;
             default:
                 colfunc = R_DrawColumnLowBackbuffer;
@@ -2418,28 +2426,45 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnLowBackbufferFastLEA;
 #endif
                 break;
+            /* the sky of the two columns of a row at a time, of the same CPUs
+               of the walls of them above, the byte of the table of the light
+               of the sky being of one to one of the full brightness of the
+               highest screenblocks and the columns of it of the lump of their
+               patch of the cache of the WAD of the flush of r_plane.c */
+            case AMD_K6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferFastLEA);
+#endif
+                break;
             case INTEL_PENTIUM_MMX:
-            case INTEL_PENTIUM_II:
-            case INTEL_PENTIUM_III:
-            case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferMMX;
 #else
                 skyfunc = R_DrawColumnLowBackbufferMMX;
 #endif
                 break;
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferMMX);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferMMX);
+#endif
+                break;
             case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferSSE2;
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferSSE2);
 #else
-                skyfunc = R_DrawColumnLowBackbufferSSE2;
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferSSE2);
 #endif
                 break;
             default:
@@ -3028,17 +3053,28 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
                 colfunc = R_DrawColumnLowVBE2FastLEA;
                 break;
+            /* of the CPUs of no renderer of the detail of the low tuned for
+               them the two columns of a row at a time, the four bytes of them
+               of one store of 32 bits to the memory linear of the mode, as of
+               the four columns of the detail of one pixel of each row above.
+               The three of the loops of them being of one store of 32 bits, as
+               the three of the loops of them of the mode of one pixel of each
+               row above */
+            case AMD_K6:
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2FastLEA);
+                break;
             case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnLowVBE2MMX;
+                break;
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
             case RISE_MP6:
-                colfunc = R_DrawColumnLowVBE2MMX;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2MMX);
                 break;
             case INTEL_PENTIUM_4:
-                colfunc = R_DrawColumnLowVBE2SSE2;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2SSE2);
                 break;
             default:
                 colfunc = R_DrawColumnLowVBE2;
@@ -3210,28 +3246,47 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2FastLEA;
 #else
                 skyfunc = R_DrawColumnLowVBE2FastLEA;
 #endif
                 break;
+            /* the sky of the two columns of a row at a time, of the same CPUs
+               of the walls of them above, the byte of the table of the light
+               of the sky being of one to one of the full brightness of the
+               highest screenblocks, the memory linear of the mode being of the
+               store of 32 bits of them of an address aligned, SCREENWIDTH of
+               the pixels of a row of it being of the units of four bytes of
+               them */
+            case AMD_K6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2FastLEA);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2FastLEA);
+#endif
+                break;
             case INTEL_PENTIUM_MMX:
-            case INTEL_PENTIUM_II:
-            case INTEL_PENTIUM_III:
-            case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2MMX;
 #else
                 skyfunc = R_DrawColumnLowVBE2MMX;
 #endif
                 break;
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2MMX);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2MMX);
+#endif
+                break;
             case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2SSE2;
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2SSE2);
 #else
-                skyfunc = R_DrawColumnLowVBE2SSE2;
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2SSE2);
 #endif
                 break;
             default:
@@ -4148,6 +4203,7 @@ void R_RenderPlayerView(void)
 
     // the flats of the planes draw over the columns kept
     R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     // Check for new console commands.
     NetUpdate();
@@ -4157,6 +4213,7 @@ void R_RenderPlayerView(void)
     // the sky of the planes keeps columns, which the masked walls and the
     // sprites of the view are to draw over
     R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     // Check for new console commands.
     NetUpdate();
@@ -4165,6 +4222,7 @@ void R_RenderPlayerView(void)
 
     // the masked walls keep columns for the view of the frame
     R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     // Check for new console commands.
     NetUpdate();
