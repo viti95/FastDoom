@@ -85,7 +85,11 @@ void R_FlushColumn2(void);
    the file of asm of them, which r_main.c chooses of its own switch of the
    CPU, as it chooses the renderers of a mode. */
 void R_DrawColumns2Mid(void);
+void R_DrawColumns2MidMMX(void);
+void R_DrawColumns2MidSSE2(void);
 void R_DrawColumns2MidAll(void);
+void R_DrawColumns2MidAllMMX(void);
+void R_DrawColumns2MidAllSSE2(void);
 extern void (*col2midfunc)(void);
 extern void (*col2midallfunc)(void);
 

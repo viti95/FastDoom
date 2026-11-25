@@ -2221,6 +2221,42 @@ static void R_SetupBackbufferFuncs(void)
 
         break;
     case DETAIL_LOW:
+#ifdef USE_COLUMNS2
+        /* the loop of the middle rows of the two columns, of the walls and of
+           the sky: of the CPUs of MMX the one of their registers, of the
+           Pentium 4 the one of the instructions of SSE2 of the two pixels of a
+           row at once, and the one of the registers of the machine for the CPUs
+           of no loop of their own, as the renderers of the mode are of the CPUs
+           which have a loop tuned for them.  Of the views of the other detail
+           levels the two columns are not taken, so the loop of them is of no
+           use.
+
+           The same of the loop of the columns of light tables, of steps and of
+           sources of their own, the two positions of a row and the two texels
+           of them being of the registers of MMX and of the registers of SSE2,
+           the loads of the bytes of the sources and of the pixels of the tables
+           of the two of them being of the registers of the machine, every one
+           of them writing the four bytes of a row with one store of 32 bits */
+        switch (selectedCPU)
+        {
+        case RISE_MP6:
+        case INTEL_PENTIUM_MMX:
+        case INTEL_PENTIUM_II:
+        case INTEL_PENTIUM_III:
+        case AMD_K6:
+            col2midfunc = R_DrawColumns2MidMMX;
+            col2midallfunc = R_DrawColumns2MidAllMMX;
+            break;
+        case INTEL_PENTIUM_4:
+            col2midfunc = R_DrawColumns2MidSSE2;
+            col2midallfunc = R_DrawColumns2MidAllSSE2;
+            break;
+        default:
+            col2midfunc = R_DrawColumns2Mid;
+            col2midallfunc = R_DrawColumns2MidAll;
+            break;
+        }
+#endif
         switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
@@ -3043,6 +3079,40 @@ static void R_SetupVBE2Funcs(void)
 
         break;
     case DETAIL_LOW:
+#ifdef USE_COLUMNS2
+        /* the loop of the middle rows of the two columns of the mode of the
+           memory linear of VESA: of the CPUs of MMX the one of their registers,
+           of the Pentium 4 the one of the instructions of SSE2 of the two
+           pixels of a row at once, and the one of the registers of the machine
+           for the CPUs of no loop of their own, as the renderers of the mode
+           are of the CPUs which have a loop tuned for them.
+
+           The same of the loop of the columns of light tables, of steps and of
+           sources of their own, the two positions of a row and the two texels
+           of them being of the registers of MMX and of the registers of SSE2,
+           the loads of the bytes of the sources and of the pixels of the tables
+           of the two of them being of the registers of the machine, every one
+           of them writing the four bytes of a row with one store of 32 bits */
+        switch (selectedCPU)
+        {
+        case RISE_MP6:
+        case INTEL_PENTIUM_MMX:
+        case INTEL_PENTIUM_II:
+        case INTEL_PENTIUM_III:
+        case AMD_K6:
+            col2midfunc = R_DrawColumns2MidMMX;
+            col2midallfunc = R_DrawColumns2MidAllMMX;
+            break;
+        case INTEL_PENTIUM_4:
+            col2midfunc = R_DrawColumns2MidSSE2;
+            col2midallfunc = R_DrawColumns2MidAllSSE2;
+            break;
+        default:
+            col2midfunc = R_DrawColumns2Mid;
+            col2midallfunc = R_DrawColumns2MidAll;
+            break;
+        }
+#endif
         switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
@@ -3842,6 +3912,18 @@ void R_ExecuteSetViewSize(void)
         if (col4midallfunc == R_DrawColumns4MidAllSSE2)
             col4midallfunc = R_DrawColumns4MidAllMMX;
 #endif
+
+#if defined(USE_COLUMNS2)
+        /* the renderer of the middle rows of the two columns of the
+           instructions of SSE2, of the CPU of the machine not having them the
+           loop of the registers of MMX of them, and the same of the loop of the
+           columns of light tables, of steps and of sources of their own */
+        if (col2midfunc == R_DrawColumns2MidSSE2)
+            col2midfunc = R_DrawColumns2MidMMX;
+
+        if (col2midallfunc == R_DrawColumns2MidAllSSE2)
+            col2midallfunc = R_DrawColumns2MidAllMMX;
+#endif
     }
 
     if (!hasMMX) {
@@ -3953,6 +4035,19 @@ void R_ExecuteSetViewSize(void)
 
         if (col4midallfunc == R_DrawColumns4MidAllMMX)
             col4midallfunc = R_DrawColumns4MidAll;
+#endif
+
+#if defined(USE_COLUMNS2)
+        // Two columns of a row at a time, of the walls and of the sky: the
+        // loop of the middle rows of the two of them of the registers of MMX is
+        // of the CPUs which have MMX, the selectedCPU of the menu being of the
+        // model of the CPU named by the user, which is not the set of the
+        // instructions of the CPU of the machine
+        if (col2midfunc == R_DrawColumns2MidMMX)
+            col2midfunc = R_DrawColumns2Mid;
+
+        if (col2midallfunc == R_DrawColumns2MidAllMMX)
+            col2midallfunc = R_DrawColumns2MidAll;
 #endif
     }
 
