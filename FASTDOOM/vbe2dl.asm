@@ -531,6 +531,206 @@ donelms:
   ret
 ; R_DrawColumnLowVBE2SSE2 ends
 
+; ==============================
+;
+; R_DrawSpanLowVBE2MMX
+;
+; The span of the loop of the registers of MMX of the file of the detail of
+; two pixels of the row, of the position of one of them in each one of the two
+; dwords of the register of them, walked to the pixels to come with one
+; "paddd" of the step of a pixel, the step being broadcasted to the two dwords
+; of the register of it, the position of them being of the sixteen bits of the
+; horizontal of them and of the sixteen bits of the vertical.
+;
+; The four pixels of the two texels of them go to the memory linear of the mode
+; with one store of 32 bits, of the two pixels of every one of the texels
+; being the byte of the pixel of the table of the light in the two bytes of
+; them, as the renderer of the mode of the file of the same name writes the two
+; of them with one store of 16 bits of them. The bytes of the two texels, the
+; one of the pixel of them and the one of the pixel to come, are packed in the
+; two bytes of the low of one register of MMX, of the four pixels of them being
+; gotten from them with one "punpcklbw" of the register of itself.
+;
+; The texels of the two positions go out of them with one "psrld" of the six
+; bits of the vertical of them and with one of the six bits of the horizontal,
+; the graphics wrapping at 64 pixels in the two directions of them, the mask of
+; the horizontal being of the value of them of the register of MMX, the texels
+; of the two positions to come being calculated of the positions of them.
+;
+; The byte of the source of every one of them names its pixel of the light
+; table with the address of it, the table being of 256 bytes, which the
+; renderers of the mode of the file name with their low byte written over. The
+; two texels of the pair of them are of two registers of the table, the one of
+; the pixel of the register of it and the one of the pixel to come of the copy
+; of it, the bytes of the high of the two of them not being broken by the byte
+; of the pixel of them.
+;
+; The pixel of the span which is not a pair of them of the loop goes before
+; it, of the registers of the machine, the texels of the span being an odd
+; number of them, its two pixels being of one copy of the register of the
+; table of the light, the register of the pixel of them being kept whole of
+; the byte of the pixel of the table of the light of it. And of one texel only
+; of the span the pixel of it is of a loop of none of them, as of the renderer
+; of the mode of the file.
+;
+; eax   the table of the light, of its low byte the texel of a pixel
+; ebx   the copy of the table of the light, of its low byte the texel of the
+;       pixel to come
+; ecx   the texel of the pixel of the pair of them, of the registers of MMX
+; edx   the two pixels of the two texels of them, and the mask of them, and of
+;       the pixel which is not a pair of them the copy of the table of the
+;       light of it
+; esi   the source of the span
+; edi   the pixel of the row of the view
+; ebp   the texels of the span left, the loop of a register
+;
+; mm0   the positions of the two pixels, one of them in each one of them
+; mm1   the step of the two of them, of both the dwords of it
+; mm2   the texels of the two of them, of the packing of their positions
+; mm3   the packing of the positions of the pixels to come
+; mm4   the mask of the horizontal component of the positions
+; mm5   the four pixels of the two texels of them
+;
+; "emms" is not of the renderers of the project, which are of no x87 code of
+; their own, and this renderer is of the same kind.
+; ==============================
+CODE_SYM_DEF R_DrawSpanLowVBE2MMX
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov     ecx,[_ds_frac]        ; the position of the texel of the span
+  mov     esi,[_ds_source]
+
+  mov     ebp,[_ds_y]
+
+  MulScreenWidthStart edi, ebp
+  MulScreenWidthEnd edi         ; the row of the view of the y of the span
+                                ;  multiplied of the width of the screen, the
+                                ;  register of the machine of the multiply of
+                                ;  it being kept whole, the texel of the span
+                                ;  of the row of them being named next
+
+  mov     ebx,[_ds_x1]
+  mov     ebp,[_ds_x2]
+  sub     ebp,ebx               ; the texels of the span less one
+
+  add     edi,[_destview]
+  add     edi,ebx
+  add     edi,ebx               ; the two pixels of the texel of the detail
+                                ;  of the low
+
+  mov     edx,ecx
+  shr     edx,4
+  mov     ebx,ecx
+  shr     ebx,26
+  and     edx,0xFC0
+  or      ebx,edx               ; the texel of the source of the span
+
+  mov     edx,[_ds_step]        ; the step of the position of a pixel
+  mov     eax,[_ds_colormap]
+
+  cmp     ebp,0
+  je      near SingleTexelLowVBE2MMX
+
+  test    ebp,1
+  jnz     near EvenSpanLowVBE2MMX
+
+  ; the pixel of the span which is not a pair of them of the loop, of the
+  ; texels of the span being an odd number of them
+
+  mov     al,[esi+ebx]          ; the byte of the source of the texel
+  dec     ebp
+  mov     al,[eax]              ; its pixel of the table of the light
+  mov     ebx,eax               ; the copy of the register of the table of the
+                                ;  light, its low byte being of the pixel of
+                                ;  the table of the light, the byte of the
+                                ;  pixel of the register of it being kept
+  mov     bh,al                 ; the two pixels of it
+  mov     [edi],bx
+
+  add     edi,2
+
+  add     ecx,edx               ; the position of the texel which the loop of
+                                ;  the two of them renders next
+
+  ; MMX 4 pixels render
+EvenSpanLowVBE2MMX:
+
+  mov     ebx,eax               ; the table of the light of the pixel to come
+
+  movd    mm0,ecx               ; the position of the texel of the pixel
+  movd    mm1,edx               ; its step
+  movq    mm2,mm0
+  paddd   mm0,mm1               ; the position of the texel to come
+  mov     edx,0x00000FC0
+  psllq   mm0,32
+  movd    mm4,edx
+  por     mm0,mm2               ; the positions of the two pixels of them
+  punpckldq mm1,mm1
+  movq    mm3,mm0
+  movq    mm2,mm0
+  psrld   mm3,4
+  psrld   mm2,26
+  punpckldq mm4,mm4
+  pand    mm3,mm4
+  por     mm2,mm3               ; the texels of the two positions of them
+  paddd   mm1,mm1               ; the step of the two positions to come
+
+align 4
+LoopSpanLowVBE2MMX:
+
+  movd    ecx,mm2               ; the texel of the source of the pixel
+  psrlq   mm2,32
+  mov     al,[esi+ecx]          ; its byte of the source
+  movd    ecx,mm2               ; the texel of the source of the pixel to come
+  paddd   mm0,mm1               ; the positions of the two pixels to come
+  mov     bl,[esi+ecx]          ; its byte of the source
+  movq    mm3,mm0
+  movq    mm2,mm0
+  mov     dl,[eax]              ; its pixel of the table of the light
+  psrld   mm3,4
+  psrld   mm2,26
+  mov     dh,[ebx]              ; the pixel of the table of the light of it
+  pand    mm3,mm4
+  movd    mm5,edx
+  punpcklbw mm5,mm5             ; the four pixels of the two texels of them
+  por     mm2,mm3               ; the texels of the two positions to come
+  movd    ecx,mm5
+  mov     [edi],ecx             ; the four pixels of them to the mode
+  add     edi,4
+
+  sub     ebp,2
+  jns     near LoopSpanLowVBE2MMX
+
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+; R_DrawSpanLowVBE2MMX ends
+
+SingleTexelLowVBE2MMX:
+
+  mov     al,[esi+ebx]          ; the byte of the source of the texel
+  mov     al,[eax]              ; its pixel of the table of the light
+  mov     edx,eax
+  mov     dh,al
+  mov     [edi],dx              ; the two pixels of it to the mode
+
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+
 CONTINUE_DATA_SECTION
 
 %macro MAPDEFINE 1
@@ -601,6 +801,242 @@ CODE_SYM_DEF R_DrawSpanLowVBE2
 	pop		ebx
   ret
 ; R_DrawSpanLowVBE2 ends
+
+; ==================================================
+;
+; R_DrawSpanLowVBE2SSE2
+;
+; The span of the loop of the registers of SSE2 of the file of the detail of
+; the low, of four texels of them in each one of the iterations of the loop,
+; their positions in the four dwords of one register of them, walked to the
+; texels to come with one "paddd" of the step of a texel multiplied by four of
+; them, the step of it being broadcasted to the four dwords of its own register
+; with one "shufps" of them.
+;
+; The texels of the four texels of them go out of their positions with one
+; "psrld" of the six bits of the horizontal of them and with one "psrld" of
+; the six bits of the vertical, the graphics wrapping at 64 pixels in the two
+; directions of them, the mask of the vertical being of the value of them of
+; one register of SSE2 of its own, the texel of every one of the dwords of the
+; positions going to the registers of the machine with one "movd" of them and
+; the dwords of them to come with one "psrldq" of them, of the four of the
+; loads of the four bytes of the source being of the registers of the machine,
+; no texel of them being of a load of a table of the registers of SSE2.
+;
+; The byte of the source of every one of them names its pixel of the light
+; table with the address of it, the table being of 256 bytes, which the
+; renderers of the modes of the file name with their low byte written over,
+; the four pixels of the table of the light of them being joined in the four
+; bytes of one dword of them, two of them of the low half of it and the other
+; two of the high one, as of the span of the detail of the file of the
+; registers of SSE2 of the file.
+;
+; The eight pixels of the four texels of them, the two pixels of every one of
+; them being of the byte of the same one of them, go to the memory of the video
+; of the mode of the frame buffer of them with one store of 64 bits, the four
+; bytes of the four pixels of the table of the light of them being spread to
+; their two pixels of them with one "punpcklbw" of the register of itself, as
+; the renderer of the mode of the file writes the two pixels of a texel of them
+; with one store of 16 bits of it, as the span of the detail of the low of the
+; registers of MMX of the file spreads the two bytes of them to the four pixels
+; of them and as the column of the detail of the low of the registers of SSE2
+; of the file multiplies its byte of the table of the light by the value of
+; 1.01 hex of them with one "imul" of the registers of the machine.
+;
+; The texels of the span which are not a full group of four of them are
+; rendered one by one with a loop of the scalar of them at the end, of their
+; positions in the dwords of the register which the loop of the groups leaves,
+; the last group of them having stepped to the texels of them, every one of
+; them writing its two pixels with one store of 16 bits of them, of the
+; "imul" of the byte of its pixel of the table of the light by the value of
+; them, as of the column of the detail of the low of the registers of SSE2 of
+; the file.
+;
+; Of the mode of the memory of the video of the frame buffer of them, the row
+; of the view of the y of the span is kept of the multiply of the width of the
+; screen of it, the register of the machine of the multiply of it being kept
+; whole, the texel of the span of the row of them being named next.
+;
+; eax   the base of the table of the light, of its low byte the pixel of a
+;       texel
+; ebx   the copy of it, of its low byte the pixel of the texel to come, and a
+;       register of the positions of them
+; ecx   the texels of them of the group of four of them, and the register of
+;       the two pixels of them
+; edx   the step of the position of a texel, the register of the two pixels of
+;       them to come, and a register of the positions of them
+; esi   the source of the span
+; edi   the pixel of the row of the view
+; ebp   the groups of four texels of the span left, the loop of a register
+;
+; xmm0  the positions of the four texels, one of them in each dword
+; xmm1  the step of a texel multiplied by four, of the four dwords of it
+; xmm2  the positions of the four texels, of their texels in the dwords of them
+; xmm3  the positions of them of the packing of their texels
+; xmm4  the mask of the vertical of the positions, of the four dwords of it
+; xmm5  the eight pixels of the four texels of them
+;
+; The registers of SSE2 are not of the ones of the registers of MMX, so one
+; "emms" is not needed of the return of this renderer, as of the renderers of
+; the modes of the file of the instructions of SSE2.
+; ==================================================
+CODE_SYM_DEF R_DrawSpanLowVBE2SSE2
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov     ecx,[_ds_frac]        ; the position of the texel of the span
+  mov     esi,[_ds_source]
+
+  mov     ebp,[_ds_y]
+
+  MulScreenWidthStart edi, ebp
+  MulScreenWidthEnd edi         ; the row of the view of the y of the span
+                                ;  multiplied of the width of the screen, the
+                                ;  register of the machine of the multiply of
+                                ;  it being kept whole, the texel of the span
+                                ;  of the row of them being named next
+
+  mov     ebx,[_ds_x1]
+  mov     ebp,[_ds_x2]
+  sub     ebp,ebx               ; the texels of the span less one
+
+  add     edi,[_destview]
+  lea     edi,[edi+ebx*2]       ; the two pixels of the texel of the detail of
+                                ;  the low
+
+  mov     edx,[_ds_step]        ; the step of the position of a texel
+
+  inc     ebp                   ; the texels of the span
+  mov     ebx,ebp
+  and     ebx,3                 ; the texels of them which are not a full
+  push    ebx                   ;  group of four of them, them kept in the
+  shr     ebp,2                 ;  stack for the loop of the scalar of them
+  dec     ebp                   ; the iterations of the loop less one
+
+  ; xmm0 has the four positions of the loop, one in each dword of them,
+  ; and xmm1 has the step of the position multiplied by four in all of
+  ; them, with xmm4 having the mask of the vertical component
+
+  movd    xmm0,ecx              ; the position of the first texel
+  lea     eax,[ecx+edx]         ; the position of the second one of them
+  movd    xmm1,eax
+  lea     eax,[eax+edx]         ; the position of the third one of them
+  movd    xmm2,eax
+  lea     eax,[eax+edx]         ; the position of the fourth one of them
+  movd    xmm3,eax
+  shufps  xmm0,xmm1,0           ; the first two positions of them
+  shufps  xmm2,xmm3,0           ; the last two positions of them
+  shufps  xmm0,xmm2,0x88        ; the four positions of them
+  lea     eax,[edx*4]           ; the step of the position multiplied by four
+  movd    xmm1,eax
+  shufps  xmm1,xmm1,0           ; it broadcasted to the four dwords
+  mov     edx,0xFC0
+  movd    xmm4,edx
+  shufps  xmm4,xmm4,0           ; the mask of the vertical component
+
+  mov     eax,[_ds_colormap]    ; the base of the table of the light
+  mov     ebx,eax               ; the base of it for the pair of the texels
+
+  ; the instructions of them above do not modify the flags, so the sign
+  ; of the iterations of the loop less one calculated with them is still
+  ; in them
+
+  js    TailSpanLowVBE2SSE2     ; there are not groups of four texels
+
+LoopSpanLowVBE2SSE2:
+  movdqa  xmm2,xmm0
+  psrld   xmm2,26               ; the horizontal components of the positions
+  movdqa  xmm3,xmm0
+  psrld   xmm3,4
+  pand    xmm3,xmm4             ; the vertical components of the positions
+  por     xmm2,xmm3             ; the texels of the source of the four pixels
+  paddd   xmm0,xmm1             ; the positions of the four texels to come
+
+  movd    ecx,xmm2              ; the texel of the source of the first pixel
+  psrldq  xmm2,4
+  movd    edx,xmm2              ; the texel of the source of the second one
+
+  ; the bytes of the source of them are gotten with the low byte of the base
+  ; of the table of the light in the eax and ebx registers of them, the two
+  ; pixels of them of the table being kept in xmm5 while the texels of the two
+  ; of them to come are gotten
+
+  mov     al,[esi+ecx]          ; the byte of the source of the first pixel
+  mov     bl,[esi+edx]          ; the byte of the source of the second one
+  mov     cl,[eax]              ; its pixel of the table of the light
+  mov     ch,[ebx]              ; the pixel of the table of the light of it
+  movd    xmm5,ecx              ; the two pixels of them of the table
+
+  psrldq  xmm2,4
+  movd    ecx,xmm2              ; the texel of the source of the third pixel
+  psrldq  xmm2,4
+  movd    edx,xmm2              ; the texel of the source of the fourth one
+
+  mov     al,[esi+ecx]          ; the byte of the source of the third pixel
+  mov     bl,[esi+edx]          ; the byte of the source of the fourth one
+  mov     dl,[eax]              ; its pixel of the table of the light
+  mov     dh,[ebx]              ; the pixel of the table of the light of it
+
+  ; the four pixels of them of the table of the light joined in a dword, two
+  ; of them in the low half of it and the other two in the high one of it
+
+  movd    ecx,xmm5              ; the first two pixels of them of it
+  movzx   ecx,cx
+  shl     edx,16                ; the last two pixels of them of it
+  or      edx,ecx
+
+  movd    xmm5,edx
+  punpcklbw xmm5,xmm5           ; the two pixels of the four bytes of them
+  movq    [edi],xmm5            ; the eight pixels of them to the view
+  add     edi,8
+
+  dec     ebp
+  jns   LoopSpanLowVBE2SSE2
+
+  ; the texels of the span which are not a full group of four of them, one by
+  ; one, with their positions in the dwords of the register of them of them
+
+TailSpanLowVBE2SSE2:
+  pop   ecx                     ; the texels which are not a full group of four
+
+  test  ecx,ecx
+  je    EndSpanLowVBE2SSE2
+
+  ; the base of the table of the light is in eax, the source is in esi and the
+  ; destination of the pixels is in edi
+
+LoopTailSpanLowVBE2SSE2:
+  movd  edx,xmm0                ; the position of the texel
+  psrldq xmm0,4                 ; the positions of the texels following it
+  mov   ebx,edx
+  shr   edx,26                  ; the component of the horizontal of it
+  shr   ebx,4
+  and   ebx,0xFC0               ; the component of the vertical of it
+  or    edx,ebx                 ; the texel of the source of the span
+
+  mov   al,[esi+edx]            ; the byte of the source of the texel
+  mov   al,[eax]                ; its pixel of the table of the light
+  movzx ebx,al                  ; the pixel of it
+  imul  ebx,ebx,0x0101          ; the two pixels of it
+  mov   [edi],bx                ; the two pixels of it to the view
+  add   edi,2
+
+  dec ecx
+  jnz LoopTailSpanLowVBE2SSE2
+
+EndSpanLowVBE2SSE2:
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+; R_DrawSpanLowVBE2SSE2 ends
 
 ;============= HIGH DETAIL ============
 

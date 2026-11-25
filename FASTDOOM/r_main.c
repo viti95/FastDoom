@@ -2361,16 +2361,22 @@ static void R_SetupBackbufferFuncs(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM_P5_P54C:
-            case INTEL_PENTIUM_P54CS:
+            case RISE_MP6:
+            case AMD_K6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
-            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanLowBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spanfunc = R_DrawSpanLowBackbufferPentium;
+                break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanLowBackbufferSSE2;
                 break;
             default:
                 spanfunc = R_DrawSpanLowBackbuffer;
@@ -2595,16 +2601,22 @@ static void R_SetupBackbufferFuncs(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM_P5_P54C:
-            case INTEL_PENTIUM_P54CS:
+            case RISE_MP6:
+            case AMD_K6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
-            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanPotatoBackbufferMMX;
+                break;
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spanfunc = R_DrawSpanPotatoBackbufferPentium;
+                break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanPotatoBackbufferSSE2;
                 break;
             default:
                 spanfunc = R_DrawSpanPotatoBackbuffer;
@@ -3146,16 +3158,22 @@ static void R_SetupVBE2Funcs(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM_P5_P54C:
-            case INTEL_PENTIUM_P54CS:
+            case RISE_MP6:
+            case AMD_K6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
-            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanLowVBE2MMX;
+                break;
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spanfunc = R_DrawSpanLowVBE2Pentium;
+                break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanLowVBE2SSE2;
                 break;
             default:
                 spanfunc = R_DrawSpanLowVBE2;
@@ -3375,16 +3393,22 @@ static void R_SetupVBE2Funcs(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM_P5_P54C:
-            case INTEL_PENTIUM_P54CS:
+            case RISE_MP6:
+            case AMD_K6:
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
-            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanPotatoVBE2MMX;
+                break;
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spanfunc = R_DrawSpanPotatoVBE2Pentium;
+                break;
+            case INTEL_PENTIUM_4:
+                spanfunc = R_DrawSpanPotatoVBE2SSE2;
                 break;
             default:
                 spanfunc = R_DrawSpanPotatoVBE2;
@@ -3648,6 +3672,22 @@ void R_ExecuteSetViewSize(void)
         if (spanfunc == R_DrawSpanBackbufferSSE2)
             spanfunc = R_DrawSpanBackbuffer;
 
+        /* the renderer of the span of the detail of the potato of the
+           instructions of SSE2 is of the Pentium 4, of the CPU of the machine
+           not having them the model of the CPU named by the user of the menu
+           being of the MMX of them, the MMX of the CPU not having it being of
+           the instructions of LEA of the Pentium of it */
+        if (spanfunc == R_DrawSpanPotatoBackbufferSSE2)
+            spanfunc = R_DrawSpanPotatoBackbufferMMX;
+
+        /* the renderer of the span of the detail of the low of the
+           instructions of SSE2 is of the Pentium 4, of the CPU of the machine
+           not having them the model of the CPU named by the user of the menu
+           being of the MMX of them, the MMX of the CPU not having it being of
+           the general one of the mode of the file */
+        if (spanfunc == R_DrawSpanLowBackbufferSSE2)
+            spanfunc = R_DrawSpanLowBackbufferMMX;
+
         /* the renderer of the column of the instructions of SSE2 is of the
            Pentium 4, of the CPU of the machine not having them the model of
            the CPU named by the user of the menu being of the MMX of them */
@@ -3687,6 +3727,22 @@ void R_ExecuteSetViewSize(void)
         // VBE2
         if (spanfunc == R_DrawSpanVBE2SSE2)
             spanfunc = R_DrawSpanVBE2;
+
+        /* the renderer of the span of the detail of the potato of the
+           instructions of SSE2 is of the Pentium 4, of the CPU of the machine
+           not having them the model of the CPU named by the user of the menu
+           being of the MMX of them, the MMX of the CPU not having it being of
+           the instructions of LEA of the Pentium of it */
+        if (spanfunc == R_DrawSpanPotatoVBE2SSE2)
+            spanfunc = R_DrawSpanPotatoVBE2MMX;
+
+        /* the renderer of the span of the detail of the low of the
+           instructions of SSE2 is of the Pentium 4, of the CPU of the machine
+           not having them the model of the CPU named by the user of the menu
+           being of the MMX of them, the MMX of the CPU not having it being of
+           the general one of the mode of the file */
+        if (spanfunc == R_DrawSpanLowVBE2SSE2)
+            spanfunc = R_DrawSpanLowVBE2MMX;
 
         if (colfunc == R_DrawColumnVBE2SSE2)
             colfunc = R_DrawColumnVBE2MMX;
@@ -3775,6 +3831,12 @@ void R_ExecuteSetViewSize(void)
 
         if (spanfunc == R_DrawSpanBackbufferMMX)
             spanfunc = R_DrawSpanBackbuffer;
+
+        if (spanfunc == R_DrawSpanLowBackbufferMMX)
+            spanfunc = R_DrawSpanLowBackbuffer;
+
+        if (spanfunc == R_DrawSpanPotatoBackbufferMMX)
+            spanfunc = R_DrawSpanPotatoBackbufferPentium;
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
@@ -3817,6 +3879,12 @@ void R_ExecuteSetViewSize(void)
 
         if (spanfunc == R_DrawSpanVBE2MMX)
             spanfunc = R_DrawSpanVBE2;
+
+        if (spanfunc == R_DrawSpanLowVBE2MMX)
+            spanfunc = R_DrawSpanLowVBE2;
+
+        if (spanfunc == R_DrawSpanPotatoVBE2MMX)
+            spanfunc = R_DrawSpanPotatoVBE2Pentium;
 #endif
 
 #if defined(USE_COLUMNS4)
