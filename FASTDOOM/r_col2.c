@@ -417,27 +417,6 @@ static void R_DrawColumns2Alone(int x, col2slot_t *slot)
    of them, for the texture position of a column of a seg is not the position of
    its neighbour of the walls not parallel to the view, and of one step of them
    of the group of the test above. */
-void R_DrawColumns2Mid(void)
-{
-    const byte *source0 = col2slots[0].source;
-    const byte *source1 = col2slots[1].source;
-    const lighttable_t *map = COL2_MAP(col2slots[0].colormap);
-    fixed_t fracstep = COL2_STEP(col2slots[0].step);
-    fixed_t frac0 = COL2_SEEDAT(col2slots[0].mid, col2y, col2slots[0].step);
-    fixed_t frac1 = COL2_SEEDAT(col2slots[1].mid, col2y, col2slots[1].step);
-    byte *dest = COL2_ROW(col2y) + COL2_COL(col2x);
-    int count = col2rows;
-
-    do
-    {
-        *(unsigned int *)dest = COL2_PAIR(map[source0[COL2_TEXEL(frac0)]],
-                                          map[source1[COL2_TEXEL(frac1)]]);
-
-        frac0 += fracstep;
-        frac1 += fracstep;
-        dest += SCREENWIDTH;
-    } while (--count);
-}
 
 /* The middle rows of the group of two columns of light tables, of steps and of
    sources of their own, of the source, of the table and of the step of every
@@ -445,30 +424,9 @@ void R_DrawColumns2Mid(void)
    of 32 bits of them as well: the groups of the segs of more than one texture,
    of the two last columns of a seg with the two first of the next one of the
    same tier, and of the columns of the tiers of one seg of the tables of the
-   light of their own. */
-void R_DrawColumns2MidAll(void)
-{
-    const byte *source0 = col2slots[0].source;
-    const byte *source1 = col2slots[1].source;
-    const lighttable_t *map0 = COL2_MAP(col2slots[0].colormap);
-    const lighttable_t *map1 = COL2_MAP(col2slots[1].colormap);
-    fixed_t fracstep0 = COL2_STEP(col2slots[0].step);
-    fixed_t fracstep1 = COL2_STEP(col2slots[1].step);
-    fixed_t frac0 = COL2_SEEDAT(col2slots[0].mid, col2y, col2slots[0].step);
-    fixed_t frac1 = COL2_SEEDAT(col2slots[1].mid, col2y, col2slots[1].step);
-    byte *dest = COL2_ROW(col2y) + COL2_COL(col2x);
-    int count = col2rows;
-
-    do
-    {
-        *(unsigned int *)dest = COL2_PAIR(map0[source0[COL2_TEXEL(frac0)]],
-                                          map1[source1[COL2_TEXEL(frac1)]]);
-
-        frac0 += fracstep0;
-        frac1 += fracstep1;
-        dest += SCREENWIDTH;
-    } while (--count);
-}
+   light of their own: of the assembly of col2.asm as well, the three of its
+   loops walking the two positions of a row of their own, every one of them
+   writing the four bytes of the row with one store of 32 bits. */
 
 /* the group of two columns of the slots (slot) of the view of x, with 32 bit
    stores where the two are visible, the rows of them of the slots of the group
