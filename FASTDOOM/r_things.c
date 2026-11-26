@@ -1537,6 +1537,7 @@ void R_DrawSprite(vissprite_t *spr)
     int sx1, sx2;
     fixed_t sscale, sgz, sgzt, sgx, sgy;
     int svheight;
+    int masked;
     
     sx1 = spr->x1;
     sx2 = spr->x2;
@@ -1549,6 +1550,8 @@ void R_DrawSprite(vissprite_t *spr)
 
     if (sx1 > sx2)
         return;
+
+    masked = 0;
 
     for (x = sx1; x <= sx2; x++)
     {
@@ -1588,7 +1591,10 @@ void R_DrawSprite(vissprite_t *spr)
         {
             // masked mid texture?
             if (ds->maskedtexturecol)
+            {
                 renderMaskedSegRange(ds, r1, r2);
+                masked = 1;
+            }
             // seg is behind sprite
             continue;
         }
@@ -1631,6 +1637,17 @@ void R_DrawSprite(vissprite_t *spr)
 
     // all clipping has been performed, so draw the sprite
 
+    /* the renderers of the columns of the walls keep the columns asked for, of
+       the walls of the mid textures masked of the drawsegs of the view behind
+       the sprite of it being kept: the sprite of the view is to be drawn over
+       the walls of them, so the columns of them kept are handed over to the
+       view first, the walls of them of the view being before the sprite of it */
+    if (masked)
+    {
+        R_FLUSH_COLUMNS4();
+        R_FLUSH_COLUMNS2();
+    }
+
     mfloorclip = clipbot;
     mceilingclip = cliptop;
 
@@ -1655,6 +1672,15 @@ void R_DrawMasked(void)
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
         if (ds->maskedtexturecol)
             renderMaskedSegRange2(ds);
+
+    /* the renderers of the columns of the walls keep the columns of the walls of
+       the mid textures masked of the view asked for: the player sprite of the
+       view is to be drawn over the walls of them, so the columns of them kept
+       are handed over to the view first, the walls of them of the view being
+       before the player sprite of it, the walls of them of the frame of the view
+       being of the loop of the walls of the segs of the view */
+    R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     R_DrawPlayerSprites();
 }
