@@ -217,6 +217,17 @@ static int gcount;
    columns of the view of one group only. */
 static int glist[COL2_GROUP];
 static int nglist;
+
+/* The group of the column asked for of the loops of the clash of none ending:
+   the columns kept of the groups of the columns asked for before them handed
+   over to the view end first of their own, of the loop of the clash of the group
+   of the columns asked for being none of the groups ended, the group of it of
+   the list of the groups of columns kept of taken the columns of it of the slot
+   of the column asked for written.  Of the group of the column asked for of none
+   kept the group of the loop of the clash of the group of it of taken the group
+   of the columns of it kept of the list of the groups of none of the columns kept
+   given back, the group of the columns asked for of the columns of it written. */
+static int busy;
 static int flist[COL2_GROUP];
 static int nf;
 
@@ -596,6 +607,7 @@ static void R_DrawColumns2(int x, col2slot_t *slot)
    columns kept of it taken, the group of the last of them of the list of them to
    the place of it moved, and of the list of the groups of none of the columns
    kept given back to it, the group of its own of the last of them */
+
 static void R_FreeGroup2(int g)
 {
     int i;
@@ -614,6 +626,47 @@ static void R_FreeGroup2(int g)
     col2pending -= pending[g];
     pending[g] = 0;
 }
+
+/* The column asked for of the group (g) of the columns of it joining, the group
+   of them of the four bytes of a row of the columns of it written at once, of
+   the columns of the group (g) asked for first and of the column asked for of
+   the group of them kept.
+
+   The column asked for of the columns asked for last of, so of the walls of the
+   segs of the columns of the groups kept of the columns asked for after the
+   columns of the group (g) (of their gseq below the gseq of the column asked
+   for) being over the walls of the segs of the columns of them.  The group (g)
+   of the group of them of the columns asked for first of being, the group of
+   them before the group of them kept handed over to the view, so of the column
+   asked for of the x of it and of its rows of a group of them kept clashing,
+   the walls of the seg of it of the walls of the segs of the columns of the
+   group of them kept above being of the group of them drawn first, the walls of
+   the seg of the column asked for of the walls of the segs of the columns of the
+   group of them kept under being: none of the order of the walls of the segs of
+   them breaking being, the column asked for of the group of it joining none.
+
+   The column asked for of the groups kept of the columns asked for after the
+   columns of the group (g) of none clashing, the group of it joining of the
+   walls of the seg of it of the walls of the segs of the columns of the groups
+   kept of none below being.  The group of the columns of the view of one group
+   kept of the columns asked for after them none, the case of the segs of one
+   tier and of the walls of one post, the loop of them of none testing. */
+static int R_NewerClash2(int g)
+{
+    int i;
+
+    if (nglist > 1)
+        for (i = 0; i < nglist; i++)
+        {
+            int o = glist[i];
+
+            if (o != g && gseq[o] > gseq[g] && COL2_CLASH(o))
+                return 1;
+        }
+
+    return 0;
+}
+
 
 /* the columns kept of the group (g) drawn one at a time with stores of 16
    bits, of the group of less than two of them, of the left of them to the
@@ -643,33 +696,12 @@ static void R_DrawGroup2(int g)
 {
     col2slot_t *slot = groupslot[g];
     int x = slotx[g];
-    int i;
 
     /* the groups kept of the columns asked for before the columns of the group
-       drawn, of the columns of them of the x of the columns of the group and of
-       the rows of them touching, of the list of the groups of columns kept of
-       them testing: the walls of the segs of the columns of the groups kept are
-       under the walls of the seg of the columns of the group drawn, the segs of
-       the view being asked for of the farther one to the nearer one, and the
-       walls of the tier of the top of a seg being under the walls of the tier of
-       its bottom of it, the posts of a column of a wall masked of the rows of
-       them of none to the other being under the posts of the columns of the view
-       of the rows above them, so the groups of them are handed over to the view
-       first.  Of the group drawn of the list of the groups of columns kept taken
-       the list of them of the place of the group of it the group of the last of
-       them moved, the loop of them of the group of the last of them of them of
-       none testing */
-    if (nglist > 1)
-        for (i = 0; i < nglist; )
-        {
-            int o = glist[i];
-
-            if (o != g && gseq[o] < gseq[g] && COL2_CLASH2(g, o))
-                R_EndGroup2(o);
-            else
-                i++;
-        }
-
+       drawn, of a column of the one x of the view of them and of the rows of
+       them touching, are handed over to the view by R_EndGroup2() of the file
+       below, the walls of the segs of the columns of the groups kept being under
+       the walls of the seg of the columns of the group drawn */
     if (((x + alignx) & 1) != 0)
     {
         /* the group has to start at an aligned column, so the leftmost column
@@ -714,6 +746,58 @@ static void R_DrawGroup2(int g)
    them. */
 static void R_EndGroup2(int g)
 {
+    int i;
+
+    /* The groups kept of the columns asked for before the columns of the group
+       ended, of a column of the one x of the view of the two of them and of the
+       rows of them touching, are handed over to the view first, the walls of the
+       segs of the columns of them being under the walls of the seg of the
+       columns of the group ended: the segs of the view being asked for of the
+       farther one to the nearer one, the walls of the tier of the top of a seg
+       being under the walls of the tier of its bottom of it, and the posts of a
+       column of a wall masked of the rows of them of none to the other being
+       under the posts of the columns of the view of the rows above them.
+
+       The columns kept of a group are drawn of the rows of the view of the group
+       of them, the rows of its band and the rows of the edges of them of them,
+       so of the group ended of the columns asked for first the groups kept of
+       the columns of it of the x of them and of their rows touching end first of
+       their own, of the walls of the segs of the columns of them being under the
+       walls of the seg of the columns of the group ended.  The test of the clash
+       is of the group ended and of the group kept of their own, the walls of the
+       segs of the columns of the groups kept of the two of them of the same
+       order of the columns asked for being of the order of the group of them of
+       the x of them and of their rows of the test.
+
+       Of the group ended of the list of the groups of columns kept taken the
+       list of them of the place of the group of it the group of the last of them
+       moved, the loop of them of the group of the last of them of them of none
+       testing, the group of the columns asked for of the loop of the group of it
+       of none ending of the number of it of gseq[] of the group ended below
+       being. */
+    if (nglist > 1)
+    {
+        /* the groups kept of the x of the group of them and of their rows
+           touching, the last of them of the list of the groups of it taken, the
+           last one of the list of them to the place of the one ended moved being,
+           of the first of the list of them testing again */
+        i = 0;
+
+        while (i < nglist)
+        {
+            int o = glist[i];
+
+            if (o != g && o != busy && gseq[o] < gseq[g]
+                && COL2_CLASH2(g, o))
+            {
+                R_EndGroup2(o);
+                i = 0;
+            }
+            else
+                i++;
+        }
+    }
+
     if (pending[g] == COL2_GSLOT)
         R_DrawGroup2(g);
     else
@@ -774,14 +858,33 @@ void R_DrawColumn2(void)
     /* the group of the column asked for, of the groups of columns kept the one
        of the columns of it kept of the column of the view next to them of their
        left and of the rows of them leaving the band of the group of rows none,
-       of the list of the groups of columns kept of them testing */
+       of the list of the groups of columns kept of them testing.
+
+       Of the groups of them more than one of the column asked for matching, the
+       group of the columns asked for first of taken: the seg of the columns of
+       it the farther one of the view of the seg of the columns of the other ones
+       being, the walls of the seg of the column asked for over the walls of the
+       segs of the columns of it of the group of it drawn first, so of the order
+       of the walls of the segs of none breaking being.  The columns of the tier
+       of the top of a seg of the group of them of the tier of them kept of the
+       column asked for of the tier of its bottom joining being of the band of
+       the group of the rows of the two of the tiers of the narrow, the walls of
+       the seg of the columns of the band of them of the group of them written
+       at once, the walls of the seg of the columns of the rows of the edges of
+       them of one column of the view at a time written, so of the group of the
+       tier of the top of them the columns of the tier of its bottom of them not
+       joining */
     g = -1;
     for (i = 0; i < nglist; i++)
-        if (COL2_MATCH(glist[i]))
-        {
-            g = glist[i];
-            break;
-        }
+    {
+        int o = glist[i];
+
+        if (COL2_MATCH(o) && !R_NewerClash2(o)
+            && (g < 0 || gseq[o] < gseq[g]))
+            g = o;
+    }
+
+    busy = g;
 
     if (g >= 0)
     {
@@ -800,15 +903,26 @@ void R_DrawColumn2(void)
            kept, none of them of the x of the column asked for being, the loop of
            them of the groups of the x of them of none testing */
         if (nglist > 1)
-            for (i = 0; i < nglist; )
+        {
+            /* the groups kept of the x of the column asked for, the last of
+               them of the list of the groups of it taken, the last one of the
+               list of them to the place of the one ended moved being, of the
+               first of the list of them testing again */
+            i = 0;
+
+            while (i < nglist)
             {
                 int o = glist[i];
 
                 if (o != g && COL2_CLASH(o))
+                {
                     R_EndGroup2(o);
+                    i = 0;
+                }
                 else
                     i++;
             }
+        }
     }
     else
     {
@@ -855,6 +969,7 @@ void R_DrawColumn2(void)
                groups of none of the columns kept the last of them being it */
             R_EndGroup2(old);
             g = flist[--nf];
+            busy = g;
         }
     }
 
@@ -863,9 +978,15 @@ void R_DrawColumn2(void)
     if (pending[g] == COL2_GSLOT)
     {
         /* the group of the column asked for full, its four bytes of a row
-           written at once and its columns kept of none left */
-        R_DrawGroup2(g);
+           written at once and its columns kept of none left: of the groups kept
+           of the columns asked for before the columns of it, the group ended of
+           the x of them and of their rows touching, the walls of the segs of the
+           columns of them of the walls of the seg of the columns of the group
+           drawn below being */
+        R_EndGroup2(g);
     }
+
+    busy = -1;
 }
 
 /* Called when the renderers of the frame are set up: the columns kept of the
@@ -894,6 +1015,7 @@ void (*R_SetupColumn2(void (*fallback)(void)))(void)
 
     nglist = 0;
     nf = COL2_GROUP;
+    busy = -1;
     gcount = 0;
     col2pending = 0;
 
