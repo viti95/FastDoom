@@ -180,14 +180,13 @@ static int gseq[COL4_GROUP];
 static int gcount;
 
 /* The groups of columns kept, of the list of them glist[] the number of them
-   being nglist, and the groups of none of the columns kept, of the list of them
-   flist[] the number of them being nf, a group of the last of them of the list
-   of them taken when a group is opened and of the list of them given back to it
-   when its columns are drawn: of the loops of the x of a column of them and of
-   the band of their rows the groups of columns kept of none testing, so the
-   loops of them are of the number of the groups of columns kept at the same
-   time, which is of the segs of one tier and of the walls of one post of the
-   columns of the view of one group only. */
+   being nglist, the columns kept of none none of them, the group of the list of
+   them of taken of its columns kept the group of none of them of the list of them
+   left: of the loops of the x of a column of them and of the band of their rows
+   the groups of columns kept of none testing, so the loops of them are of the
+   number of the groups of columns kept at the same time, which is of the segs of
+   one tier and of the walls of one post of the columns of the view of one group
+   only. */
 static int glist[COL4_GROUP];
 static int nglist;
 
@@ -199,10 +198,17 @@ static int nglist;
    of the column asked for written.  Of the group of the column asked for of none
    kept the group of the loop of the clash of the group of it of taken the group
    of the columns of it kept of the list of the groups of none of the columns kept
-   given back, the group of the columns asked for of the columns of it written. */
+   given back, the group of the columns asked for of the columns of it written.
+
+   The groups of none of the columns kept of the bit of every one of them of
+   gmask of none set told, the bit of a group of its columns kept opened set and
+   of its columns drawn cleared: of the group of the column asked for of none of
+   the groups kept taking, the group of the bit of it of none set of the groups
+   of the lowest one of them taken, the groups of the bits of them of none set
+   none, the segs of the view asking for the columns of more tiers of them and of
+   more posts of them than the groups of the renderer, being. */
 static int busy;
-static int flist[COL4_GROUP];
-static int nf;
+static unsigned int gmask;
 
 /* The band of the rows of a group, the rows of the view every one of the
    columns of it shows, of its first row the highest of the tops of them to
@@ -237,6 +243,11 @@ void (*col4midallfunc)(void) = R_DrawColumns4MidAll;
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */
 static int alignx;
 
+/* the bit of the group (g) of gmask, the group of the columns kept opened and
+   of its columns drawn free, of the loops of the groups of the bit of it of none
+   set taking */
+#define COL4_BIT(g) (1u << (g))
+
 /* The byte renderers of the modes name a pixel of a light table by writing
    the byte of the source over the low byte of the address of the table,
    "mov al,[eax]", which names a pixel only of a table beginning at an
@@ -269,37 +280,34 @@ static int alignx;
         col->top = dc_yl;                                              \
         col->bottom = dc_yh;                                           \
                                                                        \
-        /* the group opened of none of the columns kept takes the number of  \
-        the requests of its columns, the group of the tier of the top of a \
-        seg being the group of the columns asked for first of them, and joins \
-        the list of the groups of columns kept */                         \
-        if (!pending[g])                                                 \
-        {                                                                \
-            gseq[g] = ++gcount;                                          \
-            glist[nglist++] = g;                                         \
-        }                                                                \
-                                                                       \
-        if (pending[g])                                                \
-        {                                                              \
-            if (dc_yl > bandtop[g])                                    \
-                bandtop[g] = dc_yl;                                    \
-            if (dc_yh < bandbot[g])                                    \
-                bandbot[g] = dc_yh;                                    \
-            if (dc_yl < rowtop[g])                                     \
-                rowtop[g] = dc_yl;                                     \
-            if (dc_yh > rowbot[g])                                     \
-                rowbot[g] = dc_yh;                                     \
-                                                                       \
-            pending[g]++;                                              \
-        }                                                              \
-        else                                                           \
-        {                                                              \
-            bandtop[g] = rowtop[g] = dc_yl;                            \
-            bandbot[g] = rowbot[g] = dc_yh;                            \
-            slotx[g] = (x);                                            \
-                                                                       \
-            pending[g] = 1;                                            \
-        }                                                              \
+        if (!(gmask & COL4_BIT(g)))                                          \
+        {                                                                    \
+            /* the group opened of none of the columns kept takes the number \
+            of the requests of its columns, the group of the tier of the top \
+            of a seg being the group of the columns asked for first of them, \
+            and joins the list of the groups of columns kept */              \
+            gmask |= COL4_BIT(g);                                            \
+            gseq[g] = ++gcount;                                              \
+            glist[nglist++] = g;                                             \
+                                                                             \
+            bandtop[g] = rowtop[g] = dc_yl;                                  \
+            bandbot[g] = rowbot[g] = dc_yh;                                  \
+            slotx[g] = (x);                                                  \
+            pending[g] = 1;                                                  \
+        }                                                                    \
+        else                                                                 \
+        {                                                                    \
+            if (dc_yl > bandtop[g])                                          \
+                bandtop[g] = dc_yl;                                          \
+            if (dc_yh < bandbot[g])                                          \
+                bandbot[g] = dc_yh;                                          \
+            if (dc_yl < rowtop[g])                                           \
+                rowtop[g] = dc_yl;                                           \
+            if (dc_yh > rowbot[g])                                           \
+                rowbot[g] = dc_yh;                                           \
+                                                                             \
+            pending[g]++;                                                    \
+        }                                                                    \
                                                                        \
         /* the column of the view kept of the number of them of the file of    \
         the renderer one more, of the loop of the groups of their own of    \
@@ -316,9 +324,12 @@ static int alignx;
    and the loop of the four of them of their own walks the rest, of the
    registers of the machine, of the registers of MMX and of the instructions
    of SSE2, all of them writing the four bytes of a row with one store of 32
-   bits, as COL4_MID tells. */
+   bits, as COL4_MID tells.
+
+   Of the groups of the list of the groups of columns kept testing, so of the
+   columns kept of none of them none. */
 #define COL4_MATCH(g)                                                      \
-    (pending[g] && dc_x == slotx[g] + pending[g]                           \
+    (dc_x == slotx[g] + pending[g]                                         \
      && dc_yl <= bandbot[g] && dc_yh >= bandtop[g])
 
 /* The columns of the two groups kept are drawn one of them after the other,
@@ -328,9 +339,12 @@ static int alignx;
    tiers of one seg the rows of the one are over the rows of the other, the seg
    loops asking for the columns of the tier of the top of a column before the
    columns of the tier of its bottom, so the groups of the two of them touch
-   none of the rows of a column of the view. */
+   none of the rows of a column of the view.
+
+   Of the groups of the list of the groups of columns kept testing, so of the
+   columns kept of none of them none. */
 #define COL4_CLASH(g)                                                      \
-    (pending[g] && dc_x >= slotx[g] && dc_x < slotx[g] + pending[g]        \
+    (dc_x >= slotx[g] && dc_x < slotx[g] + pending[g]                      \
      && dc_yl <= rowbot[g] && dc_yh >= rowtop[g])
 
 /* The group (g) drawn and the group (o) kept have a column of the one x of the
@@ -359,19 +373,19 @@ static void R_DrawColumn4All(col4slot_t *col, int x)
     byte *dest;
     int count;
 
-    if (top <= bottom)
-    {
-        frac = COL4_SEEDAT(col->mid, top, col->step);
-        dest = COL4_ROW(top) + COL4_COL(x);
-        count = bottom - top + 1;
+    /* of the column of the rows of it none the column function of none to the
+       view, so of the slots of the columns of the rows of them none the loop of
+       the columns of them of none writing */
+    frac = COL4_SEEDAT(col->mid, top, col->step);
+    dest = COL4_ROW(top) + COL4_COL(x);
+    count = bottom - top + 1;
 
-        do
-        {
-            *dest = map[source[COL4_TEXEL(frac)]];
-            frac += fracstep;
-            dest += SCREENWIDTH;
-        } while (--count);
-    }
+    do
+    {
+        *dest = map[source[COL4_TEXEL(frac)]];
+        frac += fracstep;
+        dest += SCREENWIDTH;
+    } while (--count);
 }
 
 /* The rows [top, ylo) and (yhi, bottom] of a column of a group which is not
@@ -417,17 +431,6 @@ static void R_DrawColumn4All(col4slot_t *col, int x)
         }                                                                    \
     }
 
-/* the four columns of the slots (slot) drawn one at a time, of no row showing
-   all of them */
-static void R_DrawColumns4Alone(int x, col4slot_t *slot)
-{
-    int i;
-
-    for (i = 0; i < 4; i++)
-        if (slot[i].top <= slot[i].bottom)
-            R_DrawColumn4All(&slot[i], x + i);
-}
-
 /* The group of one light table and of one step, which is what a seg of one
    texture gives: the loop of the middle rows of col4.asm walks the four of
    them with the light table of the leftmost of the group and with its step,
@@ -449,108 +452,51 @@ static void R_DrawColumns4Alone(int x, col4slot_t *slot)
      && col4slots[0].step == col4slots[3].step)
 
 /* the middle rows of the four columns of the view of x, of the rows of ylo to
-   yhi, handed over to the renderer of the columns kept of col4.asm */
-#define COL4_MID_DRAW(x, ylo, yhi)    \
+   yhi, handed over to the renderer of the columns kept of the (func) of them: the
+   loop of the four columns of one light table and of one step of the shape of the
+   group, and the loop of the four of them of their own, of the loop of the
+   registers of the machine, of the registers of MMX and of the instructions of
+   SSE2, of a group which is not of that shape, r_main.c writing the pointers of
+   the loops of them of the switch of the CPU of it */
+#define COL4_DRAW(x, ylo, yhi, func)  \
     do {                              \
         col4x = (x);                  \
         col4y = (ylo);                \
         col4rows = (yhi) - (ylo) + 1; \
-        col4midfunc();                \
+        (func)();                     \
     } while (0)
 
-/* the middle rows of the four columns of the view of x, of the rows of ylo to
-   yhi, of a group which is not of the shape of the loop above: of more than
-   one light table or of more than one step, so every one of its columns is
-   walked on its own, of the loop of the registers of the machine, of the
-   registers of MMX or of the instructions of SSE2, r_main.c writing the
-   pointer of the loop of them as it writes the pointer of the loop above */
-#define COL4_ALL_DRAW(x, ylo, yhi)    \
-    do {                              \
-        col4x = (x);                  \
-        col4y = (ylo);                \
-        col4rows = (yhi) - (ylo) + 1; \
-        col4midallfunc();             \
-    } while (0)
-
-/* the group of four columns of the slots (slot) of the view of x, with 32 bit
-   stores where the four are visible, the rows of them of the slots of the
-   group and the four of the fields of the renderer of the slots of the
-   renderer, the renderer of col4.asm of the fields of these reading */
-static void R_DrawColumns4(int x, col4slot_t *slot)
+/* the group of four columns of the slots (slot) of the view of x, of the rows
+   of the band of them of ylo to yhi, with one store of 32 bits of a row where
+   the four of them are seen: of the columns kept of a group the rows of the
+   band of them none of them of no rows being, of the tests of the group of it
+   telling, so of the band of the group the rows of it the four of the columns of
+   it seeing, and of the slots of the group the columns of the rows of them the
+   band of the group of them not filling, of the rows of the edges of them one
+   column of the view at a time written */
+static void R_DrawColumns4(int x, col4slot_t *slot, int ylo, int yhi)
 {
-    int ylo, yhi;
-    int equal;
+    int equal = 1;
     int i;
 
-    ylo = slot[0].top;
-    yhi = slot[0].bottom;
-    equal = 1;
-
-    if (ylo > yhi)
-    {
-        /* an empty column, so there is no row with the four of them */
-        R_DrawColumns4Alone(x, slot);
-        return;
-    }
-
-    /* the rows of the four columns, from the highest of the tops of them to
-       the lowest of their bottoms; 'equal' tells the group of one height,
-       which has no rows of the edges at all */
-    for (i = 1; i < 4; i++)
-    {
-        int top = slot[i].top;
-        int bottom = slot[i].bottom;
-
-        if (top > bottom)
-        {
-            /* an empty column, so there is no row with the four of them */
-            R_DrawColumns4Alone(x, slot);
-            return;
-        }
-
-        if (top != ylo)
-        {
+    /* the group of one height, a wall between two floors: every one of its rows
+       shows the four columns, so of the rows of the edges of it none */
+    for (i = 0; i < COL4_GSLOT; i++)
+        if (slot[i].top != ylo || slot[i].bottom != yhi)
             equal = 0;
-            if (top > ylo)
-                ylo = top;
-        }
-        if (bottom != yhi)
-        {
-            equal = 0;
-            if (bottom < yhi)
-                yhi = bottom;
-        }
-    }
 
-    if (ylo > yhi)
+    if (!equal)
     {
-        /* the walls of the group do not overlap, so no row shows the four
-           of them and every column is drawn on its own */
-        R_DrawColumns4Alone(x, slot);
-        return;
+        /* the rows of the edges, one setup for the column of every one of them */
+        for (i = 0; i < COL4_GSLOT; i++)
+            COL4_EDGES(&slot[i], x + i, ylo, yhi);
     }
 
-    /* the group of one height, a wall between two floors: every row of it
-       shows the four columns, so there is no edge to draw */
-    if (equal)
-    {
-        /* the columns of a seg are of one light table and one step */
-        if (COL4_MID())
-            COL4_MID_DRAW(x, ylo, yhi);
-        else
-            COL4_ALL_DRAW(x, ylo, yhi);
-        return;
-    }
-
-    /* the rows of the two edges, one setup for the column of both of them */
-    for (i = 0; i < 4; i++)
-        COL4_EDGES(&slot[i], x + i, ylo, yhi);
-
-    /* the rows with the four columns, one 32 bit store per row */
+    /* the rows with the four columns, one store of 32 bits of a row */
     if (COL4_MID())
-        COL4_MID_DRAW(x, ylo, yhi);
+        COL4_DRAW(x, ylo, yhi, col4midfunc);
     else
-        COL4_ALL_DRAW(x, ylo, yhi);
+        COL4_DRAW(x, ylo, yhi, col4midallfunc);
 }
 
 /* A group of none of the columns kept, of the list of the groups of them the
@@ -572,51 +518,10 @@ static void R_FreeGroup4(int g)
         }
     }
 
-    flist[nf++] = g;
+    gmask &= ~COL4_BIT(g);
     col4pending -= pending[g];
     pending[g] = 0;
 }
-
-/* The column asked for of the group (g) of the columns of it joining, the group
-   of them of the four bytes of a row of the columns of it written at once, of
-   the columns of the group (g) asked for first and of the column asked for of
-   the group of them kept.
-
-   The column asked for of the columns asked for last of, so of the walls of the
-   segs of the columns of the groups kept of the columns asked for after the
-   columns of the group (g) (of their gseq below the gseq of the column asked
-   for) being over the walls of the segs of the columns of them.  The group (g)
-   of the group of them of the columns asked for first of being, the group of
-   them before the group of them kept handed over to the view, so of the column
-   asked for of the x of it and of its rows of a group of them kept clashing,
-   the walls of the seg of it of the walls of the segs of the columns of the
-   group of them kept above being of the group of them drawn first, the walls of
-   the seg of the column asked for of the walls of the segs of the columns of the
-   group of them kept under being: none of the order of the walls of the segs of
-   them breaking being, the column asked for of the group of it joining none.
-
-   The column asked for of the groups kept of the columns asked for after the
-   columns of the group (g) of none clashing, the group of it joining of the
-   walls of the seg of it of the walls of the segs of the columns of the groups
-   kept of none below being.  The group of the columns of the view of one group
-   kept of the columns asked for after them none, the case of the segs of one
-   tier and of the walls of one post, the loop of them of none testing. */
-static int R_NewerClash4(int g)
-{
-    int i;
-
-    if (nglist > 1)
-        for (i = 0; i < nglist; i++)
-        {
-            int o = glist[i];
-
-            if (o != g && gseq[o] > gseq[g] && COL4_CLASH(o))
-                return 1;
-        }
-
-    return 0;
-}
-
 
 /* the columns kept of the group (g) drawn one at a time with byte stores, of
    the group of less than four of them, of the left of them to the right */
@@ -698,7 +603,7 @@ static void R_DrawGroup4(int g)
 
     /* the four of the fields of the slots of the group to the slots of the
        renderer of col4.asm, the renderer reading none of the rows of them */
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < COL4_GSLOT; i++)
     {
         col4slots[i].source = slot[i].source;
         col4slots[i].colormap = slot[i].colormap;
@@ -706,7 +611,7 @@ static void R_DrawGroup4(int g)
         col4slots[i].mid = slot[i].mid;
     }
 
-    R_DrawColumns4(x, slot);
+    R_DrawColumns4(x, slot, bandtop[g], bandbot[g]);
     R_FreeGroup4(g);
 }
 
@@ -846,15 +751,55 @@ void R_DrawColumn4(void)
        at once, the walls of the seg of the columns of the rows of the edges of
        them of one column of the view at a time written, so of the group of the
        tier of the top of them the columns of the tier of its bottom of them not
-       joining */
-    g = -1;
-    for (i = 0; i < nglist; i++)
-    {
-        int o = glist[i];
+       joining.
 
-        if (COL4_MATCH(o) && !R_NewerClash4(o)
-            && (g < 0 || gseq[o] < gseq[g]))
-            g = o;
+       The column asked for of the group of none of the columns kept joining of
+       none being, of the groups kept the one of the columns asked for after the
+       column asked for of the x of the column asked for and of its rows touching
+       the number of gseq[] of the highest one of them of last told: the columns
+       of the group of last of the column asked for kept over it being, so the
+       column asked for of the group of the columns of it of none joining, which
+       is of the segs of the walls of the columns of the same x of the view and of
+       the same rows of it more than one of them asking for being.
+
+       Of the groups of them the column asked for of more than one matching, the
+       group of them of the columns asked for first of taken, the seg of the
+       columns of it the farther one of the view of the segs of the columns of the
+       other ones of being.
+
+       Of the group of the columns kept of the one of them the loops of the clash
+       and of the match of of none being, the shape of the walls of the segs of
+       the plain of the view and of the walls of them of the tiers of them of the
+       band of the group of a column of the view of filling. */
+    g = -1;
+
+    if (nglist == 1)
+    {
+        g = glist[0];
+
+        if (!COL4_MATCH(g))
+            g = -1;
+    }
+    else if (nglist > 1)
+    {
+        int last = 0;
+
+        for (i = 0; i < nglist; i++)
+        {
+            int o = glist[i];
+
+            if (gseq[o] > last && COL4_CLASH(o))
+                last = gseq[o];
+        }
+
+        for (i = 0; i < nglist; i++)
+        {
+            int o = glist[i];
+
+            if (gseq[o] > last && COL4_MATCH(o)
+                && (g < 0 || gseq[o] < gseq[g]))
+                g = o;
+        }
     }
 
     busy = g;
@@ -911,9 +856,12 @@ void R_DrawColumn4(void)
            the wall of the tier of its bottom of it, and the group of a post of a
            column of the view of the columns asked for before the group of the
            post of its right, of the rows of them of none to the other */
-        g = nf ? flist[--nf] : -1;
+        g = 0;
 
-        if (g < 0)
+        while (g < COL4_GROUP && (gmask & COL4_BIT(g)))
+            g++;
+
+        if (g >= COL4_GROUP)
         {
             /* none of the groups of none of the columns kept, the segs of the
                view asking for the columns of more tiers of them and of more posts
@@ -942,10 +890,10 @@ void R_DrawColumn4(void)
             }
 
             /* the columns of the group handed over to the view and the group of
-               the list of the groups of columns kept taken, of the list of the
-               groups of none of the columns kept the last of them being it */
+               the list of the groups of columns kept taken, the loop of the
+               groups of their own of none of them being */
             R_EndGroup4(old);
-            g = flist[--nf];
+            g = old;
             busy = g;
         }
     }
@@ -978,13 +926,10 @@ void (*R_SetupColumn4(void (*fallback)(void)))(void)
     int i;
 
     for (i = 0; i < COL4_GROUP; i++)
-    {
         pending[i] = 0;
-        flist[i] = i;
-    }
 
     nglist = 0;
-    nf = COL4_GROUP;
+    gmask = 0;
     busy = -1;
     gcount = 0;
     col4pending = 0;
