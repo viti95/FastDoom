@@ -13,8 +13,9 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Wall renderer of r_col2.c, which maps two columns at a time of the
-//	detail of the low.
+//	Wall renderer of r_col.c, which maps two columns at a time of the
+//	detail of the low, the four columns of the detail of high of the same
+//	file, r_col4.h being of it.
 //
 
 */
@@ -35,6 +36,15 @@
  * R_SetupColumn2() tells, the mode of the same detail drawing one column with
  * two stores of 16 bits of them.
  *
+ * The renderer is of the file of r_col.c, which is of the two of the renderers
+ * at once, of the four columns of the detail of high above it, for the
+ * bookkeeping of the columns kept of the two of them is the same, of the state
+ * of it being one: R_SetupColumn2() and R_SetupColumn4() of the file give the
+ * shape of the renderer of the frame, and the columns kept of the frame before
+ * are dropped by the setup of it.  The header of the four columns is of the
+ * file as well, the macros of the two of the headers of them being of the seg
+ * loops of their own.
+ *
  * The renderer is of the detail of the low, the detail of one pixel of each
  * row of the four columns of r_col4.c being of it of its own, and of the same
  * modes of the four of them: the buffered modes and MODE_VBE2_DIRECT, of the
@@ -45,9 +55,10 @@
  *
  * The columns kept point into the WAD cache, which the seg loops purge when
  * they take a lump, so every such loop hands the columns kept to the view
- * first with R_FLUSH_COLUMNS2(), which tests col2pending, the number of
- * columns kept, of its own and calls nothing when none is kept.  Of the modes
- * without the renderer the macro is of nothing, of the shape of a call still.
+ * first with R_FLUSH_COLUMNS2(), which tests colp, the number of the columns
+ * kept of the renderer of the frame being, of its own and calls nothing when
+ * none is kept.  Of the modes without the renderer the macro is of nothing, of
+ * the shape of a call still.
  *
  * The texture position of a row is kept in the format of the assembly column
  * renderers of the modes of the detail of the low, and the renderer is
@@ -69,7 +80,8 @@
 /* The modes of the renderer, of the reason of the paragraph above: of the
    macro below are the files which keep the renderer out of their build, and of
    it the switch of r_main.c which chooses the column function of the detail of
-   the low. */
+   the low.  The two of the headers of the renderers of the file guard of the
+   same shape, for the two of the renderers of them are of the one file. */
 #if (defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)) \
     && !defined(MODE_CGA16) && !defined(MODE_CVB) && !defined(MODE_CGA512)
 #define USE_COLUMNS2
@@ -104,15 +116,18 @@ extern void (*col2midallfunc)(void);
    chooses it of its own switch of the CPU, as it chooses the loop of the
    columns of one light table and of one step above. */
 
-/* the number of the columns of the seg loops kept of the view */
-extern int col2pending;
+/* the number of the columns of the seg loops kept of the view, of the two of
+   the renderers of the file being one, the renderer of the frame one of them
+   being and the columns kept of the other of none, the macro of the flush of
+   the renderer of the frame of none of them being */
+extern int colp;
 
 /* the column function of the frame: R_DrawColumn2 of the views of the detail
    of the low drawn two columns at a time, the fallback of the others */
 void (*R_SetupColumn2(void (*fallback)(void)))(void);
 
 #define R_CHOOSE_COLUMNS2(fallback) R_SetupColumn2(fallback)
-#define R_FLUSH_COLUMNS2() do { if (col2pending) R_FlushColumn2(); } while (0)
+#define R_FLUSH_COLUMNS2() do { if (colp) R_FlushColumn2(); } while (0)
 
 #else
 
