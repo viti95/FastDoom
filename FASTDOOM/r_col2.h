@@ -46,7 +46,7 @@
  * loops of their own.
  *
  * The renderer is of the detail of the low, the detail of one pixel of each
- * row of the four columns of r_col4.c being of it of its own, and of the same
+ * row of the four columns of r_col4.h being of it of its own, and of the same
  * modes of the four of them: the buffered modes and MODE_VBE2_DIRECT, of the
  * CPUs which have no column renderer tuned for them.  The scaled views, the
  * planar modes, the text modes and the modes of CGA of sixteen colours, of CVB
@@ -86,13 +86,14 @@
     && !defined(MODE_CGA16) && !defined(MODE_CVB) && !defined(MODE_CGA512)
 #define USE_COLUMNS2
 
-void R_DrawColumn2(void);
-void R_FlushColumn2(void);
+/* The columns kept of the renderer of the frame handed over to the view, of the
+   two of the renderers of the one function of them being. */
+void R_FlushColumn(void);
 
 /* The middle rows of a group of two columns of one light table and of one
    step: the group of the columns kept in col2slots, of the x of them in
    col2x, of the first of their rows in col2y and of their number in col2rows,
-   which r_col2.c writes before the call.  The renderer of them is kept in
+   which r_col.c writes before the call.  The renderer of them is kept in
    col2midfunc, of the loop of the file by default, and of the loop of a CPU of
    the file of asm of them, which r_main.c chooses of its own switch of the
    CPU, as it chooses the renderers of a mode. */
@@ -122,12 +123,12 @@ extern void (*col2midallfunc)(void);
    the renderer of the frame of none of them being */
 extern int colp;
 
-/* the column function of the frame: R_DrawColumn2 of the views of the detail
-   of the low drawn two columns at a time, the fallback of the others */
+/* the column function of the frame of the columns kept, of the views of the
+   detail of the low drawn two columns at a time, the fallback of the others */
 void (*R_SetupColumn2(void (*fallback)(void)))(void);
 
 #define R_CHOOSE_COLUMNS2(fallback) R_SetupColumn2(fallback)
-#define R_FLUSH_COLUMNS2() do { if (colp) R_FlushColumn2(); } while (0)
+#define R_FLUSH_COLUMNS2() do { if (colp) R_FlushColumn(); } while (0)
 
 #else
 

@@ -610,8 +610,11 @@ static void R_EndGroup(int g)
    last, of the number of them of gseq[] the lower one being the group of the
    columns asked for first: the segs of the view being asked for of the farther one
    to the nearer one, so the wall of the seg asked for the last, the nearer one of
-   the view, is drawn over the walls of the segs asked for before it. */
-static void R_FlushColumn(void)
+   the view, is drawn over the walls of the segs asked for before it.
+
+   The macros of the flush of the two of the headers of them, R_FLUSH_COLUMNS2() and
+   R_FLUSH_COLUMNS4(), call this of the renderer of the frame one of them being. */
+void R_FlushColumn(void)
 {
     int i, best;
 
@@ -793,8 +796,9 @@ static void R_DrawColumnKeep(void)
    columns of a group of them and the bytes of a pixel of the view of the detail of
    it, the slots of the renderer of asm of them and the variables of them of the x,
    of the first row and of the number of the rows of the group drawn, the pointers
-   of the loops of its middle rows, the writer of a run of rows of one column of it
-   and the column function of the seg loops of it. */
+   of the loops of its middle rows and the writer of a run of rows of one column of
+   it.  The column function of the seg loops of the two of them is R_DrawColumnKeep,
+   of the shape of the renderer of the frame it reading. */
 typedef struct
 {
     int detail;
@@ -807,7 +811,6 @@ typedef struct
     void (**midfunc)(void);
     void (**midallfunc)(void);
     colrun_t run;
-    void (*column)(void);
 } colcfg_t;
 
 /* The setup of the renderer of the frame: the columns kept of the frame before
@@ -865,30 +868,7 @@ static void (*R_SetupColumn(void (*fallback)(void), const colcfg_t *cfg))(void)
 
     alignx = (int)((base >> cfg->bits) & (unsigned long)alignmask);
 
-    return cfg->column;
-}
-
-/* The two of the renderers of the state of the file being one, of the shape of
-   the renderer of the frame the calls of them telling. */
-
-void R_DrawColumn2(void)
-{
-    R_DrawColumnKeep();
-}
-
-void R_DrawColumn4(void)
-{
-    R_DrawColumnKeep();
-}
-
-void R_FlushColumn2(void)
-{
-    R_FlushColumn();
-}
-
-void R_FlushColumn4(void)
-{
-    R_FlushColumn();
+    return R_DrawColumnKeep;
 }
 
 /* the renderer of the two columns of the detail of the low, the two of them
@@ -898,7 +878,7 @@ static const colcfg_t col2cfg =
     DETAIL_LOW, 2, 1,
     col2slots, &col2x, &col2y, &col2rows,
     &col2midfunc, &col2midallfunc,
-    R_DrawRunWord, R_DrawColumn2
+    R_DrawRunWord
 };
 
 /* the renderer of the four columns of the detail of high, the four of them being
@@ -908,7 +888,7 @@ static const colcfg_t col4cfg =
     DETAIL_HIGH, 4, 0,
     col4slots, &col4x, &col4y, &col4rows,
     &col4midfunc, &col4midallfunc,
-    R_DrawRunByte, R_DrawColumn4
+    R_DrawRunByte
 };
 
 /* Called when the renderers of the frame are set up: the renderer of the two

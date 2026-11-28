@@ -83,8 +83,9 @@
     && !defined(MODE_CGA16) && !defined(MODE_CVB) && !defined(MODE_CGA512)
 #define USE_COLUMNS4
 
-void R_DrawColumn4(void);
-void R_FlushColumn4(void);
+/* The columns kept of the renderer of the frame handed over to the view, of the
+   two of the renderers of the one function of them being. */
+void R_FlushColumn(void);
 
 /* The middle rows of a group of four columns of one light table and of one
    step: the group of the columns kept in col4slots, of the x of them in
@@ -121,12 +122,12 @@ extern void (*col4midallfunc)(void);
    renderer of the frame of none of them being */
 extern int colp;
 
-/* the column function of the frame: R_DrawColumn4 of the views drawn four
+/* the column function of the frame of the columns kept, of the views drawn four
    columns at a time, the fallback of the others */
 void (*R_SetupColumn4(void (*fallback)(void)))(void);
 
 #define R_CHOOSE_COLUMNS4(fallback) R_SetupColumn4(fallback)
-#define R_FLUSH_COLUMNS4() do { if (colp) R_FlushColumn4(); } while (0)
+#define R_FLUSH_COLUMNS4() do { if (colp) R_FlushColumn(); } while (0)
 
 #else
 
