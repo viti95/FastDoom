@@ -119,6 +119,7 @@ GLOBOBJS = &
  i_file.obj &
  i_gamma.obj &
  col4.obj &
+ col2.obj &
  linearh.obj &
  linearh2.obj &
  linearh3.obj &
@@ -205,7 +206,7 @@ GLOBOBJS = &
  p_tick.obj &
  p_user.obj &
  r_bsp.obj &
- r_col4.obj &
+ r_col.obj &
  r_data.obj &
  r_draw.obj &
  r_main.obj &

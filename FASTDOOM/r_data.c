@@ -222,6 +222,7 @@ void R_GenerateComposite(int texnum)
 
     /* the block takes the place of the lumps of the columns kept */
     R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     texture = textures[texnum];
 

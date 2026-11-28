@@ -2221,6 +2221,42 @@ static void R_SetupBackbufferFuncs(void)
 
         break;
     case DETAIL_LOW:
+#ifdef USE_COLUMNS2
+        /* the loop of the middle rows of the two columns, of the walls and of
+           the sky: of the CPUs of MMX the one of their registers, of the
+           Pentium 4 the one of the instructions of SSE2 of the two pixels of a
+           row at once, and the one of the registers of the machine for the CPUs
+           of no loop of their own, as the renderers of the mode are of the CPUs
+           which have a loop tuned for them.  Of the views of the other detail
+           levels the two columns are not taken, so the loop of them is of no
+           use.
+
+           The same of the loop of the columns of light tables, of steps and of
+           sources of their own, the two positions of a row and the two texels
+           of them being of the registers of MMX and of the registers of SSE2,
+           the loads of the bytes of the sources and of the pixels of the tables
+           of the two of them being of the registers of the machine, every one
+           of them writing the four bytes of a row with one store of 32 bits */
+        switch (selectedCPU)
+        {
+        case RISE_MP6:
+        case INTEL_PENTIUM_MMX:
+        case INTEL_PENTIUM_II:
+        case INTEL_PENTIUM_III:
+        case AMD_K6:
+            col2midfunc = R_DrawColumns2MidMMX;
+            col2midallfunc = R_DrawColumns2MidAllMMX;
+            break;
+        case INTEL_PENTIUM_4:
+            col2midfunc = R_DrawColumns2MidSSE2;
+            col2midallfunc = R_DrawColumns2MidAllSSE2;
+            break;
+        default:
+            col2midfunc = R_DrawColumns2Mid;
+            col2midallfunc = R_DrawColumns2MidAll;
+            break;
+        }
+#endif
         switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
@@ -2231,17 +2267,25 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
                 colfunc = R_DrawColumnLowBackbufferFastLEA;
                 break;
+            /* of the CPUs of no renderer of the detail of the low tuned for
+               them the two columns of a row at a time, the four bytes of them
+               of one store of 32 bits to the buffer of the screen, as of the
+               four columns of the detail of one pixel of each row above */
+            case AMD_K6:
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferFastLEA);
+                break;
             case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnLowBackbufferMMX;
+                break;
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
             case RISE_MP6:
-                colfunc = R_DrawColumnLowBackbufferMMX;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferMMX);
                 break;
             case INTEL_PENTIUM_4:
-                colfunc = R_DrawColumnLowBackbufferSSE2;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferSSE2);
                 break;
             default:
                 colfunc = R_DrawColumnLowBackbuffer;
@@ -2418,28 +2462,45 @@ static void R_SetupBackbufferFuncs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnLowBackbufferFastLEA;
 #endif
                 break;
+            /* the sky of the two columns of a row at a time, of the same CPUs
+               of the walls of them above, the byte of the table of the light
+               of the sky being of one to one of the full brightness of the
+               highest screenblocks and the columns of it of the lump of their
+               patch of the cache of the WAD of the flush of r_plane.c */
+            case AMD_K6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferFastLEA);
+#endif
+                break;
             case INTEL_PENTIUM_MMX:
-            case INTEL_PENTIUM_II:
-            case INTEL_PENTIUM_III:
-            case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferMMX;
 #else
                 skyfunc = R_DrawColumnLowBackbufferMMX;
 #endif
                 break;
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferMMX);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferMMX);
+#endif
+                break;
             case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferSSE2;
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferSSE2);
 #else
-                skyfunc = R_DrawColumnLowBackbufferSSE2;
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowBackbufferSSE2);
 #endif
                 break;
             default:
@@ -3018,6 +3079,40 @@ static void R_SetupVBE2Funcs(void)
 
         break;
     case DETAIL_LOW:
+#ifdef USE_COLUMNS2
+        /* the loop of the middle rows of the two columns of the mode of the
+           memory linear of VESA: of the CPUs of MMX the one of their registers,
+           of the Pentium 4 the one of the instructions of SSE2 of the two
+           pixels of a row at once, and the one of the registers of the machine
+           for the CPUs of no loop of their own, as the renderers of the mode
+           are of the CPUs which have a loop tuned for them.
+
+           The same of the loop of the columns of light tables, of steps and of
+           sources of their own, the two positions of a row and the two texels
+           of them being of the registers of MMX and of the registers of SSE2,
+           the loads of the bytes of the sources and of the pixels of the tables
+           of the two of them being of the registers of the machine, every one
+           of them writing the four bytes of a row with one store of 32 bits */
+        switch (selectedCPU)
+        {
+        case RISE_MP6:
+        case INTEL_PENTIUM_MMX:
+        case INTEL_PENTIUM_II:
+        case INTEL_PENTIUM_III:
+        case AMD_K6:
+            col2midfunc = R_DrawColumns2MidMMX;
+            col2midallfunc = R_DrawColumns2MidAllMMX;
+            break;
+        case INTEL_PENTIUM_4:
+            col2midfunc = R_DrawColumns2MidSSE2;
+            col2midallfunc = R_DrawColumns2MidAllSSE2;
+            break;
+        default:
+            col2midfunc = R_DrawColumns2Mid;
+            col2midallfunc = R_DrawColumns2MidAll;
+            break;
+        }
+#endif
         switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
@@ -3028,17 +3123,28 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
                 colfunc = R_DrawColumnLowVBE2FastLEA;
                 break;
+            /* of the CPUs of no renderer of the detail of the low tuned for
+               them the two columns of a row at a time, the four bytes of them
+               of one store of 32 bits to the memory linear of the mode, as of
+               the four columns of the detail of one pixel of each row above.
+               The three of the loops of them being of one store of 32 bits, as
+               the three of the loops of them of the mode of one pixel of each
+               row above */
+            case AMD_K6:
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2FastLEA);
+                break;
             case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnLowVBE2MMX;
+                break;
             case INTEL_PENTIUM_II:
             case INTEL_PENTIUM_III:
             case RISE_MP6:
-                colfunc = R_DrawColumnLowVBE2MMX;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2MMX);
                 break;
             case INTEL_PENTIUM_4:
-                colfunc = R_DrawColumnLowVBE2SSE2;
+                colfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2SSE2);
                 break;
             default:
                 colfunc = R_DrawColumnLowVBE2;
@@ -3210,28 +3316,47 @@ static void R_SetupVBE2Funcs(void)
             case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
-            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2FastLEA;
 #else
                 skyfunc = R_DrawColumnLowVBE2FastLEA;
 #endif
                 break;
+            /* the sky of the two columns of a row at a time, of the same CPUs
+               of the walls of them above, the byte of the table of the light
+               of the sky being of one to one of the full brightness of the
+               highest screenblocks, the memory linear of the mode being of the
+               store of 32 bits of them of an address aligned, SCREENWIDTH of
+               the pixels of a row of it being of the units of four bytes of
+               them */
+            case AMD_K6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2FastLEA);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2FastLEA);
+#endif
+                break;
             case INTEL_PENTIUM_MMX:
-            case INTEL_PENTIUM_II:
-            case INTEL_PENTIUM_III:
-            case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2MMX;
 #else
                 skyfunc = R_DrawColumnLowVBE2MMX;
 #endif
                 break;
+            case INTEL_PENTIUM_II:
+            case INTEL_PENTIUM_III:
+            case RISE_MP6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2MMX);
+#else
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2MMX);
+#endif
+                break;
             case INTEL_PENTIUM_4:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2SSE2;
+                skyfunc = R_CHOOSE_COLUMNS2((screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2SSE2);
 #else
-                skyfunc = R_DrawColumnLowVBE2SSE2;
+                skyfunc = R_CHOOSE_COLUMNS2(R_DrawColumnLowVBE2SSE2);
 #endif
                 break;
             default:
@@ -3787,6 +3912,18 @@ void R_ExecuteSetViewSize(void)
         if (col4midallfunc == R_DrawColumns4MidAllSSE2)
             col4midallfunc = R_DrawColumns4MidAllMMX;
 #endif
+
+#if defined(USE_COLUMNS2)
+        /* the renderer of the middle rows of the two columns of the
+           instructions of SSE2, of the CPU of the machine not having them the
+           loop of the registers of MMX of them, and the same of the loop of the
+           columns of light tables, of steps and of sources of their own */
+        if (col2midfunc == R_DrawColumns2MidSSE2)
+            col2midfunc = R_DrawColumns2MidMMX;
+
+        if (col2midallfunc == R_DrawColumns2MidAllSSE2)
+            col2midallfunc = R_DrawColumns2MidAllMMX;
+#endif
     }
 
     if (!hasMMX) {
@@ -3898,6 +4035,19 @@ void R_ExecuteSetViewSize(void)
 
         if (col4midallfunc == R_DrawColumns4MidAllMMX)
             col4midallfunc = R_DrawColumns4MidAll;
+#endif
+
+#if defined(USE_COLUMNS2)
+        // Two columns of a row at a time, of the walls and of the sky: the
+        // loop of the middle rows of the two of them of the registers of MMX is
+        // of the CPUs which have MMX, the selectedCPU of the menu being of the
+        // model of the CPU named by the user, which is not the set of the
+        // instructions of the CPU of the machine
+        if (col2midfunc == R_DrawColumns2MidMMX)
+            col2midfunc = R_DrawColumns2Mid;
+
+        if (col2midallfunc == R_DrawColumns2MidAllMMX)
+            col2midallfunc = R_DrawColumns2MidAll;
 #endif
     }
 
@@ -4148,6 +4298,7 @@ void R_RenderPlayerView(void)
 
     // the flats of the planes draw over the columns kept
     R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     // Check for new console commands.
     NetUpdate();
@@ -4157,6 +4308,7 @@ void R_RenderPlayerView(void)
     // the sky of the planes keeps columns, which the masked walls and the
     // sprites of the view are to draw over
     R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     // Check for new console commands.
     NetUpdate();
@@ -4165,6 +4317,7 @@ void R_RenderPlayerView(void)
 
     // the masked walls keep columns for the view of the frame
     R_FLUSH_COLUMNS4();
+    R_FLUSH_COLUMNS2();
 
     // Check for new console commands.
     NetUpdate();

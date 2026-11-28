@@ -13,7 +13,9 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Wall renderer of r_col4.c, which maps four columns at a time.
+//	Wall renderer of r_col.c, which maps four columns at a time of the
+//	detail of high, the two columns of the detail of the low being of the
+//	same file, r_col2.h being of it.
 //
 
 */
@@ -37,11 +39,21 @@
  * sixteen colours, of CVB and of 512 columns are not, for four of their
  * columns are not four bytes of a row.
  *
+ * The renderer is of the file of r_col.c, which is of the two of the renderers
+ * at once, of the two columns of the detail of the low below it, for the
+ * bookkeeping of the columns kept of the two of them is the same, of the state
+ * of it being one: R_SetupColumn4() and R_SetupColumn2() of the file give the
+ * shape of the renderer of the frame, and the columns kept of the frame before
+ * are dropped by the setup of it.  The header of the two columns is of the file
+ * as well, the macros of the two of the headers of them being of the seg loops
+ * of their own.
+ *
  * The columns kept point into the WAD cache, which the seg loops purge when
  * they take a lump, so every such loop hands the columns kept to the view
- * first with R_FLUSH_COLUMNS4(), which tests col4pending, the number of
- * columns kept, of its own and calls nothing when none is kept.  Of the modes
- * without the renderer the macro is of nothing, of the shape of a call still.
+ * first with R_FLUSH_COLUMNS4(), which tests colp, of the number of the columns
+ * kept of the renderer of the frame being, of its own and calls nothing when
+ * none is kept.  Of the modes without the renderer the macro is of nothing, of
+ * the shape of a call still.
  *
  * The texture position of a row is kept in the format of the assembly column
  * renderers of the modes, and the renderer is compared with them byte for
@@ -71,13 +83,14 @@
     && !defined(MODE_CGA16) && !defined(MODE_CVB) && !defined(MODE_CGA512)
 #define USE_COLUMNS4
 
-void R_DrawColumn4(void);
-void R_FlushColumn4(void);
+/* The columns kept of the renderer of the frame handed over to the view, of the
+   two of the renderers of the one function of them being. */
+void R_FlushColumn(void);
 
 /* The middle rows of a group of four columns of one light table and of one
    step: the group of the columns kept in col4slots, of the x of them in
    col4x, of the first of their rows in col4y and of their number in col4rows,
-   which r_col4.c writes before the call.  The renderer of them is kept in
+   which r_col.c writes before the call.  The renderer of them is kept in
    col4midfunc, of the scalar loop by default, and r_main.c chooses the loop
    of the CPUs of MMX of its own switch of the CPU, as it chooses the other
    renderers of a mode. */
@@ -103,15 +116,18 @@ void R_DrawColumns4MidAllMMX(void);
 void R_DrawColumns4MidAllSSE2(void);
 extern void (*col4midallfunc)(void);
 
-/* the number of the columns of the seg loops kept of the view */
-extern int col4pending;
+/* the number of the columns of the seg loops kept of the view, of the two of
+   the renderers of the file being one, the renderer of the frame one of them
+   being and the columns kept of the other of none, the macro of the flush of the
+   renderer of the frame of none of them being */
+extern int colp;
 
-/* the column function of the frame: R_DrawColumn4 of the views drawn four
+/* the column function of the frame of the columns kept, of the views drawn four
    columns at a time, the fallback of the others */
 void (*R_SetupColumn4(void (*fallback)(void)))(void);
 
 #define R_CHOOSE_COLUMNS4(fallback) R_SetupColumn4(fallback)
-#define R_FLUSH_COLUMNS4() do { if (col4pending) R_FlushColumn4(); } while (0)
+#define R_FLUSH_COLUMNS4() do { if (colp) R_FlushColumn(); } while (0)
 
 #else
 

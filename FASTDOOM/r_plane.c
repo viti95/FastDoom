@@ -1290,7 +1290,10 @@ void R_DrawSky(visplane_t *pl)
            patch are all of one lump, so the four columns are kept whole over
            the width of a patch, and are of the boundary of it flushed */
         if (texbase != lumpcache[lump])
+        {
             R_FLUSH_COLUMNS4();
+            R_FLUSH_COLUMNS2();
+        }
 
         dc_source = W_CachedLumpBase(texbase, lump, ofs);
 
